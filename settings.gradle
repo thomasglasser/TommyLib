@@ -29,5 +29,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'MultiLoader Template'
-include("Common", "Fabric", "NeoForge")
+rootProject.name = 'TommyLib'
+include("common", "fabric", "neoforge")

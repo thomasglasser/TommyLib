@@ -1,0 +1,9 @@
+accessWidener   v1  named
+accessible  field   net/minecraft/client/model/geom/ModelPart                       cubes               Ljava/util/List;
+accessible  method  net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer  setPartVisibility   (Lnet/minecraft/client/model/HumanoidModel;Lnet/minecraft/world/entity/EquipmentSlot;)V
+accessible  method  net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer  getArmorModel       (Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/client/model/HumanoidModel;
+accessible  method  net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer  renderArmorPiece    (Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;)V
+accessible  method  net/minecraft/world/level/block/Blocks                          log                 (Lnet/minecraft/world/level/material/MapColor;Lnet/minecraft/world/level/material/MapColor;)Lnet/minecraft/world/level/block/Block;
+accessible  method  net/minecraft/world/level/block/Blocks                          log                 (Lnet/minecraft/world/level/material/MapColor;Lnet/minecraft/world/level/material/MapColor;Lnet/minecraft/world/level/block/SoundType;)Lnet/minecraft/world/level/block/Block;
+accessible  method  net/minecraft/world/level/block/Blocks                          leaves              (Lnet/minecraft/world/level/block/SoundType;)Lnet/minecraft/world/level/block/Block;
+accessible  method  net/minecraft/world/level/block/Blocks                          flowerPot           (Lnet/minecraft/world/level/block/Block;)Lnet/minecraft/world/level/block/Block;

@@ -22,7 +22,10 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "dev.thomasglasser.multiloadertemplate.MultiloaderTemplateFabric"
+            "dev.thomasglasser.tommylib.TommyLibFabric"
+        ],
+        "client": [
+            "dev.thomasglasser.tommylib.impl.client.TommyLibFabricClient"
         ]
     },
     "mixins": [

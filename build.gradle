@@ -1,9 +1,15 @@
 plugins {
     id 'fabric-loom' version "${loom_version}" apply(false)
+    id 'signing'
 }
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
+
+    base {
+        archivesName = "${mod_id}-${project.name}-${minecraft_version}"
+    }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
     java.withSourcesJar()
@@ -72,6 +78,42 @@ subprojects {
                 includeGroupAndSubgroups 'maven.modrinth'
             }
         }
+        maven {
+            name "playerAnimator"
+            url 'https://maven.kosmx.dev/'
+            content {
+                includeGroupAndSubgroups 'dev.kosmx.player-anim'
+            }
+        }
+        maven {
+            name = "TslatEffectsLib"
+            url = "https://dl.cloudsmith.io/public/tslat/tel/maven/"
+            content {
+                includeGroupAndSubgroups "net.tslat.effectslib"
+            }
+        }
+        maven {
+            name = "SmartBrainLib"
+            url = "https://dl.cloudsmith.io/public/tslat/sbl/maven/"
+            content {
+                includeGroupAndSubgroups 'net.tslat.smartbrainlib'
+            }
+        }
+        maven {
+            name = "Cardinal Components API"
+            url = 'https://maven.ladysnake.org/releases'
+            content {
+                includeGroupAndSubgroups 'dev.onyxstudios.cardinal-components-api'
+            }
+        }
+        maven {
+            name = 'GeckoLib'
+            url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+            content {
+                includeGroupAndSubgroups 'software.bernie.geckolib'
+                includeGroupAndSubgroups 'com.eliotlash.mclib'
+            }
+        }
 
         // Non-specific
         maven {
@@ -125,5 +167,61 @@ subprojects {
     tasks.withType(GenerateModuleMetadata) {
 
         enabled = false
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId = project.group
+                artifactId = base.archivesName.get()
+                version project.version
+                from components.java
+
+                pom {
+                    name = project.mod_name
+                    description = project.description
+                    url = project.homepage
+                    licenses {
+                        license {
+                            name = project.license
+                            url = project.license_url
+                        }
+                    }
+                    contributors {
+                        project.contributors.each {
+                            contributor {
+                                name = it
+                            }
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = project.mod_author
+                            name = project.mod_author
+                        }
+                    }
+                    issueManagement {
+                        system = 'GitHub'
+                        url = project.issues
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                credentials {
+                    username = "$usr"
+                    password = "$pwd"
+                }
+
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            }
+        }
+    }
+
+    signing {
+        useGpgCmd()
+        sign publishing.publications
     }
 }
