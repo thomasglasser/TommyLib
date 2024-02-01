@@ -1,11 +1,11 @@
 plugins {
     id 'fabric-loom' version "${loom_version}" apply(false)
-    id 'signing'
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
+    apply plugin: 'signing'
 
     base {
         archivesName = "${mod_id}-${project.name}-${minecraft_version}"
@@ -203,6 +203,12 @@ subprojects {
                     issueManagement {
                         system = 'GitHub'
                         url = project.issues
+                    }
+                    scm
+                    {
+                        connection = 'scm:git:git://github.com/thomasglasser/TommyLib.git'
+                        developerConnection = 'scm:git:ssh://github.com:thomasglasser/TommyLib.git'
+                        url = "http://github.com/thomasglasser/TommyLib/tree/${minecraft_version}"
                     }
                 }
             }
