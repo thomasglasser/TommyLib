@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:orange_dye",
+    {
+      "id": "#neoforge:dyes/orange",
+      "required": false
+    },
+    {
+      "id": "#c:orange_dyes",
+      "required": false
+    }
+  ]
+}

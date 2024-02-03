@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:cyan_dye",
+    {
+      "id": "#neoforge:dyes/cyan",
+      "required": false
+    },
+    {
+      "id": "#c:cyan_dyes",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:purple_dye",
+    {
+      "id": "#neoforge:dyes/purple",
+      "required": false
+    },
+    {
+      "id": "#c:purple_dyes",
+      "required": false
+    }
+  ]
+}
