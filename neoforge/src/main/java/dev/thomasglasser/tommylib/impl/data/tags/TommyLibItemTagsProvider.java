@@ -5,11 +5,9 @@ import dev.thomasglasser.tommylib.TommyLib;
 import dev.thomasglasser.tommylib.api.data.tags.ExtendedItemTagsProvider;
 import dev.thomasglasser.tommylib.api.tags.TommyLibItemTags;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -42,13 +40,5 @@ public class TommyLibItemTagsProvider extends ExtendedItemTagsProvider
 						.add(DyeItem.byColor(dyeColor))
 						.addOptionalTag(neoforgeLoc("dyes/" + dyeColor.getName()))
 						.addOptionalTag(cLoc(dyeColor.getName() + "_dyes")));
-
-
-		IntrinsicTagAppender<Item> meats = tag(TommyLibItemTags.MEATS);
-		for (Item item : BuiltInRegistries.ITEM.stream().toList())
-		{
-			if (item.isEdible() && item.getFoodProperties().isMeat())
-				meats.add(item);
-		}
 	}
 }
