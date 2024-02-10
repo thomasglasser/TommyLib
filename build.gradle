@@ -137,16 +137,13 @@ subprojects {
                 description: project.description,
                 mod_author: mod_author,
                 contributors: contributors,
-                homepage: homepage,
-                sources: sources,
-                issues: issues,
                 license: license,
-                icon: icon,
                 neoforge_version: neoforge_version,
                 fabric_loader_version: fabric_loader_version,
                 fabric_version: fabric_version,
                 minecraft_version: minecraft_version,
-                next_minecraft_version: next_minecraft_version
+                next_minecraft_version: next_minecraft_version,
+                github_name: github_name
         ]
         inputs.properties replaceProperties
 
@@ -169,6 +166,7 @@ subprojects {
         enabled = false
     }
 
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
@@ -180,7 +178,7 @@ subprojects {
                 pom {
                     name = project.mod_name
                     description = project.description
-                    url = project.homepage
+                    url = "https://github.com/thomasglasser/${github_name}/wiki"
                     licenses {
                         license {
                             name = project.license
@@ -195,14 +193,14 @@ subprojects {
                     }
                     issueManagement {
                         system = 'GitHub'
-                        url = project.issues
+                        url = "https://github.com/thomasglasser/${github_name}/issues"
                     }
                     scm
-                    {
-                        connection = 'scm:git:git://github.com/thomasglasser/TommyLib.git'
-                        developerConnection = 'scm:git:ssh://github.com:thomasglasser/TommyLib.git'
-                        url = "http://github.com/thomasglasser/TommyLib/tree/${minecraft_version}"
-                    }
+                            {
+                                connection = "scm:git:git://github.com/thomasglasser/${github_name}.git"
+                                developerConnection = "scm:git:ssh://github.com:thomasglasser/${github_name}.git"
+                                url = "http://github.com/thomasglasser/${github_name}/tree/${minecraft_version}"
+                            }
                 }
             }
         }

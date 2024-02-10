@@ -12,13 +12,11 @@
         "${contributors}"
     ],
     "contact": {
-        "homepage": "${homepage}",
-        "sources": "${sources}",
-        "issues": "${issues}"
+        "sources": "https://github.com/thomasglasser/${github_name}",
+        "issues": "https://github.com/thomasglasser/${github_name}/issues"
     },
 
     "license": "${license}",
-    "icon": "${icon}",
     "environment": "*",
     "entrypoints": {
         "main": [
