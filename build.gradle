@@ -187,13 +187,6 @@ subprojects {
                             url = project.license_url
                         }
                     }
-                    contributors {
-                        project.contributors.each {
-                            contributor {
-                                name = it
-                            }
-                        }
-                    }
                     developers {
                         developer {
                             id = project.mod_author
