@@ -1,17 +1,18 @@
 {
     "required": true,
     "minVersion": "0.8",
-    "package": "dev.thomasglasser.tommylib.mixin",
+    "package": "dev.thomasglasser.tommylib.impl.mixin",
     "refmap": "${mod_id}.refmap.json",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
+        "minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateMixin"
     ],
     "client": [
     ],
     "server": [
     ],
     "injectors": {
-      "defaultRequire": 1
+        "defaultRequire": 1
     }
   }
   
