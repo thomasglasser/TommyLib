@@ -1,5 +1,6 @@
 package dev.thomasglasser.tommylib.impl.platform;
 
+import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.thomasglasser.tommylib.impl.platform.services.ItemHelper;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -26,7 +27,7 @@ public class FabricItemHelper implements ItemHelper
     @Override
     public Attribute getAttackRangeAttribute() {
         // TODO: Switch to vanilla attribute when it's added
-        return null;
+        return ReachEntityAttributes.ATTACK_RANGE;
     }
 
     @Override

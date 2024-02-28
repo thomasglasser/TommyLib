@@ -114,6 +114,13 @@ subprojects {
                 includeGroupAndSubgroups 'com.eliotlash.mclib'
             }
         }
+        maven {
+            name = "Reach Entity Attributes"
+            url "https://maven.jamieswhiteshirt.com/libs-release"
+            content {
+                includeGroupAndSubgroups "com.jamieswhiteshirt"
+            }
+        }
 
         // Non-specific
         maven {
