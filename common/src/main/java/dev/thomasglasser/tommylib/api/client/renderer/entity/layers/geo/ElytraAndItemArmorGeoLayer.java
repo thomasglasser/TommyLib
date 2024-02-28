@@ -42,13 +42,16 @@ public abstract class ElytraAndItemArmorGeoLayer<T extends LivingEntity & GeoAni
 
 			model.setupAnim(animatable, 0, 0, 0, 0, 0);
 
-			if (!left.cubes.isEmpty())
+			if (getEquipmentSlotForBone(bone, armorStack, animatable).equals(EquipmentSlot.CHEST))
 			{
-				renderWing(poseStack, bufferSource, armorStack, left, packedLight, packedOverlay);
-			}
-			if (!right.cubes.isEmpty())
-			{
-				renderWing(poseStack, bufferSource, armorStack, right, packedLight, packedOverlay);
+				if (!left.cubes.isEmpty())
+				{
+					renderWing(poseStack, bufferSource, armorStack, left, packedLight, packedOverlay);
+				}
+				if (!right.cubes.isEmpty())
+				{
+					renderWing(poseStack, bufferSource, armorStack, right, packedLight, packedOverlay);
+				}
 			}
 		}
 		else
