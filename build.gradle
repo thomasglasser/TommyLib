@@ -121,6 +121,20 @@ subprojects {
                 includeGroupAndSubgroups "com.jamieswhiteshirt"
             }
         }
+        maven {
+            name = 'Modonomicon'
+            url "https://dl.cloudsmith.io/public/klikli-dev/mods/maven/"
+            content {
+                includeGroupAndSubgroups "com.klikli_dev"
+            }
+        }
+        maven {
+            name = "JEI"
+            url = "https://maven.blamejared.com/"
+            content {
+                includeGroupAndSubgroups 'mezz.jei'
+            }
+        }
 
         // Non-specific
         maven {
