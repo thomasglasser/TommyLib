@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 public class BlockUtils
 {
 	public static final Function<RegistryObject<? extends Block>, BlockItem> BLOCK_ITEM_FUNCTION = ((block) -> new BlockItem(block.get(), new Item.Properties()));
-	public static final BiFunction<RegistryObject<Block>, Item.Properties, BlockItem> BLOCK_ITEM_WITH_PROPERTIES_FUNCTION = ((block, properties) -> new BlockItem(block.get(), properties));
+	public static final BiFunction<RegistryObject<? extends Block>, Item.Properties, BlockItem> BLOCK_ITEM_WITH_PROPERTIES_FUNCTION = ((block, properties) -> new BlockItem(block.get(), properties));
 
 	public static <T extends Block> RegistryObject<T> register(RegistrationProvider<Block> provider, String name, Supplier<T> block)
 	{
@@ -48,15 +48,15 @@ public class BlockUtils
 		return block;
 	}
 
-	public static RegistryObject<Block> registerBlockAndItemAndWrap(
+	public static <T extends Block> RegistryObject<T> registerBlockAndItemAndWrap(
 			RegistrationProvider<Block> provider,
 			String name,
-			Supplier<Block> blockFactory,
+			Supplier<T> blockFactory,
 			TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, RegistryObject<? extends Item>> itemFactory,
 			Item.Properties properties,
 			List<ResourceKey<CreativeModeTab>> tabs)
 	{
-		RegistryObject<Block> block = register(provider, name, blockFactory);
+		RegistryObject<T> block = register(provider, name, blockFactory);
 		itemFactory.apply(name, () -> BLOCK_ITEM_WITH_PROPERTIES_FUNCTION.apply(block, properties), tabs);
 		return block;
 	}

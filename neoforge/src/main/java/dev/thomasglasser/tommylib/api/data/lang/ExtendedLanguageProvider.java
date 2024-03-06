@@ -1,5 +1,6 @@
 package dev.thomasglasser.tommylib.api.data.lang;
 
+import dev.thomasglasser.tommylib.api.packs.PackHolder;
 import dev.thomasglasser.tommylib.api.registration.RegistryObject;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
@@ -144,5 +145,11 @@ public abstract class ExtendedLanguageProvider extends LanguageProvider
 	protected void addConfigCategory(String field, String name)
 	{
 		add(modId + ".midnightconfig.category." + field, name);
+	}
+
+	protected void add(PackHolder packHolder, String title, String description)
+	{
+		add(packHolder.titleKey(), title);
+		add(packHolder.descriptionKey(), description);
 	}
 }
