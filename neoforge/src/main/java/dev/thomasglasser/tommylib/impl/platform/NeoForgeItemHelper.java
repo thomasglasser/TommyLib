@@ -3,8 +3,8 @@ package dev.thomasglasser.tommylib.impl.platform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.thomasglasser.tommylib.api.client.ClientUtils;
 import dev.thomasglasser.tommylib.impl.platform.services.ItemHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +35,16 @@ public class NeoForgeItemHelper implements ItemHelper
 
 	@Override
 	public void renderItem(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, String modid, String model) {
-		ClientUtils.getMinecraft().getItemRenderer().render(itemStack, displayContext, false, poseStack, buffer, combinedLight, combinedOverlay, Minecraft.getInstance().getModelManager().getModel(new ResourceLocation(modid, "item/" + model)));
+		ClientUtils.getMinecraft().getItemRenderer().render(itemStack, displayContext, false, poseStack, buffer, combinedLight, combinedOverlay, ClientUtils.getMinecraft().getModelManager().getModel(new ResourceLocation(modid, "item/" + model)));
+	}
+
+	@Override
+	public void renderItem(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, String modid, String model, String defaultModel)
+	{
+		BakedModel m = ClientUtils.getMinecraft().getModelManager().getModel(new ResourceLocation(modid, "item/" + model));
+		if (m == ClientUtils.getMinecraft().getModelManager().getMissingModel())
+			m = ClientUtils.getMinecraft().getModelManager().getModel(new ResourceLocation(modid, "item/" + defaultModel));
+		ClientUtils.getMinecraft().getItemRenderer().render(itemStack, displayContext, false, poseStack, buffer, combinedLight, combinedOverlay, m);
 	}
 
 	@SafeVarargs

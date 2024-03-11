@@ -5,6 +5,9 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "minecraft.client.model.HumanoidModelMixin",
+    "minecraft.client.renderer.entity.player.PlayerRendererMixin",
+    "minecraft.world.entity.EntityMixin"
   ],
   "client": [
   ],
