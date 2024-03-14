@@ -1,11 +1,13 @@
 package dev.thomasglasser.tommylib.api.client;
 
 import dev.thomasglasser.tommylib.api.world.item.ItemUtils;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
@@ -19,6 +21,8 @@ import java.util.UUID;
 
 public class ClientUtils
 {
+    private static final ArrayList<KeyMapping> KEY_MAPPINGS = new ArrayList<>();
+
     public static AbstractClientPlayer getClientPlayerByUUID(UUID uuid) {
         return (AbstractClientPlayer) Minecraft.getInstance().level.getPlayerByUUID(uuid);
     }
@@ -60,5 +64,17 @@ public class ClientUtils
         });
 
         return items;
+    }
+
+    public static ArrayList<KeyMapping> getKeyMappings()
+    {
+        return KEY_MAPPINGS;
+    }
+
+    public static KeyMapping registerKeyMapping(ResourceLocation name, int key, String category)
+    {
+        KeyMapping mapping = new KeyMapping(name.toLanguageKey("key"), key, category);
+        KEY_MAPPINGS.add(mapping);
+        return mapping;
     }
 }

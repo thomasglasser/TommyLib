@@ -9,6 +9,7 @@
     "tommylib.api.world.item.GeoBlockItemMixin"
   ],
   "client": [
+    "minecraft.client.OptionsMixin"
   ],
   "server": [
   ],

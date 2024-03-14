@@ -1,15 +1,19 @@
 package dev.thomasglasser.tommylib.api.world.item;
 
+import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
 import dev.thomasglasser.tommylib.api.registration.RegistrationProvider;
 import dev.thomasglasser.tommylib.api.registration.RegistryObject;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SmithingTemplateItem;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.armortrim.TrimPattern;
 
 import java.util.ArrayList;
@@ -46,8 +50,21 @@ public final class ItemUtils
         return register(provider, key.location().getPath() + "_armor_trim_smithing_template", () -> (SmithingTemplateItem.createArmorTrimTemplate(key)), List.of(CreativeModeTabs.INGREDIENTS));
     }
 
-    public static void safeShrink(int d, ItemStack item, Player player)
+    public static ItemStack safeShrink(int d, ItemStack item, Player player)
     {
-        if (!player.getAbilities().instabuild) item.shrink(d);
+        if (!player.getAbilities().instabuild)
+        {
+            Item remainder = item.getItem().getCraftingRemainingItem();
+            item.shrink(d);
+            if (remainder != null)
+                return remainder.getDefaultInstance();
+            return ItemStack.EMPTY;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    public static RegistryObject<SpawnEggItem> registerSpawnEgg(RegistrationProvider<Item> provider, String name, Supplier<EntityType<? extends Mob>> entityType, int primaryColor, int secondaryColor)
+    {
+        return register(provider, name, TommyLibServices.ITEM.makeSpawnEgg(entityType, primaryColor, secondaryColor, new Item.Properties()), List.of(CreativeModeTabs.SPAWN_EGGS));
     }
 }

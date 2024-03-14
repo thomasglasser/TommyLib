@@ -17,6 +17,7 @@ public class TommyLibNeoForge
         if (TommyLibServices.PLATFORM.isClientSide())
         {
             eventBus.addListener(TommyLibNeoForgeClientEvents::onBuildCreativeTabContent);
+            eventBus.addListener(TommyLibNeoForgeClientEvents::onRegisterKeyMappings);
         }
     }
 }
