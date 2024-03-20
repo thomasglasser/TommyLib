@@ -1,6 +1,7 @@
 package dev.thomasglasser.tommylib.impl.mixin.minecraft.client.renderer.entity.player;
 
-import dev.thomasglasser.tommylib.api.world.item.armor.GeoArmorItem;
+import dev.thomasglasser.tommylib.api.world.item.ItemUtils;
+import dev.thomasglasser.tommylib.impl.GeckoLibUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.model.PlayerModel;
@@ -9,6 +10,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,87 +28,94 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 	@Inject(method = "setModelProperties", at = @At("TAIL"))
 	private void tommylib_setModelProperties(AbstractClientPlayer clientPlayer, CallbackInfo ci)
 	{
-		PlayerModel<AbstractClientPlayer> playerModel = getModel();
-		if (clientPlayer.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof GeoArmorItem geoArmorItem && geoArmorItem.isSkintight())
+		if (ItemUtils.isGeckoLoaded())
 		{
-			playerModel.leftSleeve.visible = false;
-			playerModel.rightSleeve.visible = false;
-			playerModel.jacket.visible = false;
-			if (Minecraft.getInstance().screen instanceof EffectRenderingInventoryScreen<?>)
+			PlayerModel<AbstractClientPlayer> playerModel = getModel();
+			Item chest = clientPlayer.getItemBySlot(EquipmentSlot.CHEST).getItem();
+			if (GeckoLibUtils.isSkintight(chest))
 			{
-				playerModel.leftArm.xScale = 0.90f;
-				playerModel.leftArm.yScale = 0.90f;
-				playerModel.leftArm.zScale = 0.90f;
-				playerModel.rightArm.xScale = 0.90f;
-				playerModel.rightArm.yScale = 0.90f;
-				playerModel.rightArm.zScale = 0.90f;
-				playerModel.body.xScale = 0.90f;
-				playerModel.body.yScale = 0.90f;
-				playerModel.body.zScale = 0.90f;
+				playerModel.leftSleeve.visible = false;
+				playerModel.rightSleeve.visible = false;
+				playerModel.jacket.visible = false;
+				if (Minecraft.getInstance().screen instanceof EffectRenderingInventoryScreen<?>)
+				{
+					playerModel.leftArm.xScale = 0.90f;
+					playerModel.leftArm.yScale = 0.90f;
+					playerModel.leftArm.zScale = 0.90f;
+					playerModel.rightArm.xScale = 0.90f;
+					playerModel.rightArm.yScale = 0.90f;
+					playerModel.rightArm.zScale = 0.90f;
+					playerModel.body.xScale = 0.90f;
+					playerModel.body.yScale = 0.90f;
+					playerModel.body.zScale = 0.90f;
+				}
+				else
+				{
+					playerModel.leftArm.xScale = 1.0f;
+					playerModel.leftArm.yScale = 1.0f;
+					playerModel.leftArm.zScale = 1.0f;
+					playerModel.rightArm.xScale = 1.0f;
+					playerModel.rightArm.yScale = 1.0f;
+					playerModel.rightArm.zScale = 1.0f;
+					playerModel.body.xScale = 1.0f;
+					playerModel.body.yScale = 1.0f;
+					playerModel.body.zScale = 1.0f;
+				}
 			}
 			else
 			{
-				playerModel.leftArm.xScale = 1.0f;
-				playerModel.leftArm.yScale = 1.0f;
-				playerModel.leftArm.zScale = 1.0f;
-				playerModel.rightArm.xScale = 1.0f;
-				playerModel.rightArm.yScale = 1.0f;
-				playerModel.rightArm.zScale = 1.0f;
-				playerModel.body.xScale = 1.0f;
-				playerModel.body.yScale = 1.0f;
-				playerModel.body.zScale = 1.0f;
+				tommyLib$reset(playerModel, EquipmentSlot.CHEST);
 			}
-		}
-		else
-		{
-			tommyLib$reset(playerModel, EquipmentSlot.CHEST);
-		}
-		if (clientPlayer.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof GeoArmorItem geoArmorItem && geoArmorItem.isSkintight())
-		{
-			playerModel.hat.visible = false;
-			if (Minecraft.getInstance().screen instanceof EffectRenderingInventoryScreen<?>)
+			Item head = clientPlayer.getItemBySlot(EquipmentSlot.HEAD).getItem();
+			if (GeckoLibUtils.isSkintight(head))
 			{
-				playerModel.head.xScale = 0.98f;
-				playerModel.head.yScale = 0.98f;
-				playerModel.head.zScale = 0.98f;
+				playerModel.hat.visible = false;
+				if (Minecraft.getInstance().screen instanceof EffectRenderingInventoryScreen<?>)
+				{
+					playerModel.head.xScale = 0.98f;
+					playerModel.head.yScale = 0.98f;
+					playerModel.head.zScale = 0.98f;
+				}
+				else
+				{
+					playerModel.head.xScale = 1.0f;
+					playerModel.head.yScale = 1.0f;
+					playerModel.head.zScale = 1.0f;
+				}
 			}
 			else
 			{
-				playerModel.head.xScale = 1.0f;
-				playerModel.head.yScale = 1.0f;
-				playerModel.head.zScale = 1.0f;
+				tommyLib$reset(playerModel, EquipmentSlot.HEAD);
 			}
-		}
-		else
-		{
-			tommyLib$reset(playerModel, EquipmentSlot.HEAD);
-		}
-		if (clientPlayer.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof GeoArmorItem iGeoArmorBoots && iGeoArmorBoots.isSkintight() || clientPlayer.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof GeoArmorItem iGeoArmorLeggings && iGeoArmorLeggings.isSkintight())
-		{
-			playerModel.rightPants.visible = false;
-			playerModel.leftPants.visible = false;
-			if (Minecraft.getInstance().screen instanceof EffectRenderingInventoryScreen<?>)
+			Item feet = clientPlayer.getItemBySlot(EquipmentSlot.FEET).getItem();
+			Item legs = clientPlayer.getItemBySlot(EquipmentSlot.LEGS).getItem();
+			if (GeckoLibUtils.isSkintight(feet) || GeckoLibUtils.isSkintight(legs))
 			{
-				playerModel.leftLeg.xScale = 0.90f;
-				playerModel.leftLeg.yScale = 0.90f;
-				playerModel.leftLeg.zScale = 0.90f;
-				playerModel.rightLeg.xScale = 0.90f;
-				playerModel.rightLeg.yScale = 0.90f;
-				playerModel.rightLeg.zScale = 0.90f;
+				playerModel.rightPants.visible = false;
+				playerModel.leftPants.visible = false;
+				if (Minecraft.getInstance().screen instanceof EffectRenderingInventoryScreen<?>)
+				{
+					playerModel.leftLeg.xScale = 0.90f;
+					playerModel.leftLeg.yScale = 0.90f;
+					playerModel.leftLeg.zScale = 0.90f;
+					playerModel.rightLeg.xScale = 0.90f;
+					playerModel.rightLeg.yScale = 0.90f;
+					playerModel.rightLeg.zScale = 0.90f;
+				}
+				else
+				{
+					playerModel.leftLeg.xScale = 1.0f;
+					playerModel.leftLeg.yScale = 1.0f;
+					playerModel.leftLeg.zScale = 1.0f;
+					playerModel.rightLeg.xScale = 1.0f;
+					playerModel.rightLeg.yScale = 1.0f;
+					playerModel.rightLeg.zScale = 1.0f;
+				}
 			}
 			else
 			{
-				playerModel.leftLeg.xScale = 1.0f;
-				playerModel.leftLeg.yScale = 1.0f;
-				playerModel.leftLeg.zScale = 1.0f;
-				playerModel.rightLeg.xScale = 1.0f;
-				playerModel.rightLeg.yScale = 1.0f;
-				playerModel.rightLeg.zScale = 1.0f;
+				tommyLib$reset(playerModel, EquipmentSlot.LEGS);
 			}
-		}
-		else
-		{
-			tommyLib$reset(playerModel, EquipmentSlot.LEGS);
 		}
 	}
 

@@ -6,6 +6,9 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
+/**
+ * Must use Neo mixin to override initializeClient method or use {@link BaseGeoArmorItem}
+ */
 public interface GeoArmorItem extends GeoItem, FabricGeoItem
 {
     GeoArmorRenderer newRenderer();

@@ -67,4 +67,9 @@ public final class ItemUtils
     {
         return register(provider, name, TommyLibServices.ITEM.makeSpawnEgg(entityType, primaryColor, secondaryColor, new Item.Properties()), List.of(CreativeModeTabs.SPAWN_EGGS));
     }
+
+    public static boolean isGeckoLoaded()
+    {
+        return TommyLibServices.PLATFORM.isModLoaded("geckolib");
+    }
 }

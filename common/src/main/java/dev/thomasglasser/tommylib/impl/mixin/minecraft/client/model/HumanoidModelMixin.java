@@ -1,10 +1,12 @@
 package dev.thomasglasser.tommylib.impl.mixin.minecraft.client.model;
 
-import dev.thomasglasser.tommylib.api.world.item.armor.GeoArmorItem;
+import dev.thomasglasser.tommylib.api.world.item.ItemUtils;
+import dev.thomasglasser.tommylib.impl.GeckoLibUtils;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,7 +24,8 @@ public abstract class HumanoidModelMixin<T extends LivingEntity>
     @Inject(method = "prepareMobModel(Lnet/minecraft/world/entity/LivingEntity;FFF)V", at = @At("TAIL"))
     private void tommylib_prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick, CallbackInfo ci)
     {
-        if (entity.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof GeoArmorItem geoArmorItem && geoArmorItem.isSkintight())
+        Item chest = entity.getItemBySlot(EquipmentSlot.CHEST).getItem();
+        if (ItemUtils.isGeckoLoaded() && GeckoLibUtils.isSkintight(chest))
         {
             this.leftArm.visible = false;
             this.rightArm.visible = false;
