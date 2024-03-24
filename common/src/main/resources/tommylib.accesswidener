@@ -7,3 +7,4 @@ accessible  method  net/minecraft/world/level/block/Blocks                      
 accessible  method  net/minecraft/world/level/block/Blocks                          log                 (Lnet/minecraft/world/level/material/MapColor;Lnet/minecraft/world/level/material/MapColor;Lnet/minecraft/world/level/block/SoundType;)Lnet/minecraft/world/level/block/Block;
 accessible  method  net/minecraft/world/level/block/Blocks                          leaves              (Lnet/minecraft/world/level/block/SoundType;)Lnet/minecraft/world/level/block/Block;
 accessible  method  net/minecraft/world/level/block/Blocks                          flowerPot           (Lnet/minecraft/world/level/block/Block;)Lnet/minecraft/world/level/block/Block;
+accessible  field   net/minecraft/client/KeyMapping                                 CATEGORY_SORT_ORDER Ljava/util/Map;

@@ -18,7 +18,6 @@ public class TommyLibNeoForge
         {
             eventBus.addListener(TommyLibNeoForgeClientEvents::onBuildCreativeTabContent);
             eventBus.addListener(TommyLibNeoForgeClientEvents::onRegisterKeyMappings);
-            eventBus.addListener(TommyLibNeoForgeClientEvents::registerClientReloadListeners);
         }
     }
 }
