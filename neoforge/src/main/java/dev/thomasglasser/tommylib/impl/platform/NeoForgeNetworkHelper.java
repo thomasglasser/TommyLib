@@ -5,6 +5,7 @@ import dev.thomasglasser.tommylib.impl.platform.services.NetworkHelper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class NeoForgeNetworkHelper implements NetworkHelper
@@ -59,6 +60,32 @@ public class NeoForgeNetworkHelper implements NetworkHelper
 		try {
 			PacketDistributor.ALL.noArg().send(msgClass.getDeclaredConstructor().newInstance());
 		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public <MSG extends CustomPacket> void sendToTrackingClients(Class<MSG> msgClass, FriendlyByteBuf args, MinecraftServer server, Entity tracked)
+	{
+		try
+		{
+			PacketDistributor.TRACKING_ENTITY_AND_SELF.with(tracked).send(msgClass.getDeclaredConstructor(FriendlyByteBuf.class).newInstance(args));
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public <MSG extends CustomPacket> void sendToTrackingClients(Class<MSG> msgClass, MinecraftServer server, Entity tracked)
+	{
+		try
+		{
+			PacketDistributor.TRACKING_ENTITY_AND_SELF.with(tracked).send(msgClass.getDeclaredConstructor().newInstance());
+		}
+		catch (Exception e)
+		{
 			throw new RuntimeException(e);
 		}
 	}

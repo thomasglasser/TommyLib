@@ -10,6 +10,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+
+import java.util.ArrayList;
 
 public class FabricNetworkHelper implements NetworkHelper
 {
@@ -68,6 +71,40 @@ public class FabricNetworkHelper implements NetworkHelper
             try {
                 ServerPlayNetworking.send(player, ((ResourceLocation) msgClass.getDeclaredField("ID").get(this)), PacketUtils.empty());
             } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Override
+    public <MSG extends CustomPacket> void sendToTrackingClients(Class<MSG> msgClass, FriendlyByteBuf args, MinecraftServer server, Entity tracked)
+    {
+        ArrayList<ServerPlayer> tracking = new ArrayList<>(PlayerLookup.tracking(tracked));
+        if (tracked instanceof ServerPlayer serverPlayer && !tracking.contains(serverPlayer)) tracking.add(serverPlayer);
+        for (ServerPlayer player : tracking)
+        {
+            try
+            {
+                ServerPlayNetworking.send(player, ((ResourceLocation) msgClass.getDeclaredField("ID").get(this)), args);
+            } catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Override
+    public <MSG extends CustomPacket> void sendToTrackingClients(Class<MSG> msgClass, MinecraftServer server, Entity tracked)
+    {
+        ArrayList<ServerPlayer> tracking = new ArrayList<>(PlayerLookup.tracking(tracked));
+        if (tracked instanceof ServerPlayer serverPlayer && !tracking.contains(serverPlayer)) tracking.add(serverPlayer);
+        for (ServerPlayer player : tracking)
+        {
+            try
+            {
+                ServerPlayNetworking.send(player, ((ResourceLocation) msgClass.getDeclaredField("ID").get(this)), PacketUtils.empty());
+            } catch (Exception e)
+            {
                 throw new RuntimeException(e);
             }
         }
