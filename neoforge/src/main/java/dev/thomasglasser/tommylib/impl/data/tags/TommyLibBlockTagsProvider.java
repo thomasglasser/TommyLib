@@ -28,9 +28,14 @@ public class TommyLibBlockTagsProvider extends ExtendedBlockTagsProvider
 				.add(Blocks.CHAIN_COMMAND_BLOCK)
 				.add(Blocks.COMMAND_BLOCK)
 				.add(Blocks.REPEATING_COMMAND_BLOCK)
-				.addTag(BlockTags.PORTALS)
 				.add(Blocks.END_PORTAL_FRAME)
 				.add(Blocks.JIGSAW)
-				.add(Blocks.LIGHT);
+				.add(Blocks.LIGHT)
+				.add(Blocks.AIR)
+				.add(Blocks.STRUCTURE_VOID)
+				.add(Blocks.STRUCTURE_BLOCK)
+				.add(Blocks.CAVE_AIR)
+				.add(Blocks.VOID_AIR)
+				.addTag(BlockTags.PORTALS);
 	}
 }

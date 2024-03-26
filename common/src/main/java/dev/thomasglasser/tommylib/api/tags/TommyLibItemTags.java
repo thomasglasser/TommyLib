@@ -17,6 +17,7 @@ public class TommyLibItemTags
 	public static final TagKey<Item> WOODEN_RODS = create("wooden_rods");
 	public static final TagKey<Item> IRON_INGOTS = create("iron_ingots");
 	public static final Map<DyeColor, TagKey<Item>> DYES_MAP = dyesMap();
+	public static final TagKey<Item> UNBREAKABLE = create("unbreakable");
 
 	private static TagKey<Item> create(String name)
 	{

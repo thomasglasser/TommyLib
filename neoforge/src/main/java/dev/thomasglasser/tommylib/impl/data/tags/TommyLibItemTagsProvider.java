@@ -40,5 +40,18 @@ public class TommyLibItemTagsProvider extends ExtendedItemTagsProvider
 						.add(DyeItem.byColor(dyeColor))
 						.addOptionalTag(neoforgeLoc("dyes/" + dyeColor.getName()))
 						.addOptionalTag(cLoc(dyeColor.getName() + "_dyes")));
+
+		tag(TommyLibItemTags.UNBREAKABLE)
+				.add(Items.BEDROCK)
+				.add(Items.BARRIER)
+				.add(Items.CHAIN_COMMAND_BLOCK)
+				.add(Items.COMMAND_BLOCK)
+				.add(Items.REPEATING_COMMAND_BLOCK)
+				.add(Items.END_PORTAL_FRAME)
+				.add(Items.JIGSAW)
+				.add(Items.LIGHT)
+				.add(Items.AIR)
+				.add(Items.STRUCTURE_VOID)
+				.add(Items.STRUCTURE_BLOCK);
 	}
 }

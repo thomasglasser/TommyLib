@@ -2,6 +2,7 @@ package dev.thomasglasser.tommylib.api.data.tags;
 
 import com.mojang.datafixers.util.Pair;
 import dev.thomasglasser.tommylib.api.registration.RegistryObject;
+import dev.thomasglasser.tommylib.api.world.item.armor.ArmorSet;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import net.minecraft.core.HolderLookup;
@@ -65,12 +66,12 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider
                 .add(set.sapling().get().asItem());
     }
 
-    protected void armorSet(RegistryObject<? extends Item> helmet, RegistryObject<? extends Item> chestplate, RegistryObject<? extends Item> leggings, RegistryObject<? extends Item> boots)
+    protected void armorSet(ArmorSet armorSet)
     {
-        tagPair(HELMETS, helmet.get());
-        tagPair(CHESTPLATES, chestplate.get());
-        tagPair(LEGGINGS, leggings.get());
-        tagPair(BOOTS, boots.get());
+        tagPair(HELMETS, armorSet.HEAD.get());
+        tagPair(CHESTPLATES, armorSet.CHEST.get());
+        tagPair(LEGGINGS, armorSet.LEGS.get());
+        tagPair(BOOTS, armorSet.FEET.get());
     }
 
     @SafeVarargs
