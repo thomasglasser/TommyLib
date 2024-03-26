@@ -6,44 +6,24 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 
+import java.util.function.Function;
+
 public class NeoForgePacketUtils
 {
-	public static void register(IPayloadRegistrar registrar, Class<? extends CustomPacket> packet, Pair<ResourceLocation, CustomPacket.Direction> pair)
+	public static void register(IPayloadRegistrar registrar, Function<FriendlyByteBuf, ? extends CustomPacket> packet, Pair<ResourceLocation, CustomPacket.Direction> pair)
 	{
-		registrar.play(pair.getFirst(), (FriendlyByteBuf buf) ->
-		{
-			try
-			{
-				return packet.getConstructor(FriendlyByteBuf.class).newInstance(buf);
-			}
-			catch (NoSuchMethodException e)
-			{
-				try
-				{
-					return packet.getConstructor().newInstance();
-				}
-				catch (NoSuchMethodException nsm)
-				{
-					throw new RuntimeException("Custom packets must have FriendlyByteBuf or empty constructor!");
-				}
-				catch (Exception ex)
-				{
-					throw new RuntimeException(e);
-				}
-			}
-			catch (Exception e)
-			{
-				throw new RuntimeException(e);
-			}
-		}, handler -> handler
+
+		registrar.play(pair.getFirst(), packet::apply, handler -> handler
 				.client((payload, context) ->
 				{
-					if (payload.direction() == CustomPacket.Direction.SERVER_TO_CLIENT) payload.handle(context.player().orElse(ClientUtils.getMainClientPlayer()));
+					if (payload.direction() == CustomPacket.Direction.SERVER_TO_CLIENT)
+						context.workHandler().execute(() -> payload.handle(context.player().orElse(ClientUtils.getMainClientPlayer())));
 					else throw new RuntimeException("Serverbound packet sent to client!");
 				})
 				.server((payload, context) ->
 				{
-					if (payload.direction() == CustomPacket.Direction.CLIENT_TO_SERVER) payload.handle(context.player().orElse(null));
+					if (payload.direction() == CustomPacket.Direction.CLIENT_TO_SERVER)
+						context.workHandler().execute(() -> payload.handle(context.player().orElse(null)));
 					else throw new RuntimeException("Clientbound packet sent to server!");
 				}));
 	}

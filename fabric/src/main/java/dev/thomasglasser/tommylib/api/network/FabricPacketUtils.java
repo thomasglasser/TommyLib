@@ -9,54 +9,31 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.function.Function;
+
 public class FabricPacketUtils
 {
-	public static void register(Class<? extends CustomPacket> packet, Pair<ResourceLocation, CustomPacket.Direction> pair)
+	public static void register(Function<FriendlyByteBuf, ? extends CustomPacket> packet, Pair<ResourceLocation, CustomPacket.Direction> pair)
 	{
 		if (pair.getSecond() == CustomPacket.Direction.CLIENT_TO_SERVER)
 		{
 			ServerPlayNetworking.registerGlobalReceiver(pair.getFirst(), (server, player, handler, buf, responseSender) ->
-					handlePacket(server, packet, buf, player));
+					handlePacket(server, packet.apply(buf), buf, player));
 		}
 		else
 		{
 			ClientPlayNetworking.registerGlobalReceiver(pair.getFirst(), (client, handler, buf, responseSender) ->
-					handlePacket(client, packet, buf, ClientUtils.getMainClientPlayer()));
+					handlePacket(client, packet.apply(buf), buf, ClientUtils.getMainClientPlayer()));
 		}
 	}
 
-	private static void handlePacket(BlockableEventLoop<?> handler, Class<? extends CustomPacket> packet, FriendlyByteBuf buf, Player player)
+	private static void handlePacket(BlockableEventLoop<?> handler, CustomPacket packet, FriendlyByteBuf buf, Player player)
 	{
 		buf.retain();
 		handler.execute(() ->
 		{
-			try
-			{
-				packet.getConstructor(FriendlyByteBuf.class).newInstance(buf).handle(player);
-			}
-			catch (NoSuchMethodException e)
-			{
-				try
-				{
-					packet.getConstructor().newInstance().handle(player);
-				}
-				catch (NoSuchMethodException nsm)
-				{
-					throw new RuntimeException("Custom packets must have FriendlyByteBuf or empty constructor!");
-				}
-				catch (Exception ex)
-				{
-					throw new RuntimeException(e);
-				}
-			}
-			catch (Exception e)
-			{
-				throw new RuntimeException(e);
-			}
-			finally
-			{
-				buf.release();
-			}
+			packet.handle(player);
+			buf.release();
 		});
 	}
 }
