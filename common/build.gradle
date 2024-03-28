@@ -25,10 +25,9 @@ dependencies {
     implementation "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
-    modImplementation "net.tslat.smartbrainlib:SmartBrainLib-common-${minecraft_version}:${sbl_version}"
-    modImplementation "net.tslat.effectslib:TslatEffectsLib-common-${minecraft_version}:${tslateffectslib_version}"
-    modImplementation "com.klikli_dev:modonomicon-${minecraft_version}-common:${modonomicon_version}"
-
+    modCompileOnly "net.tslat.smartbrainlib:SmartBrainLib-common-${minecraft_version}:${sbl_version}"
+    modCompileOnly "net.tslat.effectslib:TslatEffectsLib-common-${minecraft_version}:${tslateffectslib_version}"
+    modCompileOnly "com.klikli_dev:modonomicon-${minecraft_version}-common:${modonomicon_version}"
     modCompileOnly "dev.kosmx.player-anim:player-animation-lib:${playeranimator_version}"
     modCompileOnly "dev.kosmx.player-anim:anim-core:${playeranimator_version}"
     modCompileOnly "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
