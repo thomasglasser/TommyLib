@@ -41,8 +41,7 @@ public final class ItemUtils
 
     public static RegistryObject<Item> registerSherd(RegistrationProvider<Item> provider, String name)
     {
-        RegistryObject<Item> sherd = register(provider, name, () -> new Item(new Item.Properties()), List.of(CreativeModeTabs.INGREDIENTS));
-        return sherd;
+	    return register(provider, name + "_pottery_sherd", () -> new Item(new Item.Properties()), List.of(CreativeModeTabs.INGREDIENTS));
     }
 
     public static RegistryObject<SmithingTemplateItem> registerSmithingTemplate(RegistrationProvider<Item> provider, ResourceKey<TrimPattern> key)
