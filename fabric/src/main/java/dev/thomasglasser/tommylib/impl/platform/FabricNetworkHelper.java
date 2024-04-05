@@ -1,7 +1,6 @@
 package dev.thomasglasser.tommylib.impl.platform;
 
 import dev.thomasglasser.tommylib.api.network.CustomPacket;
-import dev.thomasglasser.tommylib.api.network.PacketUtils;
 import dev.thomasglasser.tommylib.impl.platform.services.NetworkHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -13,100 +12,36 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
 import java.util.ArrayList;
+import java.util.function.Function;
 
 public class FabricNetworkHelper implements NetworkHelper
 {
     @Override
-    public <MSG extends CustomPacket> void sendToServer(Class<MSG> msgClass, FriendlyByteBuf args) {
-        try {
-            ClientPlayNetworking.send(((ResourceLocation) msgClass.getDeclaredField("ID").get(this)), args);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public <MSG extends CustomPacket> void sendToServer(ResourceLocation id, Function<FriendlyByteBuf, MSG> packetFunction, FriendlyByteBuf buf) {
+        ClientPlayNetworking.send(id, buf);
     }
 
     @Override
-    public <MSG extends CustomPacket> void sendToServer(Class<MSG> msgClass) {
-        try {
-            ClientPlayNetworking.send(((ResourceLocation) msgClass.getDeclaredField("ID").get(this)), PacketUtils.empty());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public <MSG extends CustomPacket> void sendToClient(ResourceLocation id, Function<FriendlyByteBuf, MSG> packetFunction, FriendlyByteBuf buf, ServerPlayer player) {
+        ServerPlayNetworking.send(player, id, buf);
     }
 
     @Override
-    public <MSG extends CustomPacket> void sendToClient(Class<MSG> msgClass, FriendlyByteBuf args, ServerPlayer player) {
-        try {
-            ServerPlayNetworking.send(player, ((ResourceLocation) msgClass.getDeclaredField("ID").get(this)), args);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public <MSG extends CustomPacket> void sendToClient(Class<MSG> msgClass, ServerPlayer player) {
-        try {
-            ServerPlayNetworking.send(player, ((ResourceLocation) msgClass.getDeclaredField("ID").get(this)), PacketUtils.empty());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public <MSG extends CustomPacket> void sendToAllClients(Class<MSG> msgClass, FriendlyByteBuf args, MinecraftServer server) {
+    public <MSG extends CustomPacket> void sendToAllClients(ResourceLocation id, Function<FriendlyByteBuf, MSG> packetFunction, FriendlyByteBuf buf, MinecraftServer server) {
         for (ServerPlayer player : PlayerLookup.all(server))
         {
-            try {
-                ServerPlayNetworking.send(player, ((ResourceLocation) msgClass.getDeclaredField("ID").get(this)), args);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            ServerPlayNetworking.send(player, id, buf);
         }
     }
 
     @Override
-    public <MSG extends CustomPacket> void sendToAllClients(Class<MSG> msgClass, MinecraftServer server) {
-        for (ServerPlayer player : PlayerLookup.all(server))
-        {
-            try {
-                ServerPlayNetworking.send(player, ((ResourceLocation) msgClass.getDeclaredField("ID").get(this)), PacketUtils.empty());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    @Override
-    public <MSG extends CustomPacket> void sendToTrackingClients(Class<MSG> msgClass, FriendlyByteBuf args, MinecraftServer server, Entity tracked)
+    public <MSG extends CustomPacket> void sendToTrackingClients(ResourceLocation id, Function<FriendlyByteBuf, MSG> packetFunction, FriendlyByteBuf buf, MinecraftServer server, Entity tracked)
     {
         ArrayList<ServerPlayer> tracking = new ArrayList<>(PlayerLookup.tracking(tracked));
         if (tracked instanceof ServerPlayer serverPlayer && !tracking.contains(serverPlayer)) tracking.add(serverPlayer);
         for (ServerPlayer player : tracking)
         {
-            try
-            {
-                ServerPlayNetworking.send(player, ((ResourceLocation) msgClass.getDeclaredField("ID").get(this)), args);
-            } catch (Exception e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    @Override
-    public <MSG extends CustomPacket> void sendToTrackingClients(Class<MSG> msgClass, MinecraftServer server, Entity tracked)
-    {
-        ArrayList<ServerPlayer> tracking = new ArrayList<>(PlayerLookup.tracking(tracked));
-        if (tracked instanceof ServerPlayer serverPlayer && !tracking.contains(serverPlayer)) tracking.add(serverPlayer);
-        for (ServerPlayer player : tracking)
-        {
-            try
-            {
-                ServerPlayNetworking.send(player, ((ResourceLocation) msgClass.getDeclaredField("ID").get(this)), PacketUtils.empty());
-            } catch (Exception e)
-            {
-                throw new RuntimeException(e);
-            }
+            ServerPlayNetworking.send(player, id, buf);
         }
     }
 }

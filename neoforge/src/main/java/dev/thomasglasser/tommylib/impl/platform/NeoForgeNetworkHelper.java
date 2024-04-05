@@ -3,90 +3,34 @@ package dev.thomasglasser.tommylib.impl.platform;
 import dev.thomasglasser.tommylib.api.network.CustomPacket;
 import dev.thomasglasser.tommylib.impl.platform.services.NetworkHelper;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.function.Function;
+
 public class NeoForgeNetworkHelper implements NetworkHelper
 {
 	@Override
-	public <MSG extends CustomPacket> void sendToServer(Class<MSG> msgClass, FriendlyByteBuf args) {
-		try {
-			PacketDistributor.SERVER.noArg().send(msgClass.getDeclaredConstructor(FriendlyByteBuf.class).newInstance(args));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	public <MSG extends CustomPacket> void sendToServer(ResourceLocation id, Function<FriendlyByteBuf, MSG> packetFunction, FriendlyByteBuf buf) {
+		PacketDistributor.SERVER.noArg().send(packetFunction.apply(buf));
 	}
 
 	@Override
-	public <MSG extends CustomPacket> void sendToServer(Class<MSG> msgClass) {
-		try {
-			PacketDistributor.SERVER.noArg().send(msgClass.getDeclaredConstructor().newInstance());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	public <MSG extends CustomPacket> void sendToClient(ResourceLocation id, Function<FriendlyByteBuf, MSG> packetFunction, FriendlyByteBuf buf, ServerPlayer player) {
+		PacketDistributor.PLAYER.with(player).send(packetFunction.apply(buf));
 	}
 
 	@Override
-	public <MSG extends CustomPacket> void sendToClient(Class<MSG> msgClass, FriendlyByteBuf args, ServerPlayer player) {
-		try {
-			PacketDistributor.PLAYER.with(player).send(msgClass.getDeclaredConstructor(FriendlyByteBuf.class).newInstance(args));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	public <MSG extends CustomPacket> void sendToAllClients(ResourceLocation id, Function<FriendlyByteBuf, MSG> packetFunction, FriendlyByteBuf buf, MinecraftServer server) {
+		PacketDistributor.ALL.noArg().send(packetFunction.apply(buf));
 	}
 
 	@Override
-	public <MSG extends CustomPacket> void sendToClient(Class<MSG> msgClass, ServerPlayer player) {
-		try {
-			PacketDistributor.PLAYER.with(player).send(msgClass.getDeclaredConstructor().newInstance());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public <MSG extends CustomPacket> void sendToAllClients(Class<MSG> msgClass, FriendlyByteBuf args, MinecraftServer server) {
-		try {
-			PacketDistributor.ALL.noArg().send(msgClass.getDeclaredConstructor(FriendlyByteBuf.class).newInstance(args));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public <MSG extends CustomPacket> void sendToAllClients(Class<MSG> msgClass, MinecraftServer server) {
-		try {
-			PacketDistributor.ALL.noArg().send(msgClass.getDeclaredConstructor().newInstance());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public <MSG extends CustomPacket> void sendToTrackingClients(Class<MSG> msgClass, FriendlyByteBuf args, MinecraftServer server, Entity tracked)
+	public <MSG extends CustomPacket> void sendToTrackingClients(ResourceLocation id, Function<FriendlyByteBuf, MSG> packetFunction, FriendlyByteBuf buf, MinecraftServer server, Entity tracked)
 	{
-		try
-		{
-			PacketDistributor.TRACKING_ENTITY_AND_SELF.with(tracked).send(msgClass.getDeclaredConstructor(FriendlyByteBuf.class).newInstance(args));
-		}
-		catch (Exception e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public <MSG extends CustomPacket> void sendToTrackingClients(Class<MSG> msgClass, MinecraftServer server, Entity tracked)
-	{
-		try
-		{
-			PacketDistributor.TRACKING_ENTITY_AND_SELF.with(tracked).send(msgClass.getDeclaredConstructor().newInstance());
-		}
-		catch (Exception e)
-		{
-			throw new RuntimeException(e);
-		}
+		PacketDistributor.TRACKING_ENTITY_AND_SELF.with(tracked).send(packetFunction.apply(buf));
 	}
 }
