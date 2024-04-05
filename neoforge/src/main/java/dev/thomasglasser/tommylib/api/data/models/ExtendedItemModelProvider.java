@@ -8,6 +8,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
@@ -51,6 +52,12 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider
 	{
 		withExistingParent(set.leaves().getId().getPath(), modBlockModel(BuiltInRegistries.BLOCK.getKey(set.leaves().get()).getPath()));
 		singleTexture(set.sapling().getId().getPath(), mcItemModel("generated"), "layer0", modBlockModel(set.sapling().getId().getPath()));
+	}
+
+	protected void basicBlockItem(Block block)
+	{
+		ResourceLocation rl = BuiltInRegistries.BLOCK.getKey(block);
+		withExistingParent(rl.getPath(), new ResourceLocation(rl.getNamespace(), "block/" + rl.getPath()));
 	}
 
 	public ResourceLocation modItemModel(String path)
