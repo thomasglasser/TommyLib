@@ -1,6 +1,7 @@
 package dev.thomasglasser.tommylib.impl.platform;
 
 import dev.thomasglasser.tommylib.api.network.CustomPacket;
+import dev.thomasglasser.tommylib.api.network.PacketUtils;
 import dev.thomasglasser.tommylib.impl.platform.services.NetworkHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class FabricNetworkHelper implements NetworkHelper
 {
@@ -22,8 +24,20 @@ public class FabricNetworkHelper implements NetworkHelper
     }
 
     @Override
+    public <MSG extends CustomPacket> void sendToServer(ResourceLocation id, Supplier<MSG> packetFunction)
+    {
+        sendToServer(id, buf -> packetFunction.get(), PacketUtils.empty());
+    }
+
+    @Override
     public <MSG extends CustomPacket> void sendToClient(ResourceLocation id, Function<FriendlyByteBuf, MSG> packetFunction, FriendlyByteBuf buf, ServerPlayer player) {
         ServerPlayNetworking.send(player, id, buf);
+    }
+
+    @Override
+    public <MSG extends CustomPacket> void sendToClient(ResourceLocation id, Supplier<MSG> packetFunction, ServerPlayer player)
+    {
+        sendToClient(id, buf -> packetFunction.get(), PacketUtils.empty(), player);
     }
 
     @Override
@@ -35,6 +49,12 @@ public class FabricNetworkHelper implements NetworkHelper
     }
 
     @Override
+    public <MSG extends CustomPacket> void sendToAllClients(ResourceLocation id, Supplier<MSG> packetFunction, MinecraftServer server)
+    {
+        sendToAllClients(id, buf -> packetFunction.get(), PacketUtils.empty(), server);
+    }
+
+    @Override
     public <MSG extends CustomPacket> void sendToTrackingClients(ResourceLocation id, Function<FriendlyByteBuf, MSG> packetFunction, FriendlyByteBuf buf, MinecraftServer server, Entity tracked)
     {
         ArrayList<ServerPlayer> tracking = new ArrayList<>(PlayerLookup.tracking(tracked));
@@ -43,5 +63,11 @@ public class FabricNetworkHelper implements NetworkHelper
         {
             ServerPlayNetworking.send(player, id, buf);
         }
+    }
+
+    @Override
+    public <MSG extends CustomPacket> void sendToTrackingClients(ResourceLocation id, Supplier<MSG> packetFunction, MinecraftServer server, Entity tracked)
+    {
+        sendToTrackingClients(id, buf -> packetFunction.get(), PacketUtils.empty(), server, tracked);
     }
 }

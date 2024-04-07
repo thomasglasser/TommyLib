@@ -7,6 +7,7 @@
     "minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateMixin",
     "tommylib.api.world.item.BaseModeledDiggerItemMixin",
     "tommylib.api.world.item.BaseModeledItemMixin",
+    "tommylib.api.world.item.BaseModeledSwordItemMixin",
     "tommylib.api.world.item.BaseModeledThrowableSwordItemMixin",
     "tommylib.api.world.item.armor.BaseGeoArmorItemMixin"
   ],

@@ -3,6 +3,7 @@ package dev.thomasglasser.tommylib.impl.client;
 import dev.thomasglasser.tommylib.api.client.ClientUtils;
 import dev.thomasglasser.tommylib.api.world.item.ModeledItem;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,5 +23,8 @@ public class TommyLibFabricClient implements ClientModInitializer
 				BuiltinItemRendererRegistry.INSTANCE.register(item, modeledItem.getBEWLR()::renderByItem);
 			}
 		});
+
+		ClientEntityEvents.ENTITY_LOAD.register(((trackedEntity, player) ->
+				TommyLibClientEvents.onEntityJoinLevel(trackedEntity)));
 	}
 }

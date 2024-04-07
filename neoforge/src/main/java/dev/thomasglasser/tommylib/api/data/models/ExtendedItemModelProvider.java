@@ -9,7 +9,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public abstract class ExtendedItemModelProvider extends ItemModelProvider
@@ -17,6 +19,26 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider
 	public ExtendedItemModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper)
 	{
 		super(output, modid, existingFileHelper);
+	}
+
+	public ItemModelBuilder basicInventoryItem(ResourceLocation item)
+	{
+		return basicItem(new ResourceLocation(item.getNamespace(), item.getPath() + "_inventory"), item.getPath());
+	}
+
+	public ItemModelBuilder basicInventoryItem(RegistryObject<? extends Item> item)
+	{
+		return basicInventoryItem(item.getId());
+	}
+
+	public ItemModelBuilder basicItem(ResourceLocation item, String textureLoc) {
+		return getBuilder(item.toString())
+				.parent(new ModelFile.UncheckedModelFile("item/generated"))
+				.texture("layer0", new ResourceLocation(item.getNamespace(), "item/" + textureLoc));
+	}
+
+	public ItemModelBuilder basicItem(RegistryObject<? extends Item> item, String textureLoc) {
+		return basicItem(item.getId(), textureLoc);
 	}
 
 	protected void basicItemHandheld(ResourceLocation item)
@@ -27,6 +49,16 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider
 	protected void basicItemHandheld(RegistryObject<? extends Item> item)
 	{
 		basicItemHandheld(item.getId());
+	}
+
+	protected void basicItemHandheld(ResourceLocation item, String textureLoc)
+	{
+		singleTexture(item.getPath(), mcLoc("item/handheld"), "layer0", new ResourceLocation(item.getNamespace(), "item/" + textureLoc));
+	}
+
+	protected void basicItemHandheld(RegistryObject<? extends Item> item, String textureLoc)
+	{
+		basicItemHandheld(item.getId(), textureLoc);
 	}
 
 	protected void spawnEgg(String path)
