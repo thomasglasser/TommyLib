@@ -75,9 +75,9 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider
 	{
 		withExistingParent(set.planks().getId().getPath(), modBlockModel(set.planks().getId().getPath()));
 		withExistingParent(set.log().getId().getPath(), modBlockModel(set.log().getId().getPath()));
-		//        withExistingParent(BuiltInRegistries.BLOCK.getKey(set.strippedLog().get()).getPath(), modBlockModel(set.strippedLog().get()));
+		withExistingParent(set.strippedLog().getId().getPath(), modBlockModel(set.strippedLog().getId().getPath()));
 		withExistingParent(set.wood().getId().getPath(), modBlockModel(set.wood().getId().getPath()));
-		//        withExistingParent(BuiltInRegistries.BLOCK.getKey(set.strippedWood().get()).getPath(), modBlockModel(set.strippedWood().get()));
+		withExistingParent(set.strippedWood().getId().getPath(), modBlockModel(set.strippedWood().getId().getPath()));
 	}
 
 	protected void leavesSet(LeavesSet set)

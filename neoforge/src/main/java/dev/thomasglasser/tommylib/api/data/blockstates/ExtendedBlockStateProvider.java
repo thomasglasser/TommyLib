@@ -103,9 +103,9 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider
 	{
 		simpleBlock(set.planks().get());
 		logBlock((RotatedPillarBlock) set.log().get());
-		//        logBlock((RotatedPillarBlock) set.strippedLog().get());
-		simpleBlock(set.wood().get(), models().cubeAll(set.id().getPath() + "_wood", modBlockModel(set.id().getPath() + "_log")));
-		//        simpleBlock(set.strippedWood().get());
+		logBlock((RotatedPillarBlock) set.strippedLog().get());
+		simpleBlock(set.wood().get(), models().cubeAll(set.wood().getId().getPath(), modBlockModel(set.log().getId().getPath())));
+		simpleBlock(set.strippedWood().get(), models().cubeAll(set.strippedWood().getId().getPath(), modBlockModel(set.strippedLog().getId().getPath())));
 	}
 
 	protected void leavesSet(LeavesSet set)

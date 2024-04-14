@@ -16,12 +16,15 @@ import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import org.apache.commons.lang3.function.TriFunction;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -30,6 +33,8 @@ public class BlockUtils
 {
 	public static final Function<RegistryObject<? extends Block>, BlockItem> BLOCK_ITEM_FUNCTION = ((block) -> new BlockItem(block.get(), new Item.Properties()));
 	public static final BiFunction<RegistryObject<? extends Block>, Item.Properties, BlockItem> BLOCK_ITEM_WITH_PROPERTIES_FUNCTION = ((block, properties) -> new BlockItem(block.get(), properties));
+
+	private static final Map<ResourceLocation, RegistryObject<Block>> STRIPPABLES = new HashMap<>();
 
 	public static <T extends Block> RegistryObject<T> register(RegistrationProvider<Block> provider, String name, Supplier<T> block)
 	{
@@ -63,12 +68,18 @@ public class BlockUtils
 
 	public static WoodSet registerWoodSet(RegistrationProvider<Block> provider, ResourceLocation id, MapColor mapColor, MapColor logMapColor, Supplier<TagKey<Block>> logsBlockTag, Supplier<TagKey<Item>> logsItemTag, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, RegistryObject<? extends Item>> itemFactory)
 	{
+		RegistryObject<Block> log = registerBlockAndItemAndWrap(provider, id.getPath() + "_log", () -> Blocks.log(mapColor, logMapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS, CreativeModeTabs.NATURAL_BLOCKS));
+		RegistryObject<Block> strippedLog = registerBlockAndItemAndWrap(provider, "stripped_" + id.getPath() + "_log", () -> Blocks.log(mapColor, mapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
+		RegistryObject<Block> wood = registerBlockAndItemAndWrap(provider, id.getPath() + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
+		RegistryObject<Block> strippedWood = registerBlockAndItemAndWrap(provider, "stripped_" + id.getPath() + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
+		STRIPPABLES.put(log.getId(), strippedLog);
+		STRIPPABLES.put(wood.getId(), strippedWood);
 		return new WoodSet(id,
 				registerBlockAndItemAndWrap(provider, id.getPath() + "_planks", () -> new Block(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
-				registerBlockAndItemAndWrap(provider, id.getPath() + "_log", () -> Blocks.log(mapColor, logMapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS, CreativeModeTabs.NATURAL_BLOCKS)),
-				registerBlockAndItemAndWrap(provider, "stripped_" + id.getPath() + "_log", () -> Blocks.log(mapColor, mapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
-				registerBlockAndItemAndWrap(provider, id.getPath() + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
-				registerBlockAndItemAndWrap(provider, "stripped_" + id.getPath() + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
+				log,
+				strippedLog,
+				wood,
+				strippedWood,
 				logsBlockTag,
 				logsItemTag);
 	}
@@ -80,5 +91,10 @@ public class BlockUtils
 				registerBlockAndItemAndWrap(provider, id.getPath() + "_leaves", () -> Blocks.leaves(SoundType.GRASS), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS)),
 				sapling,
 				register(provider, "potted_" + id.getPath() + "_sapling", () -> Blocks.flowerPot(sapling.get())));
+	}
+
+	public static Block getStripped(BlockState originalState) {
+		RegistryObject<Block> ro = STRIPPABLES.get(originalState.getBlock().builtInRegistryHolder().key().location());
+		return ro != null ? ro.get() : null;
 	}
 }
