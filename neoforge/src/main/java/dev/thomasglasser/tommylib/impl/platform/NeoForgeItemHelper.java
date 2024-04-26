@@ -9,24 +9,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
-import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.function.Supplier;
 
 public class NeoForgeItemHelper implements ItemHelper
 {
-	@Override
-	public Attribute getAttackRangeAttribute() {
-		return NeoForgeMod.ENTITY_REACH.value();
-	}
-
 	@Override
 	public Supplier<SpawnEggItem> makeSpawnEgg(Supplier<EntityType<? extends Mob>> entityType, int bg, int fg, Item.Properties properties) {
 		return () -> new DeferredSpawnEggItem(entityType, bg, fg, properties);

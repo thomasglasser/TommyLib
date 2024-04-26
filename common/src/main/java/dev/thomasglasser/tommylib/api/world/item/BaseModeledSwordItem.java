@@ -7,6 +7,6 @@ public abstract class BaseModeledSwordItem extends SwordItem implements ModeledI
 {
 	protected BaseModeledSwordItem(Tier tier, int attackDamageModifier, float attackSpeedModifier, Properties properties)
 	{
-		super(tier, attackDamageModifier, attackSpeedModifier, properties);
+		super(tier, properties);
 	}
 }

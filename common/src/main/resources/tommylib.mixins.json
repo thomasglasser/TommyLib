@@ -6,7 +6,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "minecraft.world.item.AxeItemMixin",
-    "minecraft.world.item.alchemy.PotionUtilsMixin",
+    "minecraft.world.item.alchemy.PotionContentsMixin",
     "minecraft.world.item.enchantment.EnchantmentMixin"
   ],
   "client": [

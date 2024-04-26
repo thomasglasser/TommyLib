@@ -14,8 +14,8 @@ import net.minecraft.world.level.Level;
 
 public abstract class ThrowableSwordItem extends SwordItem implements Enchantable
 {
-    public ThrowableSwordItem(Tier pTier, int pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties) {
-        super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
+    public ThrowableSwordItem(Tier pTier, Properties pProperties) {
+        super(pTier, pProperties);
     }
 
     public UseAnim getUseAnimation(ItemStack pStack) {

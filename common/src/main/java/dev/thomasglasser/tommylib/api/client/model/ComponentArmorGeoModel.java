@@ -1,12 +1,11 @@
 package dev.thomasglasser.tommylib.api.client.model;
 
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.model.DefaultedItemGeoModel;
 
-public class NbtArmorGeoModel<T extends GeoAnimatable> extends DefaultedItemGeoModel<T> {
+public class ComponentArmorGeoModel<T extends GeoAnimatable> extends DefaultedItemGeoModel<T> {
     private final String nbtKey;
     private ResourceLocation location;
 
@@ -20,7 +19,7 @@ public class NbtArmorGeoModel<T extends GeoAnimatable> extends DefaultedItemGeoM
      *
      * @param assetSubpath
      */
-    public NbtArmorGeoModel(ResourceLocation assetSubpath, String nbtKey) {
+    public ComponentArmorGeoModel(ResourceLocation assetSubpath, String nbtKey) {
         super(assetSubpath);
         this.nbtKey = nbtKey;
     }
@@ -28,7 +27,8 @@ public class NbtArmorGeoModel<T extends GeoAnimatable> extends DefaultedItemGeoM
     @Override
     public void setCustomAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
-        location = ResourceLocation.of(animationState.getData(DataTickets.ITEMSTACK).getOrCreateTag().getString(nbtKey), ':');
+        // TODO: See how this is done now, add custom component type?
+//        location = ResourceLocation.of(animationState.getData(DataTickets.ITEMSTACK).getOrCreateTag().getString(nbtKey), ':');
     }
 
     public ResourceLocation getLocation() {

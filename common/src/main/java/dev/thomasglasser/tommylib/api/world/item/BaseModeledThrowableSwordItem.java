@@ -4,8 +4,8 @@ import net.minecraft.world.item.Tier;
 
 public abstract class BaseModeledThrowableSwordItem extends ThrowableSwordItem implements ModeledItem
 {
-	protected BaseModeledThrowableSwordItem(Tier pTier, int pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties)
+	protected BaseModeledThrowableSwordItem(Tier pTier, Properties pProperties)
 	{
-		super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
+		super(pTier, pProperties);
 	}
 }

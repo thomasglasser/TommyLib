@@ -5,6 +5,7 @@ import dev.thomasglasser.tommylib.api.world.item.armor.BaseGeoArmorItem;
 import dev.thomasglasser.tommylib.api.world.item.armor.GeoArmorItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
@@ -20,7 +21,7 @@ import java.util.function.Consumer;
 @Mixin(BaseGeoArmorItem.class)
 public abstract class BaseGeoArmorItemMixin extends ArmorItem implements GeoArmorItem
 {
-	private BaseGeoArmorItemMixin(ArmorMaterial pMaterial, Type pType, Properties pProperties)
+	private BaseGeoArmorItemMixin(Holder<ArmorMaterial> pMaterial, Type pType, Properties pProperties)
 	{
 		super(pMaterial, pType, pProperties);
 	}

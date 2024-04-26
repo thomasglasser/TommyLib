@@ -2,7 +2,6 @@ package dev.thomasglasser.tommylib.impl.mixin.minecraft.world.level.levelgen.str
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -19,7 +18,7 @@ public class StructureTemplateMixin
 {
     // Injects into StructureTemplate#placeEntities, inside the lambda of createEntityIgnoreException
     @Inject(method = "lambda$addEntitiesToWorld$5", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;moveTo(DDDFF)V", shift = At.Shift.AFTER))
-    private static void fixPaintingPlacement(StructurePlaceSettings placementIn, Vec3 vec3, ServerLevelAccessor level, CompoundTag compoundtag, Entity entity, CallbackInfo ci) {
+    private static void fixPaintingPlacement(StructurePlaceSettings placementIn, Vec3 vec31, ServerLevelAccessor p_74524_, Entity entity, CallbackInfo ci) {
         if (!(entity instanceof Painting painting)) {
             return;
         }

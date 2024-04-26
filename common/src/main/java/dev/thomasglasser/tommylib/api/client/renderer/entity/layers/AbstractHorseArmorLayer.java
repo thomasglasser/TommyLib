@@ -10,11 +10,10 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.world.entity.animal.horse.Horse;
-import net.minecraft.world.item.DyeableHorseArmorItem;
-import net.minecraft.world.item.HorseArmorItem;
+import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.ItemStack;
 
 public class AbstractHorseArmorLayer<T extends AbstractHorse> extends RenderLayer<T, HorseModel<T>> {
@@ -38,16 +37,16 @@ public class AbstractHorseArmorLayer<T extends AbstractHorse> extends RenderLaye
             float headPitch
     ) {
         ItemStack itemStack = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
-        if (itemStack.getItem() instanceof HorseArmorItem) {
-            HorseArmorItem horseArmorItem = (HorseArmorItem)itemStack.getItem();
+        if (itemStack.getItem() instanceof AnimalArmorItem) {
+            AnimalArmorItem horseArmorItem = (AnimalArmorItem)itemStack.getItem();
             this.getParentModel().copyPropertiesTo(this.model);
             this.model.prepareMobModel(livingEntity, limbSwing, limbSwingAmount, partialTicks);
             this.model.setupAnim(livingEntity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
             float f;
             float g;
             float h;
-            if (horseArmorItem instanceof DyeableHorseArmorItem) {
-                int i = ((DyeableHorseArmorItem)horseArmorItem).getColor(itemStack);
+            if (itemStack.has(DataComponents.DYED_COLOR)) {
+                int i = itemStack.get(DataComponents.DYED_COLOR).rgb();
                 f = (float)(i >> 16 & 0xFF) / 255.0F;
                 g = (float)(i >> 8 & 0xFF) / 255.0F;
                 h = (float)(i & 0xFF) / 255.0F;

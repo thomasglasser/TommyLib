@@ -1,39 +1,24 @@
 package dev.thomasglasser.tommylib.api.network;
 
-import com.mojang.datafixers.util.Pair;
-import dev.thomasglasser.tommylib.api.client.ClientUtils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.thread.BlockableEventLoop;
-import net.minecraft.world.entity.player.Player;
-
-import java.util.function.Function;
 
 public class FabricPacketUtils
 {
-	public static void register(Function<FriendlyByteBuf, ? extends CustomPacket> packet, Pair<ResourceLocation, CustomPacket.Direction> pair)
+	public static <T extends ExtendedPacketPayload> void register(PacketInfo<T> info)
 	{
-		if (pair.getSecond() == CustomPacket.Direction.CLIENT_TO_SERVER)
+		if (info.direction() == ExtendedPacketPayload.Direction.CLIENT_TO_SERVER)
 		{
-			ServerPlayNetworking.registerGlobalReceiver(pair.getFirst(), (server, player, handler, buf, responseSender) ->
-					handlePacket(server, packet.apply(buf), buf, player));
+			PayloadTypeRegistry.playC2S().register(info.type(), info.codec());
+			ServerPlayNetworking.registerGlobalReceiver(info.type(), (payload, context) ->
+					payload.handle(context.player()));
 		}
 		else
 		{
-			ClientPlayNetworking.registerGlobalReceiver(pair.getFirst(), (client, handler, buf, responseSender) ->
-					handlePacket(client, packet.apply(buf), buf, ClientUtils.getMainClientPlayer()));
+			PayloadTypeRegistry.playS2C().register(info.type(), info.codec());
+			ClientPlayNetworking.registerGlobalReceiver(info.type(), (payload, context) ->
+					payload.handle(context.player()));
 		}
-	}
-
-	private static void handlePacket(BlockableEventLoop<?> handler, CustomPacket packet, FriendlyByteBuf buf, Player player)
-	{
-		buf.retain();
-		handler.execute(() ->
-		{
-			packet.handle(player);
-			buf.release();
-		});
 	}
 }

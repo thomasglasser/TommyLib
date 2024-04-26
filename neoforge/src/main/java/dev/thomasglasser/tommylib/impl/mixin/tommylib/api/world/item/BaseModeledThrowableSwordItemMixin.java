@@ -13,9 +13,9 @@ import java.util.function.Consumer;
 @Mixin(BaseModeledThrowableSwordItem.class)
 public abstract class BaseModeledThrowableSwordItemMixin extends ThrowableSwordItem implements ModeledItem
 {
-	private BaseModeledThrowableSwordItemMixin(Tier pTier, int pAttackDamageModifier, float pAttackSpeedModifier, Properties pProperties)
+	private BaseModeledThrowableSwordItemMixin(Tier pTier, Properties pProperties)
 	{
-		super(pTier, pAttackDamageModifier, pAttackSpeedModifier, pProperties);
+		super(pTier, pProperties);
 	}
 
 	@Override

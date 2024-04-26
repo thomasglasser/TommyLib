@@ -15,9 +15,9 @@ import java.util.function.Consumer;
 @Mixin(BaseModeledDiggerItem.class)
 public abstract class BaseModeledDiggerItemMixin extends DiggerItem implements ModeledItem
 {
-	private BaseModeledDiggerItemMixin(float pAttackDamageModifier, float pAttackSpeedModifier, Tier pTier, TagKey<Block> pBlocks, Properties pProperties)
+	private BaseModeledDiggerItemMixin(Tier pTier, TagKey<Block> pBlocks, Properties pProperties)
 	{
-		super(pAttackDamageModifier, pAttackSpeedModifier, pTier, pBlocks, pProperties);
+		super(pTier, pBlocks, pProperties);
 	}
 
 	@Override

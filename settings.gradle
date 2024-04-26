@@ -19,7 +19,7 @@ pluginManagement {
         // Non-specific
         maven {
             name = 'NeoForged'
-            url = 'https://maven.neoforged.net/releases'
+            url 'https://maven.neoforged.net/releases'
         }
         maven {
             name = "Mixin"
@@ -29,5 +29,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'TommyLib'
+rootProject.name = github_name
 include("common", "fabric", "neoforge")

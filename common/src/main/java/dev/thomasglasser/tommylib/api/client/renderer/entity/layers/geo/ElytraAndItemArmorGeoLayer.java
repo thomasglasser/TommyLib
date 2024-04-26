@@ -13,11 +13,12 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.ItemStack;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.ItemArmorGeoLayer;
 
+// TODO: Test
 public abstract class ElytraAndItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends ItemArmorGeoLayer<T>
 {
 	public ElytraAndItemArmorGeoLayer(GeoRenderer<T> geoRenderer)
@@ -46,11 +47,11 @@ public abstract class ElytraAndItemArmorGeoLayer<T extends LivingEntity & GeoAni
 			{
 				if (!left.cubes.isEmpty())
 				{
-					renderWing(poseStack, bufferSource, armorStack, left, packedLight, packedOverlay);
+					renderWing(poseStack, animatable, bone, armorStack, left, bufferSource, packedLight, packedOverlay);
 				}
 				if (!right.cubes.isEmpty())
 				{
-					renderWing(poseStack, bufferSource, armorStack, right, packedLight, packedOverlay);
+					renderWing(poseStack, animatable, bone, armorStack, right, bufferSource, packedLight, packedOverlay);
 				}
 			}
 		}
@@ -58,14 +59,15 @@ public abstract class ElytraAndItemArmorGeoLayer<T extends LivingEntity & GeoAni
 			super.renderForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 	}
 
-	private void renderWing(PoseStack poseStack, MultiBufferSource bufferSource, ItemStack armorStack, ModelPart modelPart, int packedLight, int packedOverlay)
+	private void renderWing(PoseStack poseStack, T animatable, GeoBone bone, ItemStack armorStack,
+	                        ModelPart modelPart, MultiBufferSource bufferSource, int packedLight, int packedOverlay)
 	{
 		poseStack.pushPose();
 		poseStack.scale(-1, -1, 1);
 		poseStack.translate(0, -1.5, 0.1);
 
 		ResourceLocation texture = new ResourceLocation("textures/entity/elytra.png");
-		VertexConsumer buffer = this.getArmorBuffer(bufferSource, null, texture, armorStack.hasFoil());
+		VertexConsumer buffer = this.getVanillaArmorBuffer(bufferSource, animatable, armorStack, EquipmentSlot.CHEST, bone, null, packedLight, packedOverlay, armorStack.hasFoil());
 		modelPart.render(poseStack, buffer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
 
 		poseStack.popPose();

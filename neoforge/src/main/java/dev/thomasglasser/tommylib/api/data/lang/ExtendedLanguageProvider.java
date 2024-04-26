@@ -5,6 +5,7 @@ import dev.thomasglasser.tommylib.api.registration.RegistryObject;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -16,10 +17,9 @@ import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -40,16 +40,16 @@ public abstract class ExtendedLanguageProvider extends LanguageProvider
 		add(item.getDescriptionId() + ".desc", desc);
 	}
 
-	public void add(BannerPattern pattern, String name)
+	public void add(ResourceKey<BannerPattern> pattern, String name)
 	{
 		for (DyeColor color: DyeColor.values())
 		{
-			add("block.minecraft.banner." + modId + "." + pattern.getHashname() + "." + color.getName(), WordUtils.capitalize(color.getName().replace('_', ' ')) + " " + name);
+			add("block.minecraft." + pattern.location().toLanguageKey("banner") + "." + color.getName(), WordUtils.capitalize(color.getName().replace('_', ' ')) + " " + name);
 		}
 	}
 
-	public void add(Item key, Potion potion, String name) {
-		add(PotionUtils.setPotion(new ItemStack(key), potion), name);
+	public void add(Item key, Holder<Potion> potion, String name) {
+		add(PotionContents.createItemStack(key, potion), name);
 	}
 
 	public void addBiome(ResourceKey<Biome> biome, String name)
@@ -57,7 +57,7 @@ public abstract class ExtendedLanguageProvider extends LanguageProvider
 		add("biome." + biome.location().getNamespace() + "." + biome.location().getPath(), name);
 	}
 
-	public void addPotions(Potion potion, String name)
+	public void addPotions(Holder<Potion> potion, String name)
 	{
 		add(Items.POTION, potion, "Bottle of " + name);
 		add(Items.SPLASH_POTION, potion, "Splash Bottle of " + name);

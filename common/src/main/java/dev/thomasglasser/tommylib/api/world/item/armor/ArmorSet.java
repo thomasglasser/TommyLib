@@ -35,7 +35,7 @@ public class ArmorSet
 		return switch (slot)
 		{
 
-			case MAINHAND, OFFHAND -> null;
+			case MAINHAND, OFFHAND, BODY -> null;
 			case FEET -> FEET;
 			case LEGS -> LEGS;
 			case CHEST -> CHEST;

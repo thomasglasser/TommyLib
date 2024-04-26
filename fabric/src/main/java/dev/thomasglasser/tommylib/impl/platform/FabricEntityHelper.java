@@ -2,7 +2,7 @@ package dev.thomasglasser.tommylib.impl.platform;
 
 import dev.thomasglasser.tommylib.TommyLib;
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
-import dev.thomasglasser.tommylib.impl.network.ClientboundSyncDataPacket;
+import dev.thomasglasser.tommylib.impl.network.ClientboundSyncDataPacketPayload;
 import dev.thomasglasser.tommylib.impl.platform.services.EntityHelper;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -24,6 +24,6 @@ public class FabricEntityHelper implements EntityHelper
 	public void setPersistentData(Entity entity, CompoundTag data, boolean syncToClient)
 	{
 		entity.setAttached(DATA, data);
-		if (syncToClient) TommyLibServices.NETWORK.sendToAllClients(ClientboundSyncDataPacket.ID, ClientboundSyncDataPacket::new, ClientboundSyncDataPacket.write(data, entity), entity.level().getServer());
+		if (syncToClient) TommyLibServices.NETWORK.sendToAllClients(new ClientboundSyncDataPacketPayload(data, entity.getId()), entity.level().getServer());
 	}
 }

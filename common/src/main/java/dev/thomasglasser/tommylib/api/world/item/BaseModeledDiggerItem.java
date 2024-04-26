@@ -7,8 +7,8 @@ import net.minecraft.world.level.block.Block;
 
 public abstract class BaseModeledDiggerItem extends DiggerItem implements ModeledItem
 {
-	protected BaseModeledDiggerItem(float attackDamageModifier, float attackSpeedModifier, Tier tier, TagKey<Block> blocks, Properties properties)
+	protected BaseModeledDiggerItem(Tier tier, TagKey<Block> blocks, Properties properties)
 	{
-		super(attackDamageModifier, attackSpeedModifier, tier, blocks, properties);
+		super(tier, blocks, properties);
 	}
 }

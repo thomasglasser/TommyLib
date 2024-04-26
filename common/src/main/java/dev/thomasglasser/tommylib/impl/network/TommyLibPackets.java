@@ -1,24 +1,21 @@
 package dev.thomasglasser.tommylib.impl.network;
 
-import com.mojang.datafixers.util.Pair;
-import dev.thomasglasser.tommylib.api.network.CustomPacket;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import dev.thomasglasser.tommylib.api.network.ExtendedPacketPayload;
+import dev.thomasglasser.tommylib.api.network.PacketInfo;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TommyLibPackets
 {
-	public static Map<Function<FriendlyByteBuf, ? extends CustomPacket>, Pair<ResourceLocation, CustomPacket.Direction>> PACKETS = new HashMap<>();
+	public static List<PacketInfo<?>> PACKETS = new ArrayList<>();
 
 	public static void init()
 	{
 		// Serverbound
-		PACKETS.put(ServerboundRequestDataSyncPacket::new, Pair.of(ServerboundRequestDataSyncPacket.ID, CustomPacket.Direction.CLIENT_TO_SERVER));
+		PACKETS.add(new PacketInfo<>(ServerboundRequestDataSyncPacketPayload.TYPE, ExtendedPacketPayload.Direction.CLIENT_TO_SERVER, ServerboundRequestDataSyncPacketPayload.CODEC));
 
 		// Clientbound
-		PACKETS.put(ClientboundSyncDataPacket::new, Pair.of(ClientboundSyncDataPacket.ID, CustomPacket.Direction.SERVER_TO_CLIENT));
+		PACKETS.add(new PacketInfo<>(ClientboundSyncDataPacketPayload.TYPE, ExtendedPacketPayload.Direction.SERVER_TO_CLIENT, ClientboundSyncDataPacketPayload.CODEC));
 	}
 }
