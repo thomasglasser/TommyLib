@@ -23,12 +23,6 @@ dependencies {
     modCompileOnly "net.tslat.effectslib:TslatEffectsLib-fabric-${previous_minecraft_version}:${tslateffectslib_version}"
 //    modCompileOnly "net.tslat.effectslib:TslatEffectsLib-fabric-${minecraft_version}:${tslateffectslib_version}"
     modCompileOnly "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
-
-    // Runtime
-    modRuntimeOnly "maven.modrinth:jade:${jade_version}+fabric"
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
-    modRuntimeOnly "me.shedaniel.cloth:cloth-config-fabric:$cloth_config_version"
-    modRuntimeOnly "com.terraformersmc:modmenu:${modmenu_version}"
 }
 
 loom {

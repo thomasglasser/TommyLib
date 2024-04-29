@@ -1,10 +1,15 @@
 package dev.thomasglasser.tommylib.api.packs;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.KnownPack;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 
-public record PackInfo(ResourceLocation id, boolean required, PackType type)
+public record PackInfo(KnownPack knownPack, PackType type, PackSource source)
 {
+	public static final PackSelectionConfig BUILT_IN_SELECTION_CONFIG = new PackSelectionConfig(false, Pack.Position.TOP, false);
+
 	public String titleKey()
 	{
 		return key() + ".name";
@@ -16,6 +21,6 @@ public record PackInfo(ResourceLocation id, boolean required, PackType type)
 
 	private String key()
 	{
-		return "pack." + this.id.getNamespace() + "." + this.id.getPath();
+		return "pack." + this.knownPack.namespace() + "." + this.knownPack.id();
 	}
 }

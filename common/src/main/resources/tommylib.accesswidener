@@ -1,4 +1,4 @@
-accessWidener   v1  named
+accessWidener   v2  named
 accessible  field   net/minecraft/client/model/geom/ModelPart                       cubes               Ljava/util/List;
 accessible  method  net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer  setPartVisibility   (Lnet/minecraft/client/model/HumanoidModel;Lnet/minecraft/world/entity/EquipmentSlot;)V
 accessible  method  net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer  getArmorModel       (Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/client/model/HumanoidModel;

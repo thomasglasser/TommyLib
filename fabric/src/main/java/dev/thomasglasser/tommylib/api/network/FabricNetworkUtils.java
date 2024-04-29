@@ -4,9 +4,9 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
-public class FabricPacketUtils
+public class FabricNetworkUtils
 {
-	public static <T extends ExtendedPacketPayload> void register(PacketInfo<T> info)
+	public static <T extends ExtendedPacketPayload> void register(PayloadInfo<T> info)
 	{
 		if (info.direction() == ExtendedPacketPayload.Direction.CLIENT_TO_SERVER)
 		{

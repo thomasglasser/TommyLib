@@ -2,9 +2,9 @@ package dev.thomasglasser.tommylib.api.network;
 
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-public class NeoForgePacketUtils
+public class NeoForgeNetworkUtils
 {
-	public static <T extends ExtendedPacketPayload> void register(PayloadRegistrar registrar, PacketInfo<T> info)
+	public static <T extends ExtendedPacketPayload> void register(PayloadRegistrar registrar, PayloadInfo<T> info)
 	{
 		if (info.direction() == ExtendedPacketPayload.Direction.CLIENT_TO_SERVER)
 		{

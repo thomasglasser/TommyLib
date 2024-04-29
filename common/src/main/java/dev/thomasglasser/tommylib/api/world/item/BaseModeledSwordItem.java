@@ -5,7 +5,7 @@ import net.minecraft.world.item.Tier;
 
 public abstract class BaseModeledSwordItem extends SwordItem implements ModeledItem
 {
-	protected BaseModeledSwordItem(Tier tier, int attackDamageModifier, float attackSpeedModifier, Properties properties)
+	protected BaseModeledSwordItem(Tier tier, Properties properties)
 	{
 		super(tier, properties);
 	}

@@ -1,7 +1,7 @@
 package dev.thomasglasser.tommylib;
 
-import dev.thomasglasser.tommylib.api.network.FabricPacketUtils;
-import dev.thomasglasser.tommylib.impl.network.TommyLibPackets;
+import dev.thomasglasser.tommylib.api.network.FabricNetworkUtils;
+import dev.thomasglasser.tommylib.impl.network.TommyLibPayloads;
 import net.fabricmc.api.ModInitializer;
 
 public class TommyLibFabric implements ModInitializer {
@@ -10,6 +10,6 @@ public class TommyLibFabric implements ModInitializer {
     public void onInitialize() {
         TommyLib.init();
 
-        TommyLibPackets.PACKETS.forEach(FabricPacketUtils::register);
+        TommyLibPayloads.PAYLOADS.forEach(FabricNetworkUtils::register);
     }
 }

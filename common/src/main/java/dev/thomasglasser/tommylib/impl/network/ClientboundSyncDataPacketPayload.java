@@ -3,8 +3,8 @@ package dev.thomasglasser.tommylib.impl.network;
 import dev.thomasglasser.tommylib.TommyLib;
 import dev.thomasglasser.tommylib.api.network.ExtendedPacketPayload;
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,16 +15,11 @@ import net.minecraft.world.entity.player.Player;
 public record ClientboundSyncDataPacketPayload(CompoundTag compoundTag, int entity) implements ExtendedPacketPayload
 {
 	public static final CustomPacketPayload.Type<ClientboundSyncDataPacketPayload> TYPE = new CustomPacketPayload.Type<>(TommyLib.modLoc("clientbound_sync_data"));
-	public static final StreamCodec<FriendlyByteBuf, ClientboundSyncDataPacketPayload> CODEC = StreamCodec.composite(
+	public static final StreamCodec<ByteBuf, ClientboundSyncDataPacketPayload> CODEC = StreamCodec.composite(
 			ByteBufCodecs.COMPOUND_TAG, ClientboundSyncDataPacketPayload::compoundTag,
 			ByteBufCodecs.INT, ClientboundSyncDataPacketPayload::entity,
 			ClientboundSyncDataPacketPayload::new
 	);
-
-	public ClientboundSyncDataPacketPayload(FriendlyByteBuf buffer)
-	{
-		this(buffer.readWithCodecTrusted(NbtOps.INSTANCE, CompoundTag.CODEC), buffer.readInt());
-	}
 
 	// ON CLIENT
 	@Override

@@ -29,4 +29,10 @@ public class FabricPlatformHelper implements PlatformHelper
     {
         return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
     }
+
+    @Override
+    public String getModVersion(String modId)
+    {
+        return FabricLoader.getInstance().getModContainer(modId).orElseThrow().getMetadata().getVersion().getFriendlyString();
+    }
 }

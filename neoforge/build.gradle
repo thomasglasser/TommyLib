@@ -58,11 +58,6 @@ dependencies {
 //    compileOnly "net.tslat.effectslib:TslatEffectsLib-neoforge-${minecraft_version}:${tslateffectslib_version}"
     compileOnly "net.tslat.smartbrainlib:SmartBrainLib-neoforge-${minecraft_version}:${sbl_version}"
     compileOnly "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
-
-//  Runtime
-    runtimeOnly "maven.modrinth:jade:${jade_version}+neoforge"
-    runtimeOnly "me.shedaniel:RoughlyEnoughItems-neoforge:$rei_version"
-    runtimeOnly "me.shedaniel.cloth:cloth-config-neoforge:$cloth_config_version"
 }
 
 // NeoGradle compiles the game, but we don't want to add our common code to the game's code

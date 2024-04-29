@@ -78,7 +78,7 @@ public class NeoForgeRegistrationFactory implements RegistrationProvider.Factory
 
                 @Override
                 public Holder<I> asHolder() {
-                    return Holder.direct(obj.get());
+                    return (Holder<I>) obj;
                 }
             };
             this.entries.add((RegistryObject<T>) ro);

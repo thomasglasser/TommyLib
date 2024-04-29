@@ -36,4 +36,6 @@ public interface PlatformHelper
     }
 
     boolean isClientSide();
+
+    String getModVersion(String modId);
 }

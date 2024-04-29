@@ -31,4 +31,10 @@ public class NeoForgePlatformHelper implements PlatformHelper
     {
         return FMLLoader.getDist() == Dist.CLIENT;
     }
+
+    @Override
+    public String getModVersion(String modId)
+    {
+        return ModList.get().getModContainerById(modId).orElseThrow().getModInfo().getVersion().toString();
+    }
 }
