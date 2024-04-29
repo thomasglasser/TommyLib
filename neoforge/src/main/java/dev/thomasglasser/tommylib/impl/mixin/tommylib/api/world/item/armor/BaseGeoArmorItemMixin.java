@@ -31,41 +31,16 @@ public abstract class BaseGeoArmorItemMixin extends ArmorItem implements GeoArmo
 	{
 		if (this instanceof ModeledItem modeledItem)
 		{
-			consumer.accept(new IClientItemExtensions() {
+			consumer.accept(new IClientItemExtensions()
+			{
 				private BlockEntityWithoutLevelRenderer bewlr;
 
 				@Override
-				public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-					if (this.bewlr == null)
-						this.bewlr = modeledItem.getBEWLR();
+				public BlockEntityWithoutLevelRenderer getCustomRenderer()
+				{
+					if (this.bewlr == null) this.bewlr = modeledItem.getBEWLR();
 
 					return this.bewlr;
-				}
-
-				GeoArmorRenderer<?> renderer;
-
-				@Override
-				public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
-					if (renderer == null) renderer = newRenderer();
-
-					this.renderer.prepForRender(livingEntity, itemStack, equipmentSlot, original);
-
-					return renderer;
-				}
-			});
-		}
-		else
-		{
-			consumer.accept(new IClientItemExtensions() {
-				GeoArmorRenderer<?> renderer;
-
-				@Override
-				public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
-					if (renderer == null) renderer = newRenderer();
-
-					this.renderer.prepForRender(livingEntity, itemStack, equipmentSlot, original);
-
-					return renderer;
 				}
 			});
 		}
