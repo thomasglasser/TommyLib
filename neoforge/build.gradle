@@ -56,7 +56,8 @@ dependencies {
     compileOnly "dev.kosmx.player-anim:player-animation-lib-forge:${playeranimator_version}"
     compileOnly "net.tslat.effectslib:TslatEffectsLib-neoforge-${previous_minecraft_version}:${tslateffectslib_version}"
 //    compileOnly "net.tslat.effectslib:TslatEffectsLib-neoforge-${minecraft_version}:${tslateffectslib_version}"
-    compileOnly "net.tslat.smartbrainlib:SmartBrainLib-neoforge-${minecraft_version}:${sbl_version}"
+    compileOnly "net.tslat.smartbrainlib:SmartBrainLib-neoforge-1.20.5:${sbl_version}"
+//    compileOnly "net.tslat.smartbrainlib:SmartBrainLib-neoforge-${minecraft_version}:${sbl_version}"
     compileOnly "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
 }
 
