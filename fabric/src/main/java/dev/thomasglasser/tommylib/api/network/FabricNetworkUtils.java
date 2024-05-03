@@ -1,12 +1,20 @@
 package dev.thomasglasser.tommylib.api.network;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
+import dev.thomasglasser.tommylib.impl.client.InternalFabricClientUtils;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 public class FabricNetworkUtils
 {
 	public static <T extends ExtendedPacketPayload> void register(PayloadInfo<T> info)
+	{
+		registerCommon(info);
+		if (TommyLibServices.PLATFORM.isClientSide())
+			InternalFabricClientUtils.registerClientReceiver(info);
+	}
+
+	protected static <T extends ExtendedPacketPayload> void registerCommon(PayloadInfo<T> info)
 	{
 		if (info.direction() == ExtendedPacketPayload.Direction.CLIENT_TO_SERVER)
 		{
@@ -17,8 +25,6 @@ public class FabricNetworkUtils
 		else
 		{
 			PayloadTypeRegistry.playS2C().register(info.type(), info.codec());
-			ClientPlayNetworking.registerGlobalReceiver(info.type(), (payload, context) ->
-					payload.handle(context.player()));
 		}
 	}
 }
