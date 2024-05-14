@@ -1,6 +1,6 @@
 package dev.thomasglasser.tommylib.api.data.sounds;
 
-import dev.thomasglasser.tommylib.api.registration.RegistryObject;
+import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -10,6 +10,9 @@ import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 
 import java.util.ArrayList;
 
+/**
+ * Extension of {@link SoundDefinitionsProvider} that provides functionality for mod holders.
+ */
 public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsProvider
 {
 	/**
@@ -24,21 +27,43 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
 		super(output, modId, helper);
 	}
 
+	/**
+	 * Defines a {@link SoundDefinition} with a subtitle.
+	 * @param subtitle The subtitle to use.
+	 * @param sounds The sounds to use.
+	 * @return The defined {@link SoundDefinition}.
+	 */
 	private SoundDefinition define(String subtitle, SoundDefinition.Sound... sounds)
 	{
 		return SoundDefinition.definition().with(sounds).subtitle("subtitles." + subtitle);
 	}
 
-	protected void add(RegistryObject<SoundEvent> sound)
+	/**
+	 * Adds a sound to the provider.
+	 * @param sound The sound to add.
+	 */
+	protected void add(DeferredHolder<SoundEvent, ?> sound)
 	{
-		add(sound, define(sound.get().getLocation().getPath(), sound(sound.get().getLocation())));
+		add(sound.get(), define(sound.get().getLocation().getPath(), sound(sound.get().getLocation())));
 	}
 
-	protected void add(RegistryObject<SoundEvent> sound, int variants)
+	/**
+	 * Adds a sound to the provider with multiple variants.
+	 * @param sound The sound to add.
+	 * @param variants The number of variants to add.
+	 */
+	protected void add(DeferredHolder<SoundEvent, ?> sound, int variants)
 	{
-		add(sound, defineVariants(sound.get().getLocation().getPath(), sound.get().getLocation(), variants));
+		add(sound.get(), defineVariants(sound.get().getLocation().getPath(), sound.get().getLocation(), variants));
 	}
 
+	/**
+	 * Defines a {@link SoundDefinition} with multiple variants.
+	 * @param subtitle The subtitle to use.
+	 * @param sound The sound to use.
+	 * @param variants The number of variants to add.
+	 * @return The defined {@link SoundDefinition}.
+	 */
 	private SoundDefinition defineVariants(String subtitle, ResourceLocation sound, int variants)
 	{
 		ArrayList<SoundDefinition.Sound> sounds = new ArrayList<>();
@@ -49,6 +74,11 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
 		return define(subtitle, sounds.toArray(new SoundDefinition.Sound[] {}));
 	}
 
+	/**
+	 * Gets a sound from a {@link ResourceLocation}.
+	 * @param location The location of the sound.
+	 * @return The sound.
+	 */
 	protected static SoundDefinition.Sound sound(ResourceLocation location)
 	{
 		if (location.getPath().contains("."))

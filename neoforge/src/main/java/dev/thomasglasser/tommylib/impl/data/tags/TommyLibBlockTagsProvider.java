@@ -2,16 +2,14 @@ package dev.thomasglasser.tommylib.impl.data.tags;
 
 import dev.thomasglasser.tommylib.TommyLib;
 import dev.thomasglasser.tommylib.api.data.tags.ExtendedBlockTagsProvider;
+import dev.thomasglasser.tommylib.api.tags.ConventionalBlockTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
-
-import static dev.thomasglasser.tommylib.api.tags.TommyLibBlockTags.UNBREAKABLE;
 
 public class TommyLibBlockTagsProvider extends ExtendedBlockTagsProvider
 {
@@ -22,7 +20,7 @@ public class TommyLibBlockTagsProvider extends ExtendedBlockTagsProvider
 
 	@Override
 	protected void addTags(HolderLookup.Provider p_256380_) {
-		tag(UNBREAKABLE)
+		tag(ConventionalBlockTags.UNBREAKABLE_BLOCKS)
 				.add(Blocks.BEDROCK)
 				.add(Blocks.BARRIER)
 				.add(Blocks.CHAIN_COMMAND_BLOCK)
@@ -35,7 +33,6 @@ public class TommyLibBlockTagsProvider extends ExtendedBlockTagsProvider
 				.add(Blocks.STRUCTURE_VOID)
 				.add(Blocks.STRUCTURE_BLOCK)
 				.add(Blocks.CAVE_AIR)
-				.add(Blocks.VOID_AIR)
-				.addTag(BlockTags.PORTALS);
+				.add(Blocks.VOID_AIR);
 	}
 }

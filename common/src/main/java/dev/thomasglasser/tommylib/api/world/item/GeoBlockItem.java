@@ -1,7 +1,7 @@
 package dev.thomasglasser.tommylib.api.world.item;
 
 import dev.thomasglasser.tommylib.api.client.model.GeoBlockItemModel;
-import dev.thomasglasser.tommylib.api.client.renderer.item.GeoBlockItemRenderer;
+import dev.thomasglasser.tommylib.impl.client.renderer.item.GeoBlockItemRenderer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
@@ -13,6 +13,9 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
+/**
+ * A {@link BlockItem} that can be rendered and animated using GeckoLib.
+ */
 public class GeoBlockItem extends BlockItem implements GeoItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private final GeoBlockItemModel model;
@@ -22,6 +25,10 @@ public class GeoBlockItem extends BlockItem implements GeoItem {
         this.model = model;
     }
 
+    /**
+     * Block items do not have animations by default.
+     * @param controllerRegistrar The object to register your controller instances to
+     */
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {}
 

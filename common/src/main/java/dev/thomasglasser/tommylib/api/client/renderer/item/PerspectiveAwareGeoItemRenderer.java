@@ -13,6 +13,10 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
+/**
+ * Extension of {@link GeoItemRenderer} that renders a separate model for 2D item rendering contexts.
+ * @param <T> The type of item to render
+ */
 public class PerspectiveAwareGeoItemRenderer<T extends Item & GeoAnimatable> extends GeoItemRenderer<T>
 {
 	protected ResourceLocation inventoryAssetLoc;

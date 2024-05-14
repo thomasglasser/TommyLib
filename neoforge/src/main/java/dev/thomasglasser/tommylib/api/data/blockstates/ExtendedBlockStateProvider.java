@@ -32,6 +32,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * Extension of {@link BlockStateProvider} that provides functionality for mod holders.
+ */
 public abstract class ExtendedBlockStateProvider extends BlockStateProvider
 {
 	protected static final ExistingFileHelper.ResourceType TEXTURE = new ExistingFileHelper.ResourceType(PackType.CLIENT_RESOURCES, ".png", "textures");
@@ -49,6 +52,11 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider
 		existingFileHelper = exFileHelper;
 	}
 
+	/**
+	 * Creates a new instance of {@link ExtendedBlockModelGenerators} using the provided generator.
+	 * @param generator The function to create the {@link ExtendedBlockModelGenerators} instance.
+	 * @return The new instance of {@link ExtendedBlockModelGenerators}.
+	 */
 	private ExtendedBlockModelGenerators makeBlockModelGenerators(TriFunction<Consumer<BlockStateGenerator>, BiConsumer<ResourceLocation, Supplier<JsonElement>>, Consumer<Item>, ? extends ExtendedBlockModelGenerators> generator)
 	{
 		Consumer<BlockStateGenerator> consumer = (p_125120_) -> {
@@ -69,6 +77,10 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider
 		return (generator.apply(consumer, biconsumer, consumer1));
 	}
 
+	/**
+	 * Gets the block model generators for this provider, which is null by default.
+	 * @return The block model generators for this provider.
+	 */
 	protected TriFunction<Consumer<BlockStateGenerator>, BiConsumer<ResourceLocation, Supplier<JsonElement>>, Consumer<Item>, ? extends ExtendedBlockModelGenerators> getBlockModelGenerators()
 	{
 		return null;
@@ -84,21 +96,40 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider
 		return super.run(cache);
 	}
 
+	/**
+	 * Creates a new {@link ResourceLocation} in the block subfolder with the mod namespace.
+	 * @param path The path of the new {@link ResourceLocation}.
+	 * @return The new {@link ResourceLocation}.
+	 */
 	public ResourceLocation modBlockModel(String path)
 	{
 		return modLoc("block/" + path);
 	}
 
+	/**
+	 * Creates a new {@link ResourceLocation} in the item subfolder with the mod namespace.
+	 * @param path The path of the new {@link ResourceLocation}.
+	 * @return The new {@link ResourceLocation}.
+	 */
 	public ResourceLocation modItemModel(String path)
 	{
 		return modLoc("item/" + path);
 	}
 
+	/**
+	 * Creates a new {@link ResourceLocation} in the block subfolder with the Minecraft namespace.
+	 * @param path The path of the new {@link ResourceLocation}.
+	 * @return The new {@link ResourceLocation}.
+	 */
 	public static ResourceLocation mcBlockModel(String path)
 	{
 		return new ResourceLocation("block/" + path);
 	}
 
+	/**
+	 * Generates relevant blockstates and models for a {@link WoodSet}.
+	 * @param set The {@link WoodSet} to generate blockstates and models for.
+	 */
 	protected void woodSet(WoodSet set)
 	{
 		simpleBlock(set.planks().get());
@@ -108,6 +139,10 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider
 		simpleBlock(set.strippedWood().get(), models().cubeAll(set.strippedWood().getId().getPath(), modBlockModel(set.strippedLog().getId().getPath())));
 	}
 
+	/**
+	 * Generates relevant blockstates and models for a {@link LeavesSet}.
+	 * @param set The {@link LeavesSet} to generate blockstates and models for.
+	 */
 	protected void leavesSet(LeavesSet set)
 	{
 		simpleBlock(set.leaves().get(), models().withExistingParent(BuiltInRegistries.BLOCK.getKey(set.leaves().get()).getPath(), mcBlockModel("leaves")).texture("all", modBlockModel(BuiltInRegistries.BLOCK.getKey(set.leaves().get()).getPath())));
@@ -115,6 +150,9 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider
 		simpleBlock(set.pottedSapling().get(), models().withExistingParent("potted_" + set.id().getPath() + "_sapling", mcBlockModel("flower_pot_cross")).texture("plant", modBlockModel(BuiltInRegistries.BLOCK.getKey(set.sapling().get()).getPath())).renderType("cutout"));
 	}
 
+	/**
+	 * Extension of {@link BlockModelGenerators} that exposes its methods for use in {@link ExtendedBlockStateProvider}.
+	 */
 	protected abstract class ExtendedBlockModelGenerators extends BlockModelGenerators
 	{
 		public ExtendedBlockModelGenerators(Consumer<BlockStateGenerator> pBlockStateOutput, BiConsumer<ResourceLocation, Supplier<JsonElement>> pModelOutput, Consumer<Item> pSkippedAutoModelsOutput) {
@@ -143,10 +181,20 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider
 		@Override
 		public abstract void run();
 
+		/**
+		 * Gets the key for the provided block.
+		 * @param block The block to get the key for.
+		 * @return The key for the provided block.
+		 */
 		protected ResourceLocation key(Block block) {
 			return BuiltInRegistries.BLOCK.getKey(block);
 		}
 
+		/**
+		 * Gets the path for the provided {@link ResourceLocation}.
+		 * @param loc The {@link ResourceLocation} to get the path for.
+		 * @return The path for the provided {@link ResourceLocation}.
+		 */
 		protected Path getPath(ResourceLocation loc) {
 			return output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(loc.getNamespace()).resolve("models").resolve(loc.getPath() + ".json");
 		}

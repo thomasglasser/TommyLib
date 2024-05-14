@@ -12,7 +12,6 @@
     "minecraft:structure_void",
     "minecraft:structure_block",
     "minecraft:cave_air",
-    "minecraft:void_air",
-    "#minecraft:portals"
+    "minecraft:void_air"
   ]
 }

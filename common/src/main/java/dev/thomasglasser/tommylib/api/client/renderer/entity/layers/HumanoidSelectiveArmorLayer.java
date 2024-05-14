@@ -9,6 +9,12 @@ import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 
+/**
+ * An extension of {@link HumanoidArmorLayer} that allows for selective rendering of armor slots.
+ * @param <T> The entity type
+ * @param <M> The inner model type
+ * @param <A> The outer model type
+ */
 public class HumanoidSelectiveArmorLayer<T extends LivingEntity, M extends HumanoidModel<T>, A extends HumanoidModel<T>> extends HumanoidArmorLayer<T, M, A> {
     public boolean renderHead = true;
     public boolean renderChest = true;

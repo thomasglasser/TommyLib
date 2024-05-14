@@ -7,6 +7,11 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 public class FabricNetworkUtils
 {
+	/**
+	 * Register a packet payload for common handling and client-side receiving.
+	 * @param info The payload info.
+	 * @param <T> The payload type.
+	 */
 	public static <T extends ExtendedPacketPayload> void register(PayloadInfo<T> info)
 	{
 		registerCommon(info);
@@ -14,6 +19,11 @@ public class FabricNetworkUtils
 			InternalFabricClientUtils.registerClientReceiver(info);
 	}
 
+	/**
+	 * Register a packet payload for common handling.
+	 * @param info The payload info.
+	 * @param <T> The payload type.
+	 */
 	protected static <T extends ExtendedPacketPayload> void registerCommon(PayloadInfo<T> info)
 	{
 		if (info.direction() == ExtendedPacketPayload.Direction.CLIENT_TO_SERVER)

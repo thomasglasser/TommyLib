@@ -16,6 +16,10 @@ import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.ItemStack;
 
+/**
+ * A layer that renders horse armor on an abstract horse entity.
+ * @param <T> The type of horse entity.
+ */
 public class AbstractHorseArmorLayer<T extends AbstractHorse> extends RenderLayer<T, HorseModel<T>> {
     private final HorseModel<T> model;
 

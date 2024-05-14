@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Extension of {@link LootTableProvider} that provides default validation.
+ */
 public abstract class ExtendedLootTableProvider extends LootTableProvider
 {
 	public ExtendedLootTableProvider(PackOutput pOutput, Set<ResourceKey<LootTable>> pRequiredTables, List<SubProviderEntry> pSubProviders, CompletableFuture<HolderLookup.Provider> lookupProvider)

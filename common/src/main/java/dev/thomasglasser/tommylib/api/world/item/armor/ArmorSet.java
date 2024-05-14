@@ -1,25 +1,28 @@
 package dev.thomasglasser.tommylib.api.world.item.armor;
 
-import dev.thomasglasser.tommylib.api.registration.RegistryObject;
+import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 
 import java.util.List;
 
+/**
+ * Holder for a set of armor, with a helmet, chestplate, leggings, and boots.
+ */
 public class ArmorSet
 {
 	public static final Item.Properties DEFAULT_PROPERTIES = new Item.Properties().stacksTo(1);
 
-	public final RegistryObject<ArmorItem> HEAD;
-	public final RegistryObject<ArmorItem> CHEST;
-	public final RegistryObject<ArmorItem> LEGS;
-	public final RegistryObject<ArmorItem> FEET;
+	public final DeferredItem<ArmorItem> HEAD;
+	public final DeferredItem<ArmorItem> CHEST;
+	public final DeferredItem<ArmorItem> LEGS;
+	public final DeferredItem<ArmorItem> FEET;
 
 	private final String name;
 	private final String displayName;
 
-	public ArmorSet(String name, String displayName, RegistryObject<ArmorItem> head, RegistryObject<ArmorItem> chest, RegistryObject<ArmorItem> legs, RegistryObject<ArmorItem> feet)
+	public ArmorSet(String name, String displayName, DeferredItem<ArmorItem> head, DeferredItem<ArmorItem> chest, DeferredItem<ArmorItem> legs, DeferredItem<ArmorItem> feet)
 	{
 		this.name = name;
 		this.displayName = displayName;
@@ -30,7 +33,7 @@ public class ArmorSet
 		FEET = feet;
 	}
 
-	public RegistryObject<ArmorItem> getForSlot(EquipmentSlot slot)
+	public DeferredItem<ArmorItem> getForSlot(EquipmentSlot slot)
 	{
 		return switch (slot)
 		{
@@ -61,7 +64,7 @@ public class ArmorSet
 		return null;
 	}
 
-	public List<RegistryObject<ArmorItem>> getAll()
+	public List<DeferredItem<ArmorItem>> getAll()
 	{
 		return List.of(HEAD, CHEST, LEGS, FEET);
 	}

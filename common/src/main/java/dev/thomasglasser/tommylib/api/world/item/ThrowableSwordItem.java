@@ -12,6 +12,9 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
+/**
+ * A {@link SwordItem} that can be thrown and enchanted with Loyalty.
+ */
 public abstract class ThrowableSwordItem extends SwordItem implements Enchantable
 {
     public ThrowableSwordItem(Tier pTier, Properties pProperties) {

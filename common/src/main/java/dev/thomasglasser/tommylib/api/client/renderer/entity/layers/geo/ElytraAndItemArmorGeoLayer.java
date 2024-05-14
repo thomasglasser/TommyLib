@@ -18,7 +18,10 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.ItemArmorGeoLayer;
 
-// TODO: Test
+/**
+ * Extension of {@link ItemArmorGeoLayer} that adds support for rendering elytra.
+ * @param <T> The type of entity that this layer will render for.
+ */
 public abstract class ElytraAndItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends ItemArmorGeoLayer<T>
 {
 	public ElytraAndItemArmorGeoLayer(GeoRenderer<T> geoRenderer)
@@ -35,7 +38,6 @@ public abstract class ElytraAndItemArmorGeoLayer<T extends LivingEntity & GeoAni
 			return;
 		if (armorStack.getItem() instanceof ElytraItem)
 		{
-			EquipmentSlot slot = getEquipmentSlotForBone(bone, armorStack, animatable);
 			ModelPart modelPart = Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.ELYTRA);
 			ElytraModel<T> model = new ElytraModel<>(modelPart);
 			ModelPart left = modelPart.getChild("left_wing");
@@ -67,7 +69,7 @@ public abstract class ElytraAndItemArmorGeoLayer<T extends LivingEntity & GeoAni
 		poseStack.translate(0, -1.5, 0.1);
 
 		ResourceLocation texture = new ResourceLocation("textures/entity/elytra.png");
-		VertexConsumer buffer = this.getVanillaArmorBuffer(bufferSource, animatable, armorStack, EquipmentSlot.CHEST, bone, null, packedLight, packedOverlay, armorStack.hasFoil());
+		VertexConsumer buffer = armorStack.hasFoil() ? bufferSource.getBuffer(RenderType.armorEntityGlint()) : bufferSource.getBuffer(RenderType.armorCutoutNoCull(texture));
 		modelPart.render(poseStack, buffer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
 
 		poseStack.popPose();

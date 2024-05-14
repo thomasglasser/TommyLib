@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.ArrayList;
 
-// TODO: Test
 @Mixin(PotionContents.class)
 public class PotionContentsMixin
 {
@@ -18,7 +17,7 @@ public class PotionContentsMixin
     {
         ArrayList<MobEffectInstance> list = new ArrayList<>();
         value.forEach(effect -> {
-            if (!(effect.getEffect() instanceof EmptyMobEffect))
+            if (!(effect.getEffect().value() instanceof EmptyMobEffect || effect.getEffect().value() instanceof EmptyMobEffect.Instantaneous))
             {
                 list.add(effect);
             }

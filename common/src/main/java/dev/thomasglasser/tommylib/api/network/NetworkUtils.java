@@ -18,14 +18,29 @@ import java.util.function.Function;
 
 public class NetworkUtils
 {
+    /**
+     * Creates an empty {@link FriendlyByteBuf}.
+     * @return An empty {@link FriendlyByteBuf}.
+     */
     public static FriendlyByteBuf empty() {
         return new FriendlyByteBuf(Unpooled.EMPTY_BUFFER);
     }
 
+    /**
+     * Creates a new {@link FriendlyByteBuf}.
+     * @return A new {@link FriendlyByteBuf}.
+     */
     public static FriendlyByteBuf create() {
         return new FriendlyByteBuf(Unpooled.buffer());
     }
 
+    /**
+     * Creates a {@link StreamCodec} for an enum.
+     * @param enumClass The class of the enum.
+     * @return A {@link StreamCodec} for the enum.
+     * @param <B> The type of the {@link FriendlyByteBuf}.
+     * @param <V> The type of the enum.
+     */
     public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> enumCodec(Class<V> enumClass) {
         return new StreamCodec<>() {
             @Override
@@ -39,6 +54,16 @@ public class NetworkUtils
             }
         };
     }
+
+    /**
+     * Creates a {@link StreamCodec} for more generics than the base class provides helpers for.
+     * @param streamCodec The {@link StreamCodec} to use for the object parameter.
+     * @param function The getter {@link Function} to use for the object parameter.
+     * @param initializer The initializer {@link Function} for the object.
+     * @return A {@link StreamCodec}.
+     * @param <B> The type of the {@link FriendlyByteBuf}.
+     * @param <C> The type of the object.
+     */
 
     // Overload for 7 generics
     public static <B, C, T1, T2, T3, T4, T5, T6, T7> StreamCodec<B, C> composite(final StreamCodec<? super B, T1> streamCodec, final Function<C, T1> function, final StreamCodec<? super B, T2> streamCodec2, final Function<C, T2> function2, final StreamCodec<? super B, T3> streamCodec3, final Function<C, T3> function3, final StreamCodec<? super B, T4> streamCodec4, final Function<C, T4> function4, final StreamCodec<? super B, T5> streamCodec5, final Function<C, T5> function5, final StreamCodec<? super B, T6> streamCodec6, final Function<C, T6> function6, final StreamCodec<? super B, T7> streamCodec7, final Function<C, T7> function7, final Function7<T1, T2, T3, T4, T5, T6, T7, C> initializer) {

@@ -6,13 +6,15 @@
 
 package dev.thomasglasser.tommylib.impl.registration;
 
-import dev.thomasglasser.tommylib.api.registration.RegistrationProvider;
-import dev.thomasglasser.tommylib.api.registration.RegistryObject;
-import net.minecraft.core.Holder;
+import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
+import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
+import dev.thomasglasser.tommylib.api.registration.DeferredItem;
+import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,82 +22,104 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class FabricRegistrationFactory implements RegistrationProvider.Factory {
+public class FabricRegistrationFactory implements DeferredRegister.Factory {
 
     @Override
-    public <T> RegistrationProvider<T> create(ResourceKey<? extends Registry<T>> resourceKey, String modId) {
-        return new Provider<>(modId, resourceKey);
+    public <T> DeferredRegister<T> create(ResourceKey<? extends Registry<T>> resourceKey, String modId) {
+        return new Provider<>(resourceKey, modId);
     }
 
     @Override
-    public <T> RegistrationProvider<T> create(Registry<T> registry, String modId) {
-        return new Provider<>(modId, registry);
+    public <T> DeferredRegister<T> create(Registry<T> registry, String modId) {
+        return new Provider<>(registry.key(), modId);
     }
 
-    private static class Provider<T> implements RegistrationProvider<T> {
-        private final String modId;
-        private final Registry<T> registry;
+    @Override
+    public DeferredRegister.Items createItems(String modid)
+    {
+        return new ItemsProvider(modid);
+    }
 
-        private final Set<RegistryObject<T>> entries = new HashSet<>();
-        private final Set<RegistryObject<T>> entriesView = Collections.unmodifiableSet(this.entries);
+    @Override
+    public DeferredRegister.Blocks createBlocks(String modid)
+    {
+        return new BlocksProvider(modid);
+    }
 
-        @SuppressWarnings({"unchecked"})
-        private Provider(String modId, ResourceKey<? extends Registry<T>> key) {
-            this.modId = modId;
+    private static class Provider<T> extends DeferredRegister<T>
+    {
+        private final Set<DeferredHolder<T, ? extends T>> entries = new HashSet<>();
+        private final Set<DeferredHolder<T, ? extends T>> entriesView = Collections.unmodifiableSet(this.entries);
 
-            final var reg = BuiltInRegistries.REGISTRY.get(key.location());
-
-            if (reg == null) {
-                throw new RuntimeException("Registry with name " + key.location() + " was not found!");
-            }
-            this.registry = (Registry<T>) reg;
-        }
-
-        private Provider(String modId, Registry<T> registry) {
-            this.modId = modId;
-            this.registry = registry;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public <I extends T> RegistryObject<I> register(String name, Supplier<? extends I> supplier) {
-            final var rl = new ResourceLocation(this.modId, name);
-            final var obj = Registry.register(this.registry, rl, supplier.get());
-            final var ro = new RegistryObject<I>() {
-                final ResourceKey<I> key = ResourceKey.create((ResourceKey<? extends Registry<I>>) Provider.this.registry.key(), rl);
-
-                @Override
-                public ResourceKey<I> getResourceKey() {
-                    return this.key;
-                }
-
-                @Override
-                public ResourceLocation getId() {
-                    return rl;
-                }
-
-                @Override
-                public I get() {
-                    return obj;
-                }
-
-                @Override
-                public Holder<I> asHolder() {
-                    return (Holder<I>) Provider.this.registry.getHolder((ResourceKey<T>) this.key).orElseThrow();
-                }
-            };
-            this.entries.add((RegistryObject<T>) ro);
-            return ro;
+        protected Provider(ResourceKey<? extends Registry<T>> registryKey, String namespace)
+        {
+            super(registryKey, namespace);
         }
 
         @Override
-        public Collection<RegistryObject<T>> getEntries() {
+        public <I extends T> DeferredHolder<T, I> register(String name, Supplier<? extends I> supplier) {
+            final var rl = new ResourceLocation(getNamespace(), name);
+            Registry.register(getRegistry().get(), rl, supplier.get());
+            DeferredHolder<T, I> ret = DeferredHolder.create(getRegistryKey(), rl);
+            this.entries.add(ret);
+            return ret;
+        }
+
+        @Override
+        public Collection<DeferredHolder<T, ? extends T>> getEntries() {
+            return this.entriesView;
+        }
+    }
+
+    private static class ItemsProvider extends DeferredRegister.Items
+    {
+        private final Set<DeferredHolder<Item, ? extends Item>> entries = new HashSet<>();
+        private final Set<DeferredHolder<Item, ? extends Item>> entriesView = Collections.unmodifiableSet(this.entries);
+
+        protected ItemsProvider(String namespace)
+        {
+            super(namespace);
+        }
+
+        @Override
+        public Collection<DeferredHolder<Item, ? extends Item>> getEntries() {
             return this.entriesView;
         }
 
         @Override
-        public String getModId() {
-            return this.modId;
+        public <I extends Item> DeferredItem<I> register(String name, Supplier<? extends I> sup)
+        {
+            final var rl = new ResourceLocation(getNamespace(), name);
+            Registry.register(getRegistry().get(), rl, sup.get());
+            DeferredItem<I> ret = DeferredItem.createItem(rl);
+            this.entries.add(ret);
+            return ret;
+        }
+    }
+
+    private static class BlocksProvider extends DeferredRegister.Blocks
+    {
+        private final Set<DeferredHolder<Block, ? extends Block>> entries = new HashSet<>();
+        private final Set<DeferredHolder<Block, ? extends Block>> entriesView = Collections.unmodifiableSet(this.entries);
+
+        protected BlocksProvider(String namespace)
+        {
+            super(namespace);
+        }
+
+        @Override
+        public Collection<DeferredHolder<Block, ? extends Block>> getEntries() {
+            return this.entriesView;
+        }
+
+        @Override
+        public <I extends Block> DeferredBlock<I> register(String name, Supplier<? extends I> sup)
+        {
+            final var rl = new ResourceLocation(getNamespace(), name);
+            Registry.register(getRegistry().get(), rl, sup.get());
+            DeferredBlock<I> ret = DeferredBlock.createBlock(rl);
+            this.entries.add(ret);
+            return ret;
         }
     }
 }

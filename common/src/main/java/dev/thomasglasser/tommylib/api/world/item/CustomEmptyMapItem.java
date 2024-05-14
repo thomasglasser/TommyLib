@@ -13,6 +13,9 @@ import net.minecraft.world.level.Level;
 
 import java.util.function.BiFunction;
 
+/**
+ * Extension of {@link EmptyMapItem} that allows for a custom fill function to be used when the map is filled.
+ */
 public class CustomEmptyMapItem extends EmptyMapItem {
     protected BiFunction<ServerLevel, Entity, ItemStack> fillFunction;
 

@@ -8,6 +8,7 @@ import dev.kosmx.playerAnim.api.layered.ModifierLayer;
 import dev.kosmx.playerAnim.api.layered.modifier.AbstractFadeModifier;
 import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.Ease;
+import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.player.Player;
 
@@ -17,32 +18,35 @@ import java.util.Map;
 
 public class AnimationUtils
 {
-	/**
-	 * This will map player objects and the animation containers. To retrieve the animation for the player, you'll need that exact player object.
-	 */
 	public static final Map<AbstractClientPlayer, ModifierLayer<IAnimation>> animationData = new IdentityHashMap<>();
 
-	//This method will set your mods animation into the library.
-	public static void registerPlayerAnimation(AbstractClientPlayer player, AnimationStack stack) {
-		//This will be invoked for every new player
-		var layer = new ModifierLayer<>();
-		stack.addAnimLayer(1000, layer); //Register the layer with a priority
-		//The priority will tell, how important is this animation compared to other mods. Higher number means higher priority
-		//Mods with higher priority will override the lower priority mods (if they want to animation anything)
-
-		//If you want to map with Players, you have to use IdentityHashMap. that doesn't require hashCode function but does require the exact same object.
-		animationData.put(player, layer);
-
-		//Alternative solution is to Mixin the mod animation container into the player class. But that requires knowing how to use Mixins.
+	public static void registerPlayerForAnimation()
+	{
+		PlayerAnimationAccess.REGISTER_ANIMATION_EVENT.register(AnimationUtils::registerPlayerInternal);
 	}
 
+	/**
+	 * Registers a player for animation
+	 * @param player The player to register
+	 * @param stack The animation stack to register to
+	 */
+	private static void registerPlayerInternal(AbstractClientPlayer player, AnimationStack stack) {
+		var layer = new ModifierLayer<>();
+		stack.addAnimLayer(1000, layer);
+		animationData.put(player, layer);
+	}
+
+	/**
+	 * Starts an animation for a player with an optional transition
+	 * @param startAnim The animation to start with
+	 * @param goAnim The optional animation to transition to
+	 * @param player The player to start the animation for
+	 * @param firstPersonMode The first person mode to use
+	 */
 	public static void startAnimation(KeyframeAnimation startAnim, @Nullable KeyframeAnimation goAnim, Player player, FirstPersonMode firstPersonMode)
 	{
 		var animation = animationData.get(player);
-		//Get the animation for that player
 		if (animation != null) {
-			//You can set an animation from anywhere ON THE CLIENT
-			//Do not attempt to do this on a server, that will only fail
 			animation.setAnimation(new KeyframeAnimationPlayer(startAnim).setFirstPersonMode(firstPersonMode));
 			if (goAnim != null)
 				animation.replaceAnimationWithFade(AbstractFadeModifier.standardFadeIn(20, Ease.CONSTANT), new KeyframeAnimationPlayer(goAnim).setFirstPersonMode(firstPersonMode));
@@ -50,11 +54,21 @@ public class AnimationUtils
 
 	}
 
+	/**
+	 * Starts an animation for a player with no transition
+	 * @param anim The animation to start
+	 * @param player The player to start the animation for
+	 * @param firstPersonMode The first person mode to use
+	 */
 	public static void startAnimation(KeyframeAnimation anim, Player player, FirstPersonMode firstPersonMode)
 	{
 		startAnimation(anim, null, player, firstPersonMode);
 	}
 
+	/**
+	 * Stops the animation for a player
+	 * @param player The player to stop the animation for
+	 */
 	public static void stopAnimation(AbstractClientPlayer player)
 	{
 		var animation = animationData.get(player);

@@ -1,6 +1,8 @@
 package dev.thomasglasser.tommylib.impl.client;
 
 import dev.thomasglasser.tommylib.api.client.ClientUtils;
+import dev.thomasglasser.tommylib.api.client.animation.AnimationUtils;
+import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
 import dev.thomasglasser.tommylib.api.world.item.ModeledItem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
@@ -13,6 +15,9 @@ public class TommyLibFabricClient implements ClientModInitializer
 	@Override
 	public void onInitializeClient()
 	{
+		if (TommyLibServices.PLATFORM.isModLoaded("playeranimator"))
+			AnimationUtils.registerPlayerForAnimation();
+
 		ItemGroupEvents.MODIFY_ENTRIES_ALL.register((group, entries) ->
 				entries.acceptAll(ClientUtils.getItemsForTab(BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(group).orElseThrow())));
 

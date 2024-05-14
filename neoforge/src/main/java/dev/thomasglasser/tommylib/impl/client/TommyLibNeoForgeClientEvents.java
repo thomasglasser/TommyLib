@@ -1,12 +1,21 @@
 package dev.thomasglasser.tommylib.impl.client;
 
 import dev.thomasglasser.tommylib.api.client.ClientUtils;
+import dev.thomasglasser.tommylib.api.client.animation.AnimationUtils;
+import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 public class TommyLibNeoForgeClientEvents
 {
+	public static void onClientSetup(FMLClientSetupEvent event)
+	{
+		if (TommyLibServices.PLATFORM.isModLoaded("playeranimator"))
+			AnimationUtils.registerPlayerForAnimation();
+	}
+
 	public static void onBuildCreativeTabContent(BuildCreativeModeTabContentsEvent event)
 	{
 		event.acceptAll(ClientUtils.getItemsForTab(event.getTabKey()));

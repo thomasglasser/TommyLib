@@ -8,6 +8,9 @@ import net.minecraft.world.item.Item;
 
 import java.util.Set;
 
+/**
+ * Extension of {@link BlockLootSubProvider} that provides functionality for mod holders.
+ */
 public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider
 {
 	protected ExtendedBlockLootSubProvider(Set<Item> pExplosionResistant, FeatureFlagSet pEnabledFeatures)
@@ -15,6 +18,10 @@ public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider
 		super(pExplosionResistant, pEnabledFeatures);
 	}
 
+	/**
+	 * Adds default loot tables for all blocks in a {@link WoodSet}.
+	 * @param set The {@link WoodSet} to add loot tables for.
+	 */
 	protected void woodSet(WoodSet set)
 	{
 		dropSelf(set.planks().get());
@@ -25,6 +32,10 @@ public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider
 
 	}
 
+	/**
+	 * Adds default loot tables for all blocks in a {@link LeavesSet}.
+	 * @param set The {@link LeavesSet} to add loot tables for.
+	 */
 	protected void leavesSet(LeavesSet set)
 	{
 		add(set.leaves().get(), createLeavesDrops(set.leaves().get(), set.sapling().get(), NORMAL_LEAVES_SAPLING_CHANCES));

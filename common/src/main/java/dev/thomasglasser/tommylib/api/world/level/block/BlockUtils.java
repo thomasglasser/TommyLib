@@ -1,7 +1,8 @@
 package dev.thomasglasser.tommylib.api.world.level.block;
 
-import dev.thomasglasser.tommylib.api.registration.RegistrationProvider;
-import dev.thomasglasser.tommylib.api.registration.RegistryObject;
+import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
+import dev.thomasglasser.tommylib.api.registration.DeferredItem;
+import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -31,47 +32,94 @@ import java.util.function.Supplier;
 
 public class BlockUtils
 {
-	public static final Function<RegistryObject<? extends Block>, BlockItem> BLOCK_ITEM_FUNCTION = ((block) -> new BlockItem(block.get(), new Item.Properties()));
-	public static final BiFunction<RegistryObject<? extends Block>, Item.Properties, BlockItem> BLOCK_ITEM_WITH_PROPERTIES_FUNCTION = ((block, properties) -> new BlockItem(block.get(), properties));
+	/**
+	 * Functions to create a BlockItem from a DeferredBlock
+	 */
 
-	private static final Map<ResourceLocation, RegistryObject<Block>> STRIPPABLES = new HashMap<>();
+	public static final Function<DeferredBlock<?>, BlockItem> BLOCK_ITEM_FUNCTION = ((block) -> new BlockItem(block.get(), new Item.Properties()));
+	public static final BiFunction<DeferredBlock<?>, Item.Properties, BlockItem> BLOCK_ITEM_WITH_PROPERTIES_FUNCTION = ((block, properties) -> new BlockItem(block.get(), properties));
 
-	public static <T extends Block> RegistryObject<T> register(RegistrationProvider<Block> provider, String name, Supplier<T> block)
+	/**
+	 * Map of blocks that can be stripped to their stripped versions
+	 */
+	private static final Map<ResourceLocation, DeferredBlock<?>> STRIPPABLES = new HashMap<>();
+
+	/**
+	 * Register a block with the given provider and name
+	 * @param provider The provider to register the block with
+	 * @param name The registry name of the block
+	 * @param block The block supplier
+	 * @return The block holder
+	 * @param <T> The block type
+	 */
+	public static <T extends Block> DeferredBlock<T> register(DeferredRegister.Blocks provider, String name, Supplier<T> block)
 	{
 		return provider.register(name, block);
 	}
 
-	public static <T extends Block> RegistryObject<T> registerBlockAndItemAndWrap(
-			RegistrationProvider<Block> provider,
+	/**
+	 * Register a block and item with the given provider and name
+	 * @param provider The provider to register the block with
+	 * @param name The registry name of the block
+	 * @param blockFactory The block supplier
+	 * @param itemFactory The item supplier
+	 * @param tabs The creative mode tabs to add the item to
+	 * @return The block holder
+	 * @param <T> The block type
+	 */
+	public static <T extends Block> DeferredBlock<T> registerBlockAndItemAndWrap(
+			DeferredRegister.Blocks provider,
 			String name,
 			Supplier<T> blockFactory,
-			TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, RegistryObject<? extends Item>> itemFactory,
+			TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory,
 			List<ResourceKey<CreativeModeTab>> tabs)
 	{
-		RegistryObject<T> block = register(provider, name, blockFactory);
+		DeferredBlock<T> block = register(provider, name, blockFactory);
 		itemFactory.apply(name, () -> BLOCK_ITEM_FUNCTION.apply(block), tabs);
 		return block;
 	}
 
-	public static <T extends Block> RegistryObject<T> registerBlockAndItemAndWrap(
-			RegistrationProvider<Block> provider,
+	/**
+	 * Register a block and item with the given provider and name
+	 * @param provider The provider to register the block with
+	 * @param name The registry name of the block
+	 * @param blockFactory The block supplier
+	 * @param itemFactory The item supplier
+	 * @param properties The item properties
+	 * @param tabs The creative mode tabs to add the item to
+	 * @return The block holder
+	 * @param <T> The block type
+	 */
+	public static <T extends Block> DeferredBlock<T> registerBlockAndItemAndWrap(
+			DeferredRegister.Blocks provider,
 			String name,
 			Supplier<T> blockFactory,
-			TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, RegistryObject<? extends Item>> itemFactory,
+			TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory,
 			Item.Properties properties,
 			List<ResourceKey<CreativeModeTab>> tabs)
 	{
-		RegistryObject<T> block = register(provider, name, blockFactory);
+		DeferredBlock<T> block = register(provider, name, blockFactory);
 		itemFactory.apply(name, () -> BLOCK_ITEM_WITH_PROPERTIES_FUNCTION.apply(block, properties), tabs);
 		return block;
 	}
 
-	public static WoodSet registerWoodSet(RegistrationProvider<Block> provider, ResourceLocation id, MapColor mapColor, MapColor logMapColor, Supplier<TagKey<Block>> logsBlockTag, Supplier<TagKey<Item>> logsItemTag, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, RegistryObject<? extends Item>> itemFactory)
+	/**
+	 * Register a {@link WoodSet} with the given provider and id
+	 * @param provider The provider to register the blocks with
+	 * @param id The id of the wood set
+	 * @param mapColor The map color of the wood set
+	 * @param logMapColor The map color of the logs
+	 * @param logsBlockTag The tag key for the log blocks
+	 * @param logsItemTag The tag key for the log items
+	 * @param itemFactory The item factory
+	 * @return The wood set
+	 */
+	public static WoodSet registerWoodSet(DeferredRegister.Blocks provider, ResourceLocation id, MapColor mapColor, MapColor logMapColor, Supplier<TagKey<Block>> logsBlockTag, Supplier<TagKey<Item>> logsItemTag, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory)
 	{
-		RegistryObject<Block> log = registerBlockAndItemAndWrap(provider, id.getPath() + "_log", () -> Blocks.log(mapColor, logMapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS, CreativeModeTabs.NATURAL_BLOCKS));
-		RegistryObject<Block> strippedLog = registerBlockAndItemAndWrap(provider, "stripped_" + id.getPath() + "_log", () -> Blocks.log(mapColor, mapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
-		RegistryObject<Block> wood = registerBlockAndItemAndWrap(provider, id.getPath() + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
-		RegistryObject<Block> strippedWood = registerBlockAndItemAndWrap(provider, "stripped_" + id.getPath() + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
+		DeferredBlock<?> log = registerBlockAndItemAndWrap(provider, id.getPath() + "_log", () -> Blocks.log(mapColor, logMapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS, CreativeModeTabs.NATURAL_BLOCKS));
+		DeferredBlock<?> strippedLog = registerBlockAndItemAndWrap(provider, "stripped_" + id.getPath() + "_log", () -> Blocks.log(mapColor, mapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
+		DeferredBlock<?> wood = registerBlockAndItemAndWrap(provider, id.getPath() + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
+		DeferredBlock<?> strippedWood = registerBlockAndItemAndWrap(provider, "stripped_" + id.getPath() + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
 		STRIPPABLES.put(log.getId(), strippedLog);
 		STRIPPABLES.put(wood.getId(), strippedWood);
 		return new WoodSet(id,
@@ -84,17 +132,30 @@ public class BlockUtils
 				logsItemTag);
 	}
 
-	public static LeavesSet registerLeavesSet(RegistrationProvider<Block> provider, ResourceLocation id, TreeGrower treeGrower, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, RegistryObject<? extends Item>> itemFactory)
+	/**
+	 * Register a {@link LeavesSet} with the given provider and id
+	 * @param provider The provider to register the blocks with
+	 * @param id The id of the leaves set
+	 * @param treeGrower The tree grower for the sapling
+	 * @param itemFactory The item factory
+	 * @return The leaves set
+	 */
+	public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, ResourceLocation id, TreeGrower treeGrower, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory)
 	{
-		RegistryObject<Block> sapling = registerBlockAndItemAndWrap(provider, id.getPath() + "_sapling", () -> new SaplingBlock(treeGrower, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS));
+		DeferredBlock<?> sapling = registerBlockAndItemAndWrap(provider, id.getPath() + "_sapling", () -> new SaplingBlock(treeGrower, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS));
 		return new LeavesSet(id,
 				registerBlockAndItemAndWrap(provider, id.getPath() + "_leaves", () -> Blocks.leaves(SoundType.GRASS), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS)),
 				sapling,
 				register(provider, "potted_" + id.getPath() + "_sapling", () -> Blocks.flowerPot(sapling.get())));
 	}
 
+	/**
+	 * Gets the stripped version of a block
+	 * @param originalState The original block state
+	 * @return The stripped block
+	 */
 	public static Block getStripped(BlockState originalState) {
-		RegistryObject<Block> ro = STRIPPABLES.get(originalState.getBlock().builtInRegistryHolder().key().location());
+		DeferredBlock<?> ro = STRIPPABLES.get(originalState.getBlock().builtInRegistryHolder().key().location());
 		return ro != null ? ro.get() : null;
 	}
 }

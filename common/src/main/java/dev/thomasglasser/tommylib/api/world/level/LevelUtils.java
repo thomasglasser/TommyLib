@@ -1,5 +1,6 @@
 package dev.thomasglasser.tommylib.api.world.level;
 
+import dev.thomasglasser.tommylib.api.tags.ConventionalBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
@@ -9,27 +10,42 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-import static dev.thomasglasser.tommylib.api.tags.TommyLibBlockTags.UNBREAKABLE;
-
 public final class LevelUtils
 {
     private LevelUtils() {}
 
-    public static void safeFallSelf(Level level, BlockPos pos)
+    /**
+     * Safely destroy a block at a position, if the block is not unbreakable.
+     * @param level The level to destroy the block in.
+     * @param pos The position of the block to destroy.
+     */
+    public static void safeFall(Level level, BlockPos pos)
     {
         BlockState state = level.getBlockState(pos);
-        if (!state.is(UNBREAKABLE))
+        if (!state.is(ConventionalBlockTags.UNBREAKABLE_BLOCKS))
             FallingBlockEntity.fall(level, pos, state);
     }
 
+    /**
+     * Safely destroy a block at a position, if the block is not unbreakable.
+     * @param level The level to destroy the block in.
+     * @param pos The position of the block to destroy.
+     * @param drop Whether to drop the block.
+     */
     public static void safeDestroy(Level level, BlockPos pos, boolean drop)
     {
-        if (!level.getBlockState(pos).is(UNBREAKABLE))
+        if (!level.getBlockState(pos).is(ConventionalBlockTags.UNBREAKABLE_BLOCKS))
         {
             level.destroyBlock(pos, drop);
         }
     }
 
+    /**
+     * Spawn particles in a beam from the entity's eyes.
+     * @param particleOptions The particle options to spawn.
+     * @param level The level to spawn the particles in.
+     * @param entity The entity to spawn the particles from.
+     */
     public static void beamParticles(ParticleOptions particleOptions, Level level, Entity entity)
     {
         if (entity.level() instanceof ServerLevel serverLevel)

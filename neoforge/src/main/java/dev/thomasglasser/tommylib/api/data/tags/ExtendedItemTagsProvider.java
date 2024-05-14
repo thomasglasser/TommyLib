@@ -1,51 +1,41 @@
 package dev.thomasglasser.tommylib.api.data.tags;
 
-import com.mojang.datafixers.util.Pair;
-import dev.thomasglasser.tommylib.api.registration.RegistryObject;
 import dev.thomasglasser.tommylib.api.world.item.armor.ArmorSet;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Extension of {@link ItemTagsProvider} that provides functionality for mod holders.
+ */
 public abstract class ExtendedItemTagsProvider extends ItemTagsProvider
 {
-    private static final Pair<ResourceLocation, ResourceLocation> SWORDS = Pair.of(neoforgeLoc("tools/swords"), cLoc("swords"));
-    private static final Pair<ResourceLocation, ResourceLocation> HELMETS = Pair.of(neoforgeLoc("armors/helmets"), cLoc("helmets"));
-    private static final Pair<ResourceLocation, ResourceLocation> CHESTPLATES = Pair.of(neoforgeLoc("armors/chestplates"), cLoc("chestplates"));
-    private static final Pair<ResourceLocation, ResourceLocation> LEGGINGS = Pair.of(neoforgeLoc("armors/leggings"), cLoc("leggings"));
-    private static final Pair<ResourceLocation, ResourceLocation> BOOTS = Pair.of(neoforgeLoc("armors/boots"), cLoc("boots"));
-
     public ExtendedItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> blockTagsProvider, String modId, ExistingFileHelper existingFileHelper) {
         super(output, future, blockTagsProvider, modId, existingFileHelper);
     }
 
-    protected static ResourceLocation neoforgeLoc(String path)
-    {
-        return new ResourceLocation("neoforge", path);
-    }
-
+    /**
+     * Creates a {@link ResourceLocation} with the given path and the "c" namespace.
+     * @param path The path of the resource location.
+     * @return A new {@link ResourceLocation} with the "c" namespace.
+     */
     protected static ResourceLocation cLoc(String path)
     {
         return new ResourceLocation("c", path);
     }
 
-    protected void tagPair(Pair<ResourceLocation, ResourceLocation> tags, Item... items)
-    {
-        tag(TagKey.create(Registries.ITEM, tags.getFirst())).add(items);
-        tag(TagKey.create(Registries.ITEM, tags.getSecond())).add(items);
-    }
-
+    /**
+     * Generates relevant tags for a {@link WoodSet}.
+     * @param set The {@link WoodSet} to generate tags for.
+     */
     protected void woodSet(WoodSet set)
     {
         copy(set.logsBlockTag().get(), set.logsItemTag().get());
@@ -57,6 +47,10 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider
                 .addTag(set.logsItemTag().get());
     }
 
+    /**
+     * Generates relevant tags for a {@link LeavesSet}.
+     * @param set The {@link LeavesSet} to generate tags for.
+     */
     protected void leavesSet(LeavesSet set)
     {
         tag(ItemTags.LEAVES)
@@ -66,57 +60,16 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider
                 .add(set.sapling().get().asItem());
     }
 
+    /**
+     * Generates relevant tags for an {@link ArmorSet}.
+     * @param armorSet The {@link ArmorSet} to generate tags for.
+     */
     protected void armorSet(ArmorSet armorSet)
     {
-        tagPair(HELMETS, armorSet.HEAD.get());
-        tagPair(CHESTPLATES, armorSet.CHEST.get());
-        tagPair(LEGGINGS, armorSet.LEGS.get());
-        tagPair(BOOTS, armorSet.FEET.get());
-    }
-
-    @SafeVarargs
-    protected final void swords(RegistryObject<? extends Item>... swords)
-    {
-        for (RegistryObject<? extends Item> sword : swords)
-        {
-            tagPair(SWORDS, sword.get());
-        }
-    }
-
-    @SafeVarargs
-    protected final void helmets(RegistryObject<? extends Item>... helmets)
-    {
-        for (RegistryObject<? extends Item> helmet : helmets)
-        {
-            tagPair(HELMETS, helmet.get());
-        }
-    }
-
-    @SafeVarargs
-    protected final void chestplates(RegistryObject<? extends Item>... chestplates)
-    {
-        for (RegistryObject<? extends Item> chestplate : chestplates)
-        {
-            tagPair(CHESTPLATES, chestplate.get());
-        }
-    }
-
-    @SafeVarargs
-    protected final void leggings(RegistryObject<? extends Item>... leggings)
-    {
-        for (RegistryObject<? extends Item> legging : leggings)
-        {
-            tagPair(LEGGINGS, legging.get());
-        }
-    }
-
-    @SafeVarargs
-    protected final void boots(RegistryObject<? extends Item>... boots)
-    {
-        for (RegistryObject<? extends Item> boot : boots)
-        {
-            tagPair(BOOTS, boot.get());
-        }
+        tag(ItemTags.HEAD_ARMOR).add(armorSet.HEAD.get());
+        tag(ItemTags.CHEST_ARMOR).add(armorSet.CHEST.get());
+        tag(ItemTags.LEG_ARMOR).add(armorSet.LEGS.get());
+        tag(ItemTags.FOOT_ARMOR).add(armorSet.FEET.get());
     }
 
     @Override

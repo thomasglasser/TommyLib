@@ -3,6 +3,9 @@ package dev.thomasglasser.tommylib.api.world.item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
+/**
+ * Represents an item that can be enchanted and needs extra logic not included in the default implementation.
+ */
 public interface Enchantable
 {
     /**

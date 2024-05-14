@@ -8,6 +8,9 @@ import net.minecraft.data.recipes.RecipeProvider;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Extension of {@link RecipeProvider} that provides functionality for mod holders.
+ */
 public abstract class ExtendedRecipeProvider extends RecipeProvider
 {
 	public ExtendedRecipeProvider(PackOutput p_248933_, CompletableFuture<HolderLookup.Provider> lookupProvider)
@@ -15,6 +18,11 @@ public abstract class ExtendedRecipeProvider extends RecipeProvider
 		super(p_248933_, lookupProvider);
 	}
 
+	/**
+	 * Adds recipes for blocks in a {@link WoodSet}.
+	 * @param writer The {@link RecipeOutput} instance to write the recipes to.
+	 * @param set The {@link WoodSet} to add recipes for.
+	 */
 	protected void woodSet(RecipeOutput writer, WoodSet set)
 	{
 		planksFromLogs(writer, set.planks().get(), set.logsItemTag().get(), 4);

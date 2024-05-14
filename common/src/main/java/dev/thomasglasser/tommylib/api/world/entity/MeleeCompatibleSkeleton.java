@@ -7,6 +7,9 @@ import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.example.SBLSkeleton;
 
+/**
+ * Extension of {@link SBLSkeleton} that enables walking to attack targets when not holding a bow.
+ */
 public class MeleeCompatibleSkeleton extends SBLSkeleton
 {
     public MeleeCompatibleSkeleton(EntityType<? extends MeleeCompatibleSkeleton> entityType, Level level) {

@@ -1,6 +1,7 @@
 package dev.thomasglasser.tommylib.impl.data;
 
 import dev.thomasglasser.tommylib.api.data.tags.ExtendedBlockTagsProvider;
+import dev.thomasglasser.tommylib.impl.data.lang.TommyLibEnUsLanguageProvider;
 import dev.thomasglasser.tommylib.impl.data.tags.TommyLibBlockTagsProvider;
 import dev.thomasglasser.tommylib.impl.data.tags.TommyLibItemTagsProvider;
 import net.minecraft.core.HolderLookup;
@@ -28,5 +29,6 @@ public class TommyLibDataGenerators
 		generator.addProvider(server, new TommyLibItemTagsProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
 
 		// Client
+		generator.addProvider(client, new TommyLibEnUsLanguageProvider(packOutput));
 	}
 }

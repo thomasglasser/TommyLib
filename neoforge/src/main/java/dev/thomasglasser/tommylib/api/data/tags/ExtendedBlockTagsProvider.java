@@ -3,23 +3,28 @@ package dev.thomasglasser.tommylib.api.data.tags;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-public abstract class ExtendedBlockTagsProvider extends IntrinsicHolderTagsProvider<Block>
+/**
+ * Extension of {@link BlockTagsProvider} that provides functionality for mod holders.
+ */
+public abstract class ExtendedBlockTagsProvider extends BlockTagsProvider
 {
     public ExtendedBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper)
     {
-        super(output, Registries.BLOCK, lookupProvider, block -> block.builtInRegistryHolder().key(), modId, existingFileHelper);
+        super(output, lookupProvider, modId, existingFileHelper);
     }
 
+    /**
+     * Generates tags for a {@link WoodSet}.
+     * @param set The set to generate tags for.
+     */
     protected void woodSet(WoodSet set)
     {
         tag(set.logsBlockTag().get())
@@ -39,6 +44,10 @@ public abstract class ExtendedBlockTagsProvider extends IntrinsicHolderTagsProvi
                 .add(set.planks().get());
     }
 
+    /**
+     * Generates tags for a {@link LeavesSet}.
+     * @param set The set to generate tags for.
+     */
     protected void leavesSet(LeavesSet set)
     {
         tag(BlockTags.LEAVES)
