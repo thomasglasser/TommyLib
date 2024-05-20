@@ -1,5 +1,6 @@
 package dev.thomasglasser.tommylib.api.world.item;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,7 +35,7 @@ public abstract class ThrowableSwordItem extends SwordItem implements Enchantabl
 
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pHand);
-        if (itemstack.getDamageValue() >= itemstack.getMaxDamage() - 1) {
+        if (itemstack.getDamageValue() >= itemstack.getMaxDamage() - 1 && !itemstack.has(DataComponents.UNBREAKABLE)) {
             return InteractionResultHolder.fail(itemstack);
         } else {
             pPlayer.startUsingItem(pHand);

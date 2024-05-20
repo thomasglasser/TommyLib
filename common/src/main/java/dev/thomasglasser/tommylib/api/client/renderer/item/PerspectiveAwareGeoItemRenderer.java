@@ -1,6 +1,5 @@
 package dev.thomasglasser.tommylib.api.client.renderer.item;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
@@ -35,7 +34,6 @@ public class PerspectiveAwareGeoItemRenderer<T extends Item & GeoAnimatable> ext
 			poseStack.translate(0.5D, 0.5D, 0.5D);
 			poseStack.mulPose(Axis.YN.rotationDegrees(90));
 			poseStack.mulPose(Axis.ZN.rotationDegrees(0.1f));
-			if (displayContext == ItemDisplayContext.GUI) Lighting.setupForFlatItems();
 			TommyLibServices.ITEM.renderItem(stack, displayContext, false, poseStack, bufferSource, packedLight, packedOverlay, inventoryAssetLoc.getNamespace(), inventoryAssetLoc.getPath() + "_inventory");
 		}
 		else
