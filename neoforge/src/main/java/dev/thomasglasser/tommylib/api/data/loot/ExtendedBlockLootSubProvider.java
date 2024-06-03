@@ -48,6 +48,13 @@ public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider
 		dropPottedContents(set.pottedSapling().get());
 	}
 
+	/**
+	 * Adds a loot table for a block
+	 * that drops itself with the specified {@link Property properties} in the item's {@code BlockStateData}
+	 * tag that is copied upon place.
+	 * @param block The block to add a loot table for.
+	 * @param properties The properties to copy to the item's {@code BlockStateData} tag.
+	 */
 	protected void dropWithProperties(Block block, Property<?>... properties)
 	{
 		CopyBlockState.Builder builder = CopyBlockState.copyState(block);

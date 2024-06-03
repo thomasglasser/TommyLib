@@ -151,7 +151,7 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider
 	}
 
 	/**
-	 * Extension of {@link BlockModelGenerators} that exposes its methods for use in {@link ExtendedBlockStateProvider}.
+	 * Extension of {@link BlockModelGenerators} that exposes its methods and variables for use in {@link ExtendedBlockStateProvider}.
 	 */
 	protected abstract class ExtendedBlockModelGenerators extends BlockModelGenerators
 	{
