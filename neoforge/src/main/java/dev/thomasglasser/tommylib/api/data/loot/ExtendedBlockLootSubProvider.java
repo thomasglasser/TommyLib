@@ -5,6 +5,9 @@ import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.storage.loot.functions.CopyBlockState;
 
 import java.util.Set;
 
@@ -43,5 +46,15 @@ public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider
 		dropSelf(set.sapling().get());
 
 		dropPottedContents(set.pottedSapling().get());
+	}
+
+	protected void dropWithProperties(Block block, Property<?>... properties)
+	{
+		CopyBlockState.Builder builder = CopyBlockState.copyState(block);
+		for (Property<?> property : properties)
+		{
+			builder.copy(property);
+		}
+		add(block, createSingleItemTable(block.asItem()).apply(builder));
 	}
 }

@@ -155,8 +155,15 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider
 	 */
 	protected abstract class ExtendedBlockModelGenerators extends BlockModelGenerators
 	{
+		protected final Consumer<BlockStateGenerator> blockStateOutput;
+		protected final BiConsumer<ResourceLocation, Supplier<JsonElement>> modelOutput;
+		protected final Consumer<Item> skippedAutoModelsOutput;
+
 		public ExtendedBlockModelGenerators(Consumer<BlockStateGenerator> pBlockStateOutput, BiConsumer<ResourceLocation, Supplier<JsonElement>> pModelOutput, Consumer<Item> pSkippedAutoModelsOutput) {
 			super(pBlockStateOutput, pModelOutput, pSkippedAutoModelsOutput);
+			blockStateOutput = pBlockStateOutput;
+			modelOutput = pModelOutput;
+			skippedAutoModelsOutput = pSkippedAutoModelsOutput;
 		}
 
 		public CompletableFuture<?> generateAll(CachedOutput cache)

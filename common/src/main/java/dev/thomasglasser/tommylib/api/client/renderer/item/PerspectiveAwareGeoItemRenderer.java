@@ -19,10 +19,13 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
 public class PerspectiveAwareGeoItemRenderer<T extends Item & GeoAnimatable> extends GeoItemRenderer<T>
 {
 	protected ResourceLocation inventoryAssetLoc;
+	protected ResourceLocation worldAssetLoc;
+
 	public PerspectiveAwareGeoItemRenderer(GeoModel<T> model, ResourceLocation inventoryAssetLoc)
 	{
 		super(model);
 		this.inventoryAssetLoc = inventoryAssetLoc;
+		this.worldAssetLoc = new ResourceLocation(inventoryAssetLoc.getNamespace(), "textures/item/geo/" + inventoryAssetLoc.getPath() + ".png");
 	}
 
 	@Override
@@ -43,6 +46,6 @@ public class PerspectiveAwareGeoItemRenderer<T extends Item & GeoAnimatable> ext
 	@Override
 	public ResourceLocation getTextureLocation(T animatable)
 	{
-		return new ResourceLocation(inventoryAssetLoc.getNamespace(), "textures/item/geo/" + inventoryAssetLoc.getPath() + ".png");
+		return worldAssetLoc;
 	}
 }
