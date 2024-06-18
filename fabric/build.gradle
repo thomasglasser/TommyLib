@@ -1,8 +1,7 @@
 plugins {
     id 'fabric-loom' version "${loom_version}"
-    id 'idea'
+    id "tommylib-loader"
 }
-
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
 
@@ -14,9 +13,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
-    implementation project(":common")
 
-    // Common
     modCompileOnly("dev.kosmx.player-anim:player-animation-lib-fabric:${playeranimator_version}")
     modCompileOnly "net.tslat.smartbrainlib:SmartBrainLib-fabric-${minecraft_version}:${sbl_version}"
     modCompileOnly "net.tslat.effectslib:TslatEffectsLib-fabric-${minecraft_version}:${tslateffectslib_version}"
@@ -24,9 +21,9 @@ dependencies {
 }
 
 loom {
-    if (project(":common").file("src/main/resources/${mod_id}.accesswidener").exists()) {
-        // Must specify "accesswidener" field in fabric.mod.json
-        accessWidenerPath.set(project(":common").file("src/main/resources/${mod_id}.accesswidener"))
+    def aw = file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
     }
 
     runs {
@@ -47,12 +44,4 @@ loom {
     mixin {
         add sourceSets.main, "${mod_id}.refmap.json"
     }
-}
-
-tasks.withType(ProcessResources).configureEach {
-    from project(":common").sourceSets.main.resources
-}
-
-tasks.withType(JavaCompile).configureEach {
-    source(project(":common").sourceSets.main.allSource)
 }

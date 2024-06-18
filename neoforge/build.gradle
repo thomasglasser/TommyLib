@@ -1,49 +1,42 @@
 plugins {
-    id 'idea'
-    id 'net.neoforged.gradle.userdev' version '7.0.145'
-    id 'java-library'
+    id "tommylib-loader"
+    id 'net.neoforged.moddev' version "${mdg_version}"
 }
 
-subsystems {
+neoForge {
+    version = "${neoforge_version}"
+
     parchment {
         minecraftVersion = parchment_minecraft_version
         mappingsVersion = parchment_version
     }
-}
 
-// Automatically enable neoforge AccessTransformers if the file exists
-// This location is hardcoded in FML and can not be changed.
-// https://github.com/neoforged/FancyModLoader/blob/a952595eaaddd571fbc53f43847680b00894e0c1/loader/src/main/java/net/neoforged/fml/loading/moddiscovery/ModFile.java#L118
-if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
-    minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
-}
-runs {
-    configureEach {
-        modSource project.sourceSets.main
-    }
-    client {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-    }
-    server {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--nogui'
+    def at = '../common/src/main/resources/META-INF/accesstransformer.cfg'
+    if (file(at).exists()) {
+        accessTransformers = [at]
     }
 
-    gameTestServer {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-    }
+    runs {
+        client {
+            client()
 
-    data {
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('../common/src/generated/resources/').getAbsolutePath(), '--existing', file('../common/src/main/resources/').getAbsolutePath()
+        }
+        client_alt {
+            client()
+            programArguments = ["--username", "DevAlt"]
+        }
+        data {
+            data()
+            programArguments = ['--output', file('../common/src/generated/resources/').getAbsolutePath(), '--existing', file('../common/src/main/resources/').getAbsolutePath()]
+        }
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
 
 dependencies {
-    implementation "net.neoforged:neoforge:${neoforge_version}"
-    implementation project(":common")
-
     // Common
     compileOnly "dev.kosmx.player-anim:player-animation-lib-forge:${playeranimator_version}"
     compileOnly "net.tslat.effectslib:TslatEffectsLib-neoforge-${minecraft_version}:${tslateffectslib_version}"

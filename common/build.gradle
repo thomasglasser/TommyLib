@@ -1,61 +1,57 @@
-import net.fabricmc.loom.task.RemapJarTask
-
 plugins {
-    id 'idea'
-    id 'java'
-    id 'fabric-loom' version "${loom_version}"
+    id "tommylib-common"
+    id 'net.neoforged.moddev' version "${mdg_version}"
 }
 
-loom {
-    if (project(":common").file("src/main/resources/${mod_id}.accesswidener").exists()) {
-        accessWidenerPath.set(project(":common").file("src/main/resources/${mod_id}.accesswidener"))
+
+neoForge {
+    neoFormVersion = "${minecraft_version}-20240613.152323"
+
+    parchment {
+        minecraftVersion = parchment_minecraft_version
+        mappingsVersion = parchment_version
+    }
+
+    def at = 'src/main/resources/META-INF/accesstransformer.cfg'
+    if (file(at).exists()) {
+        accessTransformers = [at]
+    }
+
+    mods {
+        tommylib {
+            sourceSet sourceSets.main
+        }
     }
 }
 
 dependencies {
-
-    minecraft "com.mojang:minecraft:${minecraft_version}"
-
-    mappings loom.layered() {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${parchment_minecraft_version}:${parchment_version}@zip")
-    }
-
     compileOnly group:'net.fabricmc', name:'sponge-mixin', version:mixin_version
     implementation "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
-    modCompileOnly "net.tslat.smartbrainlib:SmartBrainLib-common-${minecraft_version}:${sbl_version}"
-    modCompileOnly "net.tslat.effectslib:TslatEffectsLib-common-${minecraft_version}:${tslateffectslib_version}"
-    modCompileOnly "dev.kosmx.player-anim:player-animation-lib-fabric:${playeranimator_version}"
-    modCompileOnly "dev.kosmx.player-anim:anim-core:${playeranimator_version}"
-    modCompileOnly "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+    compileOnly "net.tslat.smartbrainlib:SmartBrainLib-common-${minecraft_version}:${sbl_version}"
+    compileOnly "net.tslat.effectslib:TslatEffectsLib-common-${minecraft_version}:${tslateffectslib_version}"
+    compileOnly "dev.kosmx.player-anim:player-animation-lib:${playeranimator_version}"
+    compileOnly "dev.kosmx.player-anim:anim-core:${playeranimator_version}"
+    compileOnly "software.bernie.geckolib:geckolib-common-${minecraft_version}:${geckolib_version}"
 }
 
-import net.fabricmc.loom.task.AbstractRemapJarTask
-tasks.withType(AbstractRemapJarTask).each {
-    it.targetNamespace = "named"
+sourceSets.main.resources { srcDir './src/generated/resources' }
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
 }
 
-sourceSets.main.resources.srcDir './src/generated/resources'
-
-/*
-Generates a new common artifact in intermediary mappings.
-*/
-
-remapJar {
-    targetNamespace.set("named")
-    dependsOn("remapCommonJar")
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    sourceSets.main.resources.sourceDirectories.files.each {
+        commonResources it
+    }
 }
-
-tasks.register("remapCommonJar", RemapJarTask,  task -> {
-    final AbstractArchiveTask jarTask = getTasks().named(JavaPlugin.JAR_TASK_NAME, AbstractArchiveTask.class).get();
-    task.dependsOn(jarTask);
-    task.setDescription("Remaps the built project jar to intermediary mappings.");
-
-    task.getInputFile().convention(jarTask.getArchiveFile());
-    task.dependsOn(getTasks().named(JavaPlugin.JAR_TASK_NAME));
-    task.archiveFileName.set(archiveFileName.get().replace(".jar", "-intermediary.jar"))
-    task.targetNamespace.set("intermediary")
-    task.setGroup("fabric")
-})
