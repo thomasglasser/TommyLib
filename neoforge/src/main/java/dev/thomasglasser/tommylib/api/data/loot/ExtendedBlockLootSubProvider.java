@@ -1,5 +1,7 @@
 package dev.thomasglasser.tommylib.api.data.loot;
 
+import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
+import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -10,15 +12,49 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.storage.loot.functions.CopyBlockState;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Extension of {@link BlockLootSubProvider} that provides functionality for mod holders.
  */
 public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider
 {
-	protected ExtendedBlockLootSubProvider(Set<Item> pExplosionResistant, FeatureFlagSet pEnabledFeatures)
+	/**
+	 * The {@link Set} of blocks that this provider must generate loot tables for.
+	 */
+	protected final Set<Block> knownBlocks;
+
+	/**
+	 * Creates a new {@link ExtendedBlockLootSubProvider} knowing all blocks in a {@link Set}.
+	 * @param pExplosionResistant The set of items that are explosion resistant.
+	 * @param pEnabledFeatures The {@link FeatureFlagSet} of enabled features.
+	 * @param knownBlocks The {@link Set} of blocks to generate loot tables for.
+	 */
+	protected ExtendedBlockLootSubProvider(Set<Item> pExplosionResistant, FeatureFlagSet pEnabledFeatures, Set<Block> knownBlocks)
 	{
 		super(pExplosionResistant, pEnabledFeatures);
+		this.knownBlocks = knownBlocks;
+	}
+
+	/**
+	 * Creates a new {@link ExtendedBlockLootSubProvider} knowing all blocks in a {@link DeferredRegister}.
+	 * @param pExplosionResistant The set of items that are explosion resistant.
+	 * @param pEnabledFeatures The {@link FeatureFlagSet} of enabled features.
+	 * @param knownBlocks The {@link DeferredRegister} of blocks to generate loot tables for.
+	 */
+	protected ExtendedBlockLootSubProvider(Set<Item> pExplosionResistant, FeatureFlagSet pEnabledFeatures, DeferredRegister<Block> knownBlocks)
+	{
+		super(pExplosionResistant, pEnabledFeatures);
+		this.knownBlocks = knownBlocks.getEntries().stream().map(DeferredHolder::get).collect(Collectors.toSet());
+	}
+
+	/**
+	 * Makes the provider aware of only the provided blocks.
+	 */
+	@Override
+	public Set<Block> getKnownBlocks()
+	{
+		return knownBlocks;
 	}
 
 	/**

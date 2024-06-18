@@ -25,7 +25,7 @@ public abstract class ExtendedRecipeProvider extends RecipeProvider
 	 */
 	protected void woodSet(RecipeOutput writer, WoodSet set)
 	{
-		planksFromLogs(writer, set.planks().get(), set.logsItemTag().get(), 4);
+		planksFromLogs(writer, set.planks().get(), set.logsItemTag(), 4);
 		woodFromLogs(writer, set.wood().get(), set.log().get());
 		woodFromLogs(writer, set.strippedWood().get(), set.strippedLog().get());
 	}

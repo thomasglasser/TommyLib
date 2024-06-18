@@ -7,7 +7,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * Represents a set of blocks that are all part of the same wood type.
@@ -26,8 +25,8 @@ public record WoodSet(ResourceLocation id,
                       DeferredBlock<?> strippedLog,
                       DeferredBlock<?> wood,
                       DeferredBlock<?> strippedWood,
-                      Supplier<TagKey<Block>> logsBlockTag,
-                      Supplier<TagKey<Item>> logsItemTag)
+                      TagKey<Block> logsBlockTag,
+                      TagKey<Item> logsItemTag)
 {
 	/**
 	 * Gets all blocks in this set.

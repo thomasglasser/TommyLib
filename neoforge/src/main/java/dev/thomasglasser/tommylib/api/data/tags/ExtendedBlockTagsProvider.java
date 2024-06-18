@@ -27,20 +27,20 @@ public abstract class ExtendedBlockTagsProvider extends BlockTagsProvider
      */
     protected void woodSet(WoodSet set)
     {
-        tag(set.logsBlockTag().get())
+        tag(set.logsBlockTag())
                 .add(set.log().get(), set.strippedLog().get(), set.wood().get(), set.strippedWood().get());
 
         tag(BlockTags.PLANKS)
                 .add(set.planks().get());
 
         tag(BlockTags.LOGS_THAT_BURN)
-                .addTag(set.logsBlockTag().get());
+                .addTag(set.logsBlockTag());
 
         tag(BlockTags.OVERWORLD_NATURAL_LOGS)
                 .add(set.log().get());
 
         tag(BlockTags.MINEABLE_WITH_AXE)
-                .addTag(set.logsBlockTag().get())
+                .addTag(set.logsBlockTag())
                 .add(set.planks().get());
     }
 

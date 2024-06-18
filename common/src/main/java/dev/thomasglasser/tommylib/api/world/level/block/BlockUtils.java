@@ -3,6 +3,7 @@ package dev.thomasglasser.tommylib.api.world.level.block;
 import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -104,49 +105,46 @@ public class BlockUtils
 	}
 
 	/**
-	 * Register a {@link WoodSet} with the given provider and id
+	 * Register a {@link WoodSet} with the given provider and name in the provider's namespace
 	 * @param provider The provider to register the blocks with
-	 * @param id The id of the wood set
+	 * @param name The name of the wood set
 	 * @param mapColor The map color of the wood set
 	 * @param logMapColor The map color of the logs
-	 * @param logsBlockTag The tag key for the log blocks
-	 * @param logsItemTag The tag key for the log items
-	 * @param itemFactory The item factory
+	 * @param itemFactory The item registration factory
 	 * @return The wood set
 	 */
-	public static WoodSet registerWoodSet(DeferredRegister.Blocks provider, ResourceLocation id, MapColor mapColor, MapColor logMapColor, Supplier<TagKey<Block>> logsBlockTag, Supplier<TagKey<Item>> logsItemTag, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory)
+	public static WoodSet registerWoodSet(DeferredRegister.Blocks provider, String name, MapColor mapColor, MapColor logMapColor, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory)
 	{
-		DeferredBlock<?> log = registerBlockAndItemAndWrap(provider, id.getPath() + "_log", () -> Blocks.log(mapColor, logMapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS, CreativeModeTabs.NATURAL_BLOCKS));
-		DeferredBlock<?> strippedLog = registerBlockAndItemAndWrap(provider, "stripped_" + id.getPath() + "_log", () -> Blocks.log(mapColor, mapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
-		DeferredBlock<?> wood = registerBlockAndItemAndWrap(provider, id.getPath() + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
-		DeferredBlock<?> strippedWood = registerBlockAndItemAndWrap(provider, "stripped_" + id.getPath() + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
+		DeferredBlock<?> log = registerBlockAndItemAndWrap(provider, name + "_log", () -> Blocks.log(mapColor, logMapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS, CreativeModeTabs.NATURAL_BLOCKS));
+		DeferredBlock<?> strippedLog = registerBlockAndItemAndWrap(provider, "stripped_" + name + "_log", () -> Blocks.log(mapColor, mapColor), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
+		DeferredBlock<?> wood = registerBlockAndItemAndWrap(provider, name + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
+		DeferredBlock<?> strippedWood = registerBlockAndItemAndWrap(provider, "stripped_" + name + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
 		STRIPPABLES.put(log.getId(), strippedLog);
 		STRIPPABLES.put(wood.getId(), strippedWood);
-		return new WoodSet(id,
-				registerBlockAndItemAndWrap(provider, id.getPath() + "_planks", () -> new Block(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
+		return new WoodSet(new ResourceLocation(provider.getNamespace(), name),
+				registerBlockAndItemAndWrap(provider, name + "_planks", () -> new Block(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
 				log,
 				strippedLog,
 				wood,
 				strippedWood,
-				logsBlockTag,
-				logsItemTag);
+				TagKey.create(Registries.BLOCK, new ResourceLocation(provider.getNamespace(), name + "_logs")),
+				TagKey.create(Registries.ITEM, new ResourceLocation(provider.getNamespace(), name + "_logs")));
 	}
 
 	/**
-	 * Register a {@link LeavesSet} with the given provider and id
+	 * Register a {@link LeavesSet} with the given provider and name in the provider's namespace
 	 * @param provider The provider to register the blocks with
-	 * @param id The id of the leaves set
 	 * @param treeGrower The tree grower for the sapling
 	 * @param itemFactory The item factory
 	 * @return The leaves set
 	 */
-	public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, ResourceLocation id, TreeGrower treeGrower, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory)
+	public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, String name, TreeGrower treeGrower, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory)
 	{
-		DeferredBlock<?> sapling = registerBlockAndItemAndWrap(provider, id.getPath() + "_sapling", () -> new SaplingBlock(treeGrower, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS));
-		return new LeavesSet(id,
-				registerBlockAndItemAndWrap(provider, id.getPath() + "_leaves", () -> Blocks.leaves(SoundType.GRASS), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS)),
+		DeferredBlock<?> sapling = registerBlockAndItemAndWrap(provider, name + "_sapling", () -> new SaplingBlock(treeGrower, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS));
+		return new LeavesSet(new ResourceLocation(provider.getNamespace(), name),
+				registerBlockAndItemAndWrap(provider, name + "_leaves", () -> Blocks.leaves(SoundType.GRASS), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS)),
 				sapling,
-				register(provider, "potted_" + id.getPath() + "_sapling", () -> Blocks.flowerPot(sapling.get())));
+				register(provider, "potted_" + name + "_sapling", () -> Blocks.flowerPot(sapling.get())));
 	}
 
 	/**

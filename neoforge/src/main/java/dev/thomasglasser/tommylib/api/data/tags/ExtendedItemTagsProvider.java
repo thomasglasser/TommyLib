@@ -38,13 +38,13 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider
      */
     protected void woodSet(WoodSet set)
     {
-        copy(set.logsBlockTag().get(), set.logsItemTag().get());
+        copy(set.logsBlockTag(), set.logsItemTag());
 
         tag(ItemTags.PLANKS)
                 .add(set.planks().get().asItem());
 
         tag(ItemTags.LOGS_THAT_BURN)
-                .addTag(set.logsItemTag().get());
+                .addTag(set.logsItemTag());
     }
 
     /**
