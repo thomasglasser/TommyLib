@@ -69,7 +69,7 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
 		ArrayList<SoundDefinition.Sound> sounds = new ArrayList<>();
 		for (int i = 1; i < variants + 1; i++)
 		{
-			sounds.add(sound(new ResourceLocation(sound.getNamespace(), sound.getPath() + i)));
+			sounds.add(sound(ResourceLocation.fromNamespaceAndPath(sound.getNamespace(), sound.getPath() + i)));
 		}
 		return define(subtitle, sounds.toArray(new SoundDefinition.Sound[] {}));
 	}
@@ -83,7 +83,7 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
 	{
 		if (location.getPath().contains("."))
 		{
-			return sound(new ResourceLocation(location.getNamespace(), location.getPath().replace('.', '/')));
+			return sound(ResourceLocation.fromNamespaceAndPath(location.getNamespace(), location.getPath().replace('.', '/')));
 		}
 		return SoundDefinitionsProvider.sound(location);
 	}

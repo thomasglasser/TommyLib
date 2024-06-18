@@ -2,7 +2,7 @@ package dev.thomasglasser.tommylib.api.client.renderer.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
+import dev.thomasglasser.tommylib.api.client.ClientUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -25,7 +25,7 @@ public class PerspectiveAwareGeoItemRenderer<T extends Item & GeoAnimatable> ext
 	{
 		super(model);
 		this.inventoryAssetLoc = inventoryAssetLoc;
-		this.worldAssetLoc = new ResourceLocation(inventoryAssetLoc.getNamespace(), "textures/item/geo/" + inventoryAssetLoc.getPath() + ".png");
+		this.worldAssetLoc = ResourceLocation.fromNamespaceAndPath(inventoryAssetLoc.getNamespace(), "textures/item/geo/" + inventoryAssetLoc.getPath() + ".png");
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class PerspectiveAwareGeoItemRenderer<T extends Item & GeoAnimatable> ext
 			poseStack.translate(0.5D, 0.5D, 0.5D);
 			poseStack.mulPose(Axis.YN.rotationDegrees(90));
 			poseStack.mulPose(Axis.ZN.rotationDegrees(0.1f));
-			TommyLibServices.ITEM.renderItem(stack, displayContext, false, poseStack, bufferSource, packedLight, packedOverlay, inventoryAssetLoc.getNamespace(), inventoryAssetLoc.getPath() + "_inventory");
+			ClientUtils.renderItem(stack, displayContext, false, poseStack, bufferSource, packedLight, packedOverlay, inventoryAssetLoc.getNamespace(), inventoryAssetLoc.getPath() + "_inventory");
 		}
 		else
 			super.renderByItem(stack, displayContext, poseStack, bufferSource, packedLight, packedOverlay);

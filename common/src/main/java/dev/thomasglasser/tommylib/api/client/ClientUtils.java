@@ -1,16 +1,21 @@
 package dev.thomasglasser.tommylib.api.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.thomasglasser.tommylib.api.world.item.ItemUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -121,5 +126,42 @@ public class ClientUtils
         KeyMapping mapping = new KeyMapping(name.toLanguageKey("key"), key, category);
         KEY_MAPPINGS.add(mapping);
         return mapping;
+    }
+
+    /**
+     * Renders an item inventory model.
+     * @param itemStack The item stack to render.
+     * @param displayContext The display context of the item.
+     * @param leftHand Whether the item is in the left hand.
+     * @param poseStack The pose stack.
+     * @param buffer The buffer.
+     * @param combinedLight The combined light.
+     * @param combinedOverlay The combined overlay.
+     * @param modid The mod ID of the item.
+     * @param model The model of the item.
+     */
+    public static void renderItem(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, String modid, String model) {
+        ClientUtils.getMinecraft().getItemRenderer().render(itemStack, displayContext, leftHand, poseStack, buffer, combinedLight, combinedOverlay, ClientUtils.getMinecraft().getModelManager().getModel(ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(modid, model))));
+    }
+
+    /**
+     * Renders an item inventory model with a fallback model.
+     * @param itemStack The item stack to render.
+     * @param displayContext The display context of the item.
+     * @param leftHand Whether the item is in the left hand.
+     * @param poseStack The pose stack.
+     * @param buffer The buffer.
+     * @param combinedLight The combined light.
+     * @param combinedOverlay The combined overlay.
+     * @param modid The mod ID of the item.
+     * @param model The model of the item.
+     * @param fallbackModel The fallback model of the item.
+     */
+    public static void renderItem(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, String modid, String model, String fallbackModel)
+    {
+        BakedModel m = ClientUtils.getMinecraft().getModelManager().getModel(ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(modid, model)));
+        if (m == ClientUtils.getMinecraft().getModelManager().getMissingModel())
+            m = ClientUtils.getMinecraft().getModelManager().getModel(ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(modid, fallbackModel)));
+        ClientUtils.getMinecraft().getItemRenderer().render(itemStack, displayContext, leftHand, poseStack, buffer, combinedLight, combinedOverlay, m);
     }
 }

@@ -121,14 +121,14 @@ public class BlockUtils
 		DeferredBlock<?> strippedWood = registerBlockAndItemAndWrap(provider, "stripped_" + name + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
 		STRIPPABLES.put(log.getId(), strippedLog);
 		STRIPPABLES.put(wood.getId(), strippedWood);
-		return new WoodSet(new ResourceLocation(provider.getNamespace(), name),
+		return new WoodSet(ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name),
 				registerBlockAndItemAndWrap(provider, name + "_planks", () -> new Block(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
 				log,
 				strippedLog,
 				wood,
 				strippedWood,
-				TagKey.create(Registries.BLOCK, new ResourceLocation(provider.getNamespace(), name + "_logs")),
-				TagKey.create(Registries.ITEM, new ResourceLocation(provider.getNamespace(), name + "_logs")));
+				TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name + "_logs")),
+				TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name + "_logs")));
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class BlockUtils
 	public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, String name, TreeGrower treeGrower, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory)
 	{
 		DeferredBlock<?> sapling = registerBlockAndItemAndWrap(provider, name + "_sapling", () -> new SaplingBlock(treeGrower, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS));
-		return new LeavesSet(new ResourceLocation(provider.getNamespace(), name),
+		return new LeavesSet(ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name),
 				registerBlockAndItemAndWrap(provider, name + "_leaves", () -> Blocks.leaves(SoundType.GRASS), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS)),
 				sapling,
 				register(provider, "potted_" + name + "_sapling", () -> Blocks.flowerPot(sapling.get())));

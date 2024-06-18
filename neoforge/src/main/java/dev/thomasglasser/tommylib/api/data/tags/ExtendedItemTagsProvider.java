@@ -29,7 +29,7 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider
      */
     protected static ResourceLocation cLoc(String path)
     {
-        return new ResourceLocation("c", path);
+        return ResourceLocation.fromNamespaceAndPath("c", path);
     }
 
     /**

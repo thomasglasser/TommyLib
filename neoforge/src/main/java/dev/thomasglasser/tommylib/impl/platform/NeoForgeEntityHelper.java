@@ -7,7 +7,7 @@ import dev.thomasglasser.tommylib.impl.platform.services.EntityHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -29,7 +29,7 @@ public class NeoForgeEntityHelper implements EntityHelper
 		DeferredRegister<EntityDataSerializer<?>> register = DATA_SERIALIZERS.computeIfAbsent(modId, id ->
 		{
 			DeferredRegister<EntityDataSerializer<?>> reg = DeferredRegister.create(NeoForgeRegistries.ENTITY_DATA_SERIALIZERS, id);
-			reg.register(FMLJavaModLoadingContext.get().getModEventBus());
+			reg.register(ModLoadingContext.get().getActiveContainer().getEventBus());
 			return reg;
 		});
 		serializers.forEach((name, serializer) -> register.register(name, () -> serializer));

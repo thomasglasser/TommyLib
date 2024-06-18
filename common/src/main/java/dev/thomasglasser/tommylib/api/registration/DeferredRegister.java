@@ -201,7 +201,7 @@ public abstract class DeferredRegister<T> {
      */
     public TagKey<T> createTagKey(String path) {
         Objects.requireNonNull(path);
-        return createTagKey(new ResourceLocation(this.namespace, path));
+        return createTagKey(ResourceLocation.fromNamespaceAndPath(this.namespace, path));
     }
 
     /**

@@ -27,20 +27,6 @@ public class FabricItemHelper implements ItemHelper
     }
 
     @Override
-    public void renderItem(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, String modid, String model) {
-        ClientUtils.getMinecraft().getItemRenderer().render(itemStack, displayContext, false, poseStack, buffer, combinedLight, combinedOverlay, ClientUtils.getMinecraft().getModelManager().getModel(new ModelResourceLocation(new ResourceLocation(modid, model), "inventory")));
-    }
-
-    @Override
-    public void renderItem(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, String modid, String model, String defaultModel)
-    {
-        BakedModel m = ClientUtils.getMinecraft().getModelManager().getModel(new ModelResourceLocation(new ResourceLocation(modid, model), "inventory"));
-        if (m == ClientUtils.getMinecraft().getModelManager().getMissingModel())
-            m = ClientUtils.getMinecraft().getModelManager().getModel(new ModelResourceLocation(new ResourceLocation(modid, defaultModel), "inventory"));
-        ClientUtils.getMinecraft().getItemRenderer().render(itemStack, displayContext, false, poseStack, buffer, combinedLight, combinedOverlay, m);
-    }
-
-    @Override
     public final CreativeModeTab newTab(Component title, Supplier<ItemStack> icon, boolean search, CreativeModeTab.DisplayItemsGenerator displayItems) {
         CreativeModeTab.Builder builder = FabricItemGroup.builder().title(title).icon(icon).displayItems(displayItems);
         return builder.build();

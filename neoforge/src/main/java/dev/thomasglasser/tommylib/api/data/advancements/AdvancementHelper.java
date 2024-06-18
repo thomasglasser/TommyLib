@@ -246,6 +246,6 @@ public class AdvancementHelper
      */
     private ResourceLocation modLoc(String path)
     {
-        return new ResourceLocation(modId, path);
+        return ResourceLocation.fromNamespaceAndPath(modId, path);
     }
 }

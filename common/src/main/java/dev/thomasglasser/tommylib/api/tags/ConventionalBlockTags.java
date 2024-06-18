@@ -18,7 +18,6 @@ package dev.thomasglasser.tommylib.api.tags;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
@@ -50,7 +49,8 @@ public final class ConventionalBlockTags {
 	public static final TagKey<Block> WOODEN_CHESTS = register("chests/wooden");
 	public static final TagKey<Block> GLASS_BLOCKS = register("glass_blocks");
 	public static final TagKey<Block> GLASS_PANES = register("glass_panes");
-	public static final TagKey<Block> SHULKER_BOXES = register("shulker_boxes");
+	public static final TagKey<Block> GLAZED_TERRACOTTAS = register("glazed_terracottas");
+	public static final TagKey<Block> CONCRETES = register("concretes");
 
 	// Related to budding mechanics
 	/**

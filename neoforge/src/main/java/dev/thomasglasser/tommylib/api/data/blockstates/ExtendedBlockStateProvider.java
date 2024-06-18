@@ -123,7 +123,7 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider
 	 */
 	public static ResourceLocation mcBlockModel(String path)
 	{
-		return new ResourceLocation("block/" + path);
+		return ResourceLocation.withDefaultNamespace("block/" + path);
 	}
 
 	/**

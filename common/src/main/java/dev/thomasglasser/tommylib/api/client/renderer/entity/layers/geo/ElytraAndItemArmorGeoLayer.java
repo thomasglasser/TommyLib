@@ -68,9 +68,9 @@ public abstract class ElytraAndItemArmorGeoLayer<T extends LivingEntity & GeoAni
 		poseStack.scale(-1, -1, 1);
 		poseStack.translate(0, -1.5, 0.1);
 
-		ResourceLocation texture = new ResourceLocation("textures/entity/elytra.png");
+		ResourceLocation texture = ResourceLocation.withDefaultNamespace("textures/entity/elytra.png");
 		VertexConsumer buffer = armorStack.hasFoil() ? bufferSource.getBuffer(RenderType.armorEntityGlint()) : bufferSource.getBuffer(RenderType.armorCutoutNoCull(texture));
-		modelPart.render(poseStack, buffer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+		modelPart.render(poseStack, buffer, packedLight, packedOverlay);
 
 		poseStack.popPose();
 	}

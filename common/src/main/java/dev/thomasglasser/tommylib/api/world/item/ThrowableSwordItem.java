@@ -9,14 +9,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 /**
  * A {@link SwordItem} that can be thrown and enchanted with Loyalty.
  */
-public abstract class ThrowableSwordItem extends SwordItem implements Enchantable
+public abstract class ThrowableSwordItem extends SwordItem
 {
     public ThrowableSwordItem(Tier pTier, Properties pProperties) {
         super(pTier, pProperties);
@@ -45,9 +43,4 @@ public abstract class ThrowableSwordItem extends SwordItem implements Enchantabl
 
     @Override
     public abstract void releaseUsing(ItemStack stack, Level level, LivingEntity livingEntity, int timeCharged);
-
-    @Override
-    public boolean canEnchant(Enchantment enchantment, ItemStack stack) {
-        return enchantment == Enchantments.LOYALTY;
-    }
 }

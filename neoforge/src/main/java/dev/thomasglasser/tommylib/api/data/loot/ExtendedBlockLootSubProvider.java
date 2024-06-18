@@ -4,13 +4,17 @@ import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
 import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.functions.CopyBlockState;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,26 +30,52 @@ public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider
 
 	/**
 	 * Creates a new {@link ExtendedBlockLootSubProvider} knowing all blocks in a {@link Set}.
-	 * @param pExplosionResistant The set of items that are explosion resistant.
-	 * @param pEnabledFeatures The {@link FeatureFlagSet} of enabled features.
+	 * @param explosionResistant The set of items that are explosion resistant.
+	 * @param enabledFeatures The {@link FeatureFlagSet} of enabled features.
 	 * @param knownBlocks The {@link Set} of blocks to generate loot tables for.
 	 */
-	protected ExtendedBlockLootSubProvider(Set<Item> pExplosionResistant, FeatureFlagSet pEnabledFeatures, Set<Block> knownBlocks)
+	protected ExtendedBlockLootSubProvider(Set<Item> explosionResistant, FeatureFlagSet enabledFeatures, HolderLookup.Provider provider, Set<Block> knownBlocks)
 	{
-		super(pExplosionResistant, pEnabledFeatures);
+		super(explosionResistant, enabledFeatures, provider);
+		this.knownBlocks = knownBlocks;
+	}
+
+	/**
+	 * Creates a new {@link ExtendedBlockLootSubProvider} knowing all blocks in a {@link Set}.
+	 * @param explosionResistant The set of items that are explosion resistant.
+	 * @param enabledFeatures The {@link FeatureFlagSet} of enabled features.
+	 * @param existingTables The existing loot tables map to add to.
+	 * @param provider The {@link HolderLookup.Provider} to use for registry lookups.
+	 * @param knownBlocks The {@link Set} of blocks to generate loot tables for.
+	 */
+	protected ExtendedBlockLootSubProvider(Set<Item> explosionResistant, FeatureFlagSet enabledFeatures, Map<ResourceKey<LootTable>, LootTable.Builder> existingTables, HolderLookup.Provider provider, Set<Block> knownBlocks)
+	{
+		super(explosionResistant, enabledFeatures, existingTables, provider);
 		this.knownBlocks = knownBlocks;
 	}
 
 	/**
 	 * Creates a new {@link ExtendedBlockLootSubProvider} knowing all blocks in a {@link DeferredRegister}.
-	 * @param pExplosionResistant The set of items that are explosion resistant.
-	 * @param pEnabledFeatures The {@link FeatureFlagSet} of enabled features.
+	 * @param explosionResistant The set of items that are explosion resistant.
+	 * @param enabledFeatures The {@link FeatureFlagSet} of enabled features.
 	 * @param knownBlocks The {@link DeferredRegister} of blocks to generate loot tables for.
 	 */
-	protected ExtendedBlockLootSubProvider(Set<Item> pExplosionResistant, FeatureFlagSet pEnabledFeatures, DeferredRegister<Block> knownBlocks)
+	protected ExtendedBlockLootSubProvider(Set<Item> explosionResistant, FeatureFlagSet enabledFeatures, HolderLookup.Provider provider, DeferredRegister<Block> knownBlocks)
 	{
-		super(pExplosionResistant, pEnabledFeatures);
-		this.knownBlocks = knownBlocks.getEntries().stream().map(DeferredHolder::get).collect(Collectors.toSet());
+		this(explosionResistant, enabledFeatures, provider, knownBlocks.getEntries().stream().map(DeferredHolder::get).collect(Collectors.toSet()));
+	}
+
+	/**
+	 * Creates a new {@link ExtendedBlockLootSubProvider} knowing all blocks in a {@link DeferredRegister}.
+	 * @param explosionResistant The set of items that are explosion resistant.
+	 * @param enabledFeatures The {@link FeatureFlagSet} of enabled features.
+	 * @param existingTables The existing loot tables map to add to.
+	 * @param provider The {@link HolderLookup.Provider} to use for registry lookups.
+	 * @param knownBlocks The {@link DeferredRegister} of blocks to generate loot tables for.
+	 */
+	protected ExtendedBlockLootSubProvider(Set<Item> explosionResistant, FeatureFlagSet enabledFeatures, Map<ResourceKey<LootTable>, LootTable.Builder> existingTables, HolderLookup.Provider provider, DeferredRegister<Block> knownBlocks)
+	{
+		this(explosionResistant, enabledFeatures, existingTables, provider, knownBlocks.getEntries().stream().map(DeferredHolder::get).collect(Collectors.toSet()));
 	}
 
 	/**

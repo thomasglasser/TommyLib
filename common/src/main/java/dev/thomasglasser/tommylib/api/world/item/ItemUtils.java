@@ -47,7 +47,7 @@ public final class ItemUtils
     {
         for (ResourceKey<CreativeModeTab> tab: tabs) {
             ArrayList<ResourceLocation> list = ItemUtils.getItemTabs().computeIfAbsent(tab, empty -> new ArrayList<>());
-            list.add(new ResourceLocation(provider.getNamespace(), name));
+            list.add(ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name));
         }
         return provider.register(name, item);
     }

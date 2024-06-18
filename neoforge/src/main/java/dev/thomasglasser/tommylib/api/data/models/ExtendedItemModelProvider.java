@@ -30,7 +30,7 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider
 	 */
 	public ItemModelBuilder basicInventoryItem(ResourceLocation item)
 	{
-		return basicItem(new ResourceLocation(item.getNamespace(), item.getPath() + "_inventory"), item.getPath());
+		return basicItem(ResourceLocation.fromNamespaceAndPath(item.getNamespace(), item.getPath() + "_inventory"), item.getPath());
 	}
 	public ItemModelBuilder basicInventoryItem(DeferredItem<?> item)
 	{
@@ -46,7 +46,7 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider
 	public ItemModelBuilder basicItem(ResourceLocation item, String textureLoc) {
 		return getBuilder(item.toString())
 				.parent(new ModelFile.UncheckedModelFile("item/generated"))
-				.texture("layer0", new ResourceLocation(item.getNamespace(), "item/" + textureLoc));
+				.texture("layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "item/" + textureLoc));
 	}
 	public ItemModelBuilder basicItem(DeferredItem<?> item, String textureLoc) {
 		return basicItem(item.getId(), textureLoc);
@@ -58,7 +58,7 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider
 	 */
 	protected void basicItemHandheld(ResourceLocation item)
 	{
-		singleTexture(item.getPath(), mcLoc("item/handheld"), "layer0", new ResourceLocation(item.getNamespace(), "item/" + item.getPath()));
+		singleTexture(item.getPath(), mcLoc("item/handheld"), "layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "item/" + item.getPath()));
 	}
 	protected void basicItemHandheld(DeferredItem<?> item)
 	{
@@ -72,7 +72,7 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider
 	 */
 	protected void basicItemHandheld(ResourceLocation item, String textureLoc)
 	{
-		singleTexture(item.getPath(), mcLoc("item/handheld"), "layer0", new ResourceLocation(item.getNamespace(), "item/" + textureLoc));
+		singleTexture(item.getPath(), mcLoc("item/handheld"), "layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "item/" + textureLoc));
 	}
 	protected void basicItemHandheld(DeferredItem<?> item, String textureLoc)
 	{
@@ -122,7 +122,7 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider
 	protected void basicBlockItem(Block block)
 	{
 		ResourceLocation rl = BuiltInRegistries.BLOCK.getKey(block);
-		withExistingParent(rl.getPath(), new ResourceLocation(rl.getNamespace(), "block/" + rl.getPath()));
+		withExistingParent(rl.getPath(), ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), "block/" + rl.getPath()));
 	}
 
 	/**
@@ -132,7 +132,7 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider
 	 */
 	public ResourceLocation modItemModel(String path)
 	{
-		return new ResourceLocation(modid, "item/" + path);
+		return ResourceLocation.fromNamespaceAndPath(modid, "item/" + path);
 	}
 
 	/**
@@ -152,6 +152,6 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider
 	 */
 	public ResourceLocation mcItemModel(String path)
 	{
-		return new ResourceLocation("item/" + path);
+		return ResourceLocation.withDefaultNamespace("item/" + path);
 	}
 }

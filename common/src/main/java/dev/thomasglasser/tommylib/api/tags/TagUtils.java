@@ -15,7 +15,7 @@ public class TagUtils
 	 * @return the tag key
 	 */
 	public static <T> TagKey<T> registerConventional(ResourceKey<? extends Registry<T>> registry, String tagId) {
-		return TagKey.create(registry, new ResourceLocation("c", tagId));
+		return TagKey.create(registry, ResourceLocation.fromNamespaceAndPath("c", tagId));
 	}
 
 	/**
@@ -27,6 +27,6 @@ public class TagUtils
 	 */
 	public static <T> TagKey<T> logs(ResourceKey<Registry<T>> registry, WoodSet set)
 	{
-		return TagKey.create(registry, new ResourceLocation(set.id().getNamespace(), set.id().getPath() + "_logs"));
+		return TagKey.create(registry, ResourceLocation.fromNamespaceAndPath(set.id().getNamespace(), set.id().getPath() + "_logs"));
 	}
 }

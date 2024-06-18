@@ -58,7 +58,7 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
 
         @Override
         public <I extends T> DeferredHolder<T, I> register(String name, Supplier<? extends I> supplier) {
-            final var rl = new ResourceLocation(getNamespace(), name);
+            final var rl = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
             Registry.register(getRegistry().get(), rl, supplier.get());
             DeferredHolder<T, I> ret = DeferredHolder.create(getRegistryKey(), rl);
             this.entries.add(ret);
@@ -89,7 +89,7 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
         @Override
         public <I extends Item> DeferredItem<I> register(String name, Supplier<? extends I> sup)
         {
-            final var rl = new ResourceLocation(getNamespace(), name);
+            final var rl = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
             Registry.register(getRegistry().get(), rl, sup.get());
             DeferredItem<I> ret = DeferredItem.createItem(rl);
             this.entries.add(ret);
@@ -115,7 +115,7 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
         @Override
         public <I extends Block> DeferredBlock<I> register(String name, Supplier<? extends I> sup)
         {
-            final var rl = new ResourceLocation(getNamespace(), name);
+            final var rl = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
             Registry.register(getRegistry().get(), rl, sup.get());
             DeferredBlock<I> ret = DeferredBlock.createBlock(rl);
             this.entries.add(ret);
