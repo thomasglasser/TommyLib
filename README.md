@@ -2,5 +2,5 @@
 
 Package repository hosting is graciously provided by  [Cloudsmith](https://cloudsmith.com).
 Cloudsmith is the only fully hosted, cloud-native, universal package management solution, that
-enables your organization to create, store and share packages in any format, to any place, with total
+enables your organization to create, store, and share packages in any format, to any place, with total
 confidence.
