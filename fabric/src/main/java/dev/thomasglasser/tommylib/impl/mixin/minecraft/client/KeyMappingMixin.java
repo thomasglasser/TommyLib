@@ -20,7 +20,7 @@ public class KeyMappingMixin implements Comparable<KeyMapping>
 
 	/**
 	 * @author Thomas Glasser
-	 * Fixes errors with using the order map, code copied from NeoForge
+	 * @reason Fixes errors with using the order map, code copied from NeoForge
 	 */
 	@Override
 	@Overwrite

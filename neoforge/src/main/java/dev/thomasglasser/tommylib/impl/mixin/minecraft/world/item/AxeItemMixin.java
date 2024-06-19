@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(AxeItem.class)
-public class NeoForgeAxeItemMixin
+public class AxeItemMixin
 {
 	@ModifyExpressionValue(method = "getAxeStrippingState", at = @At(value = "INVOKE", target = "Ljava/util/Map;get(Ljava/lang/Object;)Ljava/lang/Object;"))
 	private static Object getAxeStrippingState(Object original, BlockState originalState) {

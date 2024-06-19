@@ -19,14 +19,18 @@ neoForge {
     runs {
         client {
             client()
-
+            ideName = "NeoForge Client"
+            gameDirectory = project.layout.projectDirectory.dir('runs/client')
         }
-        client_alt {
-            client()
-            programArguments = ["--username", "DevAlt"]
+        server {
+            server()
+            ideName = "NeoForge Server"
+            gameDirectory = project.layout.projectDirectory.dir('runs/server')
         }
         data {
             data()
+            ideName = "NeoForge Data Generation"
+            gameDirectory = project.layout.projectDirectory.dir('runs/data')
             programArguments = ['--output', file('../common/src/generated/resources/').getAbsolutePath(), '--existing', file('../common/src/main/resources/').getAbsolutePath()]
         }
     }
@@ -42,23 +46,4 @@ dependencies {
     compileOnly "net.tslat.effectslib:TslatEffectsLib-neoforge-${minecraft_version}:${tslateffectslib_version}"
     compileOnly "net.tslat.smartbrainlib:SmartBrainLib-neoforge-${minecraft_version}:${sbl_version}"
     compileOnly "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
-}
-
-// NeoGradle compiles the game, but we don't want to add our common code to the game's code
-Spec<Task> notNeoTask = { Task it -> !it.name.startsWith("neo") } as Spec<Task>
-
-tasks.withType(JavaCompile).matching(notNeoTask).configureEach {
-    source(project(":common").sourceSets.main.allSource)
-}
-
-tasks.withType(Javadoc).matching(notNeoTask).configureEach {
-    source(project(":common").sourceSets.main.allJava)
-}
-
-tasks.named("sourcesJar", Jar) {
-    from(project(":common").sourceSets.main.allSource)
-}
-
-tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
-    from project(":common").sourceSets.main.resources
 }

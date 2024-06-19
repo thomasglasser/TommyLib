@@ -174,22 +174,22 @@ jar {
 
 processResources {
     def expandProps = [
-            "version"               : version,
-            "group"                 : project.group,
-            "minecraft_version"     : minecraft_version,
+            "version": version,
+            "group": project.group,
+            "minecraft_version": minecraft_version,
             "next_minecraft_version": next_minecraft_version,
-            "fabric_version"        : fabric_version,
-            "fabric_loader_version" : fabric_loader_version,
-            "mod_name"              : mod_name,
-            "mod_author"            : mod_author,
-            "mod_id"                : mod_id,
-            "license"               : license,
-            "description"           : project.description,
-            "neoforge_version"      : neoforge_version,
-            "major_fml_version"     : major_fml_version,
-            "contributors"          : contributors,
-            "java_version"          : java_version,
-            "github_name"           : github_name,
+            "fabric_version": fabric_version,
+            "fabric_loader_version": fabric_loader_version,
+            "mod_name": mod_name,
+            "mod_author": mod_author,
+            "mod_id": mod_id,
+            "license": license,
+            "description": project.description,
+            "neoforge_version": neoforge_version,
+            "major_fml_version": major_fml_version,
+            "contributors": contributors,
+            "java_version": java_version,
+            "github_name": github_name,
     ]
 
     filesMatching(['fabric.mod.json', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {

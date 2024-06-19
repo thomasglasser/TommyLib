@@ -22,7 +22,8 @@ public class AnimationUtils
 
 	public static void registerPlayerForAnimation()
 	{
-		PlayerAnimationAccess.REGISTER_ANIMATION_EVENT.register(AnimationUtils::registerPlayerInternal);
+		// TODO: Update playerAnimator
+//		PlayerAnimationAccess.REGISTER_ANIMATION_EVENT.register(AnimationUtils::registerPlayerInternal);
 	}
 
 	/**
