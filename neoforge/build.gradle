@@ -31,7 +31,13 @@ neoForge {
             data()
             ideName = "NeoForge Data Generation"
             gameDirectory = project.layout.projectDirectory.dir('runs/data')
-            programArguments = ['--output', file('../common/src/generated/resources/').getAbsolutePath(), '--existing', file('../common/src/main/resources/').getAbsolutePath()]
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('../common/src/generated/resources/').getAbsolutePath(), '--existing', file('../common/src/main/resources/').getAbsolutePath()
+        }
+    }
+
+    mods {
+        tommylib {
+            sourceSet sourceSets.main
         }
     }
 }
