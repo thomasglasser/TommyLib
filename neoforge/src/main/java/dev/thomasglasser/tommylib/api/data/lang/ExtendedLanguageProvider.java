@@ -55,12 +55,24 @@ public abstract class ExtendedLanguageProvider extends LanguageProvider
 	 * @param pattern The pattern to add the translation for.
 	 * @param name The name of the pattern.
 	 */
-	public void add(ResourceKey<BannerPattern> pattern, String name)
+	public void addPattern(ResourceKey<BannerPattern> pattern, String name)
 	{
 		for (DyeColor color: DyeColor.values())
 		{
 			add("block.minecraft." + pattern.location().toLanguageKey("banner") + "." + color.getName(), WordUtils.capitalize(color.getName().replace('_', ' ')) + " " + name);
 		}
+	}
+
+	/**
+	 * Adds a translation for a given {@link PaintingVariant}.
+	 * @param key The {@link ResourceKey} of the painting to add the translation for.
+	 * @param title The title of the painting.
+	 * @param author The author of the painting.
+	 */
+	public void addPaintingVariant(ResourceKey<PaintingVariant> key, String title, String author)
+	{
+		add(key.location().toLanguageKey("painting") + ".title", title);
+		add(key.location().toLanguageKey("painting") + ".author", author);
 	}
 
 	/**
@@ -139,18 +151,6 @@ public abstract class ExtendedLanguageProvider extends LanguageProvider
 	public void add(DeferredHolder<SoundEvent, ?> sound, String name)
 	{
 		add("subtitles." + sound.get().getLocation().getPath(), name);
-	}
-
-	/**
-	 * Adds a translation for a given {@link PaintingVariant}.
-	 * @param painting The painting to add the translation for.
-	 * @param title The title of the painting.
-	 * @param author The author of the painting.
-	 */
-	public void add(DeferredHolder<PaintingVariant, ?> painting, String title, String author)
-	{
-		add(painting.getId().toLanguageKey("painting") + ".title", title);
-		add(painting.getId().toLanguageKey("painting") + ".author", author);
 	}
 
 	/**

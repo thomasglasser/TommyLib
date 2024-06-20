@@ -11,6 +11,7 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
+// TODO: Add AbstractArrow for entity version
 /**
  * A {@link SwordItem} that can be thrown and enchanted with Loyalty.
  */
