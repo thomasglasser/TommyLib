@@ -5,14 +5,21 @@ import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.CopyBlockState;
+import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 import java.util.Map;
 import java.util.Set;
@@ -129,5 +136,28 @@ public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider
 			builder.copy(property);
 		}
 		add(block, createSingleItemTable(block.asItem()).apply(builder));
+	}
+
+	/**
+	 * Used for all leaves, drops self with silk touch,
+	 * otherwise drops the second Block param with the passed chances for fortune levels,
+	 * adding in sticks and the passed item.
+	 */
+	protected LootTable.Builder createFruitfulLeavesDrops(Block pOakLeavesBlock, Block pSaplingBlock, Item fruit, float... pChances) {
+		HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
+		return this.createLeavesDrops(pOakLeavesBlock, pSaplingBlock, pChances)
+				.withPool(
+						LootPool.lootPool()
+								.setRolls(ConstantValue.exactly(1.0F))
+								.when(this.doesNotHaveShearsOrSilkTouch())
+								.add(
+										(this.applyExplosionCondition(pOakLeavesBlock, LootItem.lootTableItem(fruit)))
+												.when(
+														BonusLevelTableCondition.bonusLevelFlatChance(
+																registrylookup.getOrThrow(Enchantments.FORTUNE), 0.005F, 0.0055555557F, 0.00625F, 0.008333334F, 0.025F
+														)
+												)
+								)
+				);
 	}
 }
