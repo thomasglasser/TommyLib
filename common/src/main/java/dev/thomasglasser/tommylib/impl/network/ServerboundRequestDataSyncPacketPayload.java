@@ -4,7 +4,6 @@ import dev.thomasglasser.tommylib.TommyLib;
 import dev.thomasglasser.tommylib.api.network.ExtendedPacketPayload;
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -24,12 +23,8 @@ public record ServerboundRequestDataSyncPacketPayload(int entity) implements Ext
 	public void handle(Player player)
 	{
 		Entity target = player.level().getEntity(entity);
-		TommyLibServices.NETWORK.sendToTrackingClients(new ClientboundSyncDataPacketPayload(TommyLibServices.ENTITY.getPersistentData(target), entity), player.level().getServer(), target);
-	}
-
-	private void write(ByteBuf buffer)
-	{
-		buffer.writeInt(entity);
+		if (target != null)
+			TommyLibServices.NETWORK.sendToTrackingClients(new ClientboundSyncDataPacketPayload(TommyLibServices.ENTITY.getPersistentData(target), entity), player.level().getServer(), target);
 	}
 
 	@Override
