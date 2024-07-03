@@ -28,6 +28,6 @@ public interface PlayerRideableFlying extends PlayerRideable {
      * @return True if the player is riding a flying entity.
      */
     static boolean isRidingFlyable(Player player) {
-        return player.getVehicle() instanceof PlayerRideableFlying && player.getVehicle().getControllingPassenger().is(player);
+        return player.getVehicle() instanceof PlayerRideableFlying && player.getVehicle().getControllingPassenger() == player;
     }
 }
