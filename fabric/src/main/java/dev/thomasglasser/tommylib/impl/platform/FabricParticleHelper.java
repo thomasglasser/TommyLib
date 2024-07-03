@@ -7,8 +7,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 
-public class FabricParticleHelper implements ParticleHelper
-{
+public class FabricParticleHelper implements ParticleHelper {
     @Override
     public SimpleParticleType simple(String name, PendingParticleFactory<SimpleParticleType> factory, boolean alwaysRender) {
         SimpleParticleType simple = FabricParticleTypes.simple(alwaysRender);
@@ -17,8 +16,7 @@ public class FabricParticleHelper implements ParticleHelper
     }
 
     @Override
-    public <T extends ParticleOptions> void fabricRegister(ParticleType<T> type, PendingParticleFactory<T> factory)
-    {
+    public <T extends ParticleOptions> void fabricRegister(ParticleType<T> type, PendingParticleFactory<T> factory) {
         ParticleFactoryRegistry.getInstance().register(type, factory::create);
     }
 }

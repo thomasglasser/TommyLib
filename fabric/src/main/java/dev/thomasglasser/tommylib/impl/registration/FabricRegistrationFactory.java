@@ -1,6 +1,5 @@
 /*
  * SPDX-FileCopyrightText: 2023 klikli-dev
- *
  * SPDX-License-Identifier: MIT
  */
 
@@ -10,20 +9,18 @@ import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
 import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Supplier;
-
 public class FabricRegistrationFactory implements DeferredRegister.Factory {
-
     @Override
     public <T> DeferredRegister<T> create(ResourceKey<? extends Registry<T>> resourceKey, String modId) {
         return new Provider<>(resourceKey, modId);
@@ -35,24 +32,20 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
     }
 
     @Override
-    public DeferredRegister.Items createItems(String modid)
-    {
+    public DeferredRegister.Items createItems(String modid) {
         return new ItemsProvider(modid);
     }
 
     @Override
-    public DeferredRegister.Blocks createBlocks(String modid)
-    {
+    public DeferredRegister.Blocks createBlocks(String modid) {
         return new BlocksProvider(modid);
     }
 
-    private static class Provider<T> extends DeferredRegister<T>
-    {
+    private static class Provider<T> extends DeferredRegister<T> {
         private final Set<DeferredHolder<T, ? extends T>> entries = new HashSet<>();
         private final Set<DeferredHolder<T, ? extends T>> entriesView = Collections.unmodifiableSet(this.entries);
 
-        protected Provider(ResourceKey<? extends Registry<T>> registryKey, String namespace)
-        {
+        protected Provider(ResourceKey<? extends Registry<T>> registryKey, String namespace) {
             super(registryKey, namespace);
         }
 
@@ -71,13 +64,11 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
         }
     }
 
-    private static class ItemsProvider extends DeferredRegister.Items
-    {
+    private static class ItemsProvider extends DeferredRegister.Items {
         private final Set<DeferredHolder<Item, ? extends Item>> entries = new HashSet<>();
         private final Set<DeferredHolder<Item, ? extends Item>> entriesView = Collections.unmodifiableSet(this.entries);
 
-        protected ItemsProvider(String namespace)
-        {
+        protected ItemsProvider(String namespace) {
             super(namespace);
         }
 
@@ -87,8 +78,7 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends Item> DeferredItem<I> register(String name, Supplier<? extends I> sup)
-        {
+        public <I extends Item> DeferredItem<I> register(String name, Supplier<? extends I> sup) {
             final var rl = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
             Registry.register(getRegistry().get(), rl, sup.get());
             DeferredItem<I> ret = DeferredItem.createItem(rl);
@@ -97,13 +87,11 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
         }
     }
 
-    private static class BlocksProvider extends DeferredRegister.Blocks
-    {
+    private static class BlocksProvider extends DeferredRegister.Blocks {
         private final Set<DeferredHolder<Block, ? extends Block>> entries = new HashSet<>();
         private final Set<DeferredHolder<Block, ? extends Block>> entriesView = Collections.unmodifiableSet(this.entries);
 
-        protected BlocksProvider(String namespace)
-        {
+        protected BlocksProvider(String namespace) {
             super(namespace);
         }
 
@@ -113,8 +101,7 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends Block> DeferredBlock<I> register(String name, Supplier<? extends I> sup)
-        {
+        public <I extends Block> DeferredBlock<I> register(String name, Supplier<? extends I> sup) {
             final var rl = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
             Registry.register(getRegistry().get(), rl, sup.get());
             DeferredBlock<I> ret = DeferredBlock.createBlock(rl);

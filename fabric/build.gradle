@@ -1,48 +1,48 @@
 plugins {
-    id 'fabric-loom' version "${loom_version}"
-    id "tommylib-loader"
+	id 'fabric-loom' version "${loom_version}"
+	id "tommylib-loader"
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${minecraft_version}"
+	minecraft "com.mojang:minecraft:${minecraft_version}"
 
-    mappings loom.layered() {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${parchment_minecraft_version}:${parchment_version}@zip")
-    }
+	mappings loom.layered() {
+		officialMojangMappings()
+		parchment("org.parchmentmc.data:parchment-${parchment_minecraft_version}:${parchment_version}@zip")
+	}
 
-    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+	modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+	implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 
-    modCompileOnly("dev.kosmx.player-anim:player-animation-lib-fabric:${playeranimator_version}")
-    modCompileOnly "net.tslat.smartbrainlib:SmartBrainLib-fabric-${minecraft_version}:${sbl_version}"
-    modCompileOnly "net.tslat.effectslib:TslatEffectsLib-fabric-${minecraft_version}:${tslateffectslib_version}"
-    modCompileOnly "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+	modCompileOnly("dev.kosmx.player-anim:player-animation-lib-fabric:${playeranimator_version}")
+	modCompileOnly "net.tslat.smartbrainlib:SmartBrainLib-fabric-${minecraft_version}:${sbl_version}"
+	modCompileOnly "net.tslat.effectslib:TslatEffectsLib-fabric-${minecraft_version}:${tslateffectslib_version}"
+	modCompileOnly "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
 }
 
 loom {
-    def aw = file("src/main/resources/${mod_id}.accesswidener")
-    if (aw.exists()) {
-        accessWidenerPath.set(aw)
-    }
+	def aw = file("src/main/resources/${mod_id}.accesswidener")
+	if (aw.exists()) {
+		accessWidenerPath.set(aw)
+	}
 
-    runs {
-        client {
-            client()
-            setConfigName("Fabric Client")
-            ideConfigGenerated(true)
-            runDir("runs/client")
-        }
-        server {
-            server()
-            setConfigName("Fabric Server")
-            ideConfigGenerated(true)
-            runDir("runs/server")
-        }
-    }
+	runs {
+		client {
+			client()
+			setConfigName("Fabric Client")
+			ideConfigGenerated(true)
+			runDir("runs/client")
+		}
+		server {
+			server()
+			setConfigName("Fabric Server")
+			ideConfigGenerated(true)
+			runDir("runs/server")
+		}
+	}
 
-    mixin {
-        add sourceSets.main, "${mod_id}.refmap.json"
-    }
+	mixin {
+		add sourceSets.main, "${mod_id}.refmap.json"
+	}
 }

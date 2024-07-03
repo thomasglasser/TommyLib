@@ -9,34 +9,29 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class StructureSaplingBlock extends SaplingBlock
-{
-	public static final MapCodec<StructureSaplingBlock> CODEC = RecordCodecBuilder.mapCodec(
-			p_308834_ -> p_308834_.group(StructureGrower.CODEC.fieldOf("structure").forGetter(p_304391_ -> p_304391_.structureGrower), propertiesCodec())
-					.apply(p_308834_, StructureSaplingBlock::new)
-	);
+public class StructureSaplingBlock extends SaplingBlock {
+    public static final MapCodec<StructureSaplingBlock> CODEC = RecordCodecBuilder.mapCodec(
+            instance -> instance.group(StructureGrower.CODEC.fieldOf("structure").forGetter(block -> block.structureGrower), propertiesCodec())
+                    .apply(instance, StructureSaplingBlock::new));
 
-	protected final StructureGrower structureGrower;
+    protected final StructureGrower structureGrower;
 
-	public StructureSaplingBlock(StructureGrower structureGrower, Properties p_55979_)
-	{
-		super(null, p_55979_);
-		this.structureGrower = structureGrower;
-	}
+    public StructureSaplingBlock(StructureGrower structureGrower, Properties properties) {
+        super(null, properties);
+        this.structureGrower = structureGrower;
+    }
 
-	@Override
-	public MapCodec<? extends SaplingBlock> codec()
-	{
-		return CODEC;
-	}
+    @Override
+    public MapCodec<? extends SaplingBlock> codec() {
+        return CODEC;
+    }
 
-	@Override
-	public void advanceTree(ServerLevel pLevel, BlockPos pPos, BlockState pState, RandomSource pRandom)
-	{
-		if (pState.getValue(STAGE) == 0) {
-			pLevel.setBlock(pPos, pState.cycle(STAGE), 4);
-		} else {
-			this.structureGrower.grow(pLevel, pLevel.getChunkSource().getGenerator(), pPos, pState, pRandom);
-		}
-	}
+    @Override
+    public void advanceTree(ServerLevel level, BlockPos pos, BlockState state, RandomSource random) {
+        if (state.getValue(STAGE) == 0) {
+            level.setBlock(pos, state.cycle(STAGE), 4);
+        } else {
+            this.structureGrower.grow(level, level.getChunkSource().getGenerator(), pos, state, random);
+        }
+    }
 }

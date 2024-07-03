@@ -1,55 +1,55 @@
 plugins {
-    id "tommylib-loader"
-    id 'net.neoforged.moddev' version "${mdg_version}"
+	id "tommylib-loader"
+	id 'net.neoforged.moddev' version "${mdg_version}"
 }
 
 neoForge {
-    version = "${neoforge_version}"
+	version = "${neoforge_version}"
 
-    parchment {
-        minecraftVersion = parchment_minecraft_version
-        mappingsVersion = parchment_version
-    }
+	parchment {
+		minecraftVersion = parchment_minecraft_version
+		mappingsVersion = parchment_version
+	}
 
-    def at = '../common/src/main/resources/META-INF/accesstransformer.cfg'
-    if (file(at).exists()) {
-        accessTransformers = [at]
-    }
+	def at = '../common/src/main/resources/META-INF/accesstransformer.cfg'
+	if (file(at).exists()) {
+		accessTransformers = [at]
+	}
 
-    runs {
-        client {
-            client()
-            ideName = "NeoForge Client"
-            gameDirectory = project.layout.projectDirectory.dir('runs/client')
-        }
-        server {
-            server()
-            ideName = "NeoForge Server"
-            gameDirectory = project.layout.projectDirectory.dir('runs/server')
-        }
-        data {
-            data()
-            ideName = "NeoForge Data Generation"
-            gameDirectory = project.layout.projectDirectory.dir('runs/data')
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', rootProject.project(":common").file('src/generated/resources/').getAbsolutePath(), '--existing', rootProject.project(":common").file('src/main/resources/').getAbsolutePath()
-        }
-    }
+	runs {
+		client {
+			client()
+			ideName = "NeoForge Client"
+			gameDirectory = project.layout.projectDirectory.dir('runs/client')
+		}
+		server {
+			server()
+			ideName = "NeoForge Server"
+			gameDirectory = project.layout.projectDirectory.dir('runs/server')
+		}
+		data {
+			data()
+			ideName = "NeoForge Data Generation"
+			gameDirectory = project.layout.projectDirectory.dir('runs/data')
+			programArguments.addAll '--mod', project.mod_id, '--all', '--output', rootProject.project(":common").file('src/generated/resources/').getAbsolutePath(), '--existing', rootProject.project(":common").file('src/main/resources/').getAbsolutePath()
+		}
+	}
 
-    mods {
-        tommylib {
-            sourceSet sourceSets.main
-        }
-    }
+	mods {
+		tommylib {
+			sourceSet sourceSets.main
+		}
+	}
 }
 
 configurations {
-    runtimeClasspath.extendsFrom localRuntime
+	runtimeClasspath.extendsFrom localRuntime
 }
 
 dependencies {
-    // Common
-    compileOnly "dev.kosmx.player-anim:player-animation-lib-forge:${playeranimator_version}"
-    compileOnly "net.tslat.effectslib:TslatEffectsLib-neoforge-${minecraft_version}:${tslateffectslib_version}"
-    compileOnly "net.tslat.smartbrainlib:SmartBrainLib-neoforge-${minecraft_version}:${sbl_version}"
-    compileOnly "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+	// Common
+	compileOnly "dev.kosmx.player-anim:player-animation-lib-forge:${playeranimator_version}"
+	compileOnly "net.tslat.effectslib:TslatEffectsLib-neoforge-${minecraft_version}:${tslateffectslib_version}"
+	compileOnly "net.tslat.smartbrainlib:SmartBrainLib-neoforge-${minecraft_version}:${sbl_version}"
+	compileOnly "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
 }

@@ -15,18 +15,19 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HumanoidModel.class)
-public abstract class HumanoidModelMixin<T extends LivingEntity>
-{
-    @Shadow @Final public ModelPart leftArm;
+public abstract class HumanoidModelMixin<T extends LivingEntity> {
+    @Shadow
+    @Final
+    public ModelPart leftArm;
 
-    @Shadow @Final public ModelPart rightArm;
+    @Shadow
+    @Final
+    public ModelPart rightArm;
 
     @Inject(method = "prepareMobModel(Lnet/minecraft/world/entity/LivingEntity;FFF)V", at = @At("TAIL"))
-    private void tommylib_prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick, CallbackInfo ci)
-    {
+    private void tommylib_prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick, CallbackInfo ci) {
         Item chest = entity.getItemBySlot(EquipmentSlot.CHEST).getItem();
-        if (ItemUtils.isGeckoLoaded() && GeckoLibUtils.isSkintight(chest))
-        {
+        if (ItemUtils.isGeckoLoaded() && GeckoLibUtils.isSkintight(chest)) {
             this.leftArm.visible = false;
             this.rightArm.visible = false;
         }

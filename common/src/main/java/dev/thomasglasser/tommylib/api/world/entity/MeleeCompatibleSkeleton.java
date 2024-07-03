@@ -10,8 +10,7 @@ import net.tslat.smartbrainlib.example.SBLSkeleton;
 /**
  * Extension of {@link SBLSkeleton} that enables walking to attack targets when not holding a bow.
  */
-public class MeleeCompatibleSkeleton extends SBLSkeleton
-{
+public class MeleeCompatibleSkeleton extends SBLSkeleton {
     public MeleeCompatibleSkeleton(EntityType<? extends MeleeCompatibleSkeleton> entityType, Level level) {
         super(entityType, level);
     }
@@ -19,7 +18,6 @@ public class MeleeCompatibleSkeleton extends SBLSkeleton
     @Override
     public BrainActivityGroup<? extends SBLSkeleton> getCoreTasks() {
         return super.getCoreTasks().behaviours(
-                new SetWalkTargetToAttackTarget<>().startCondition((entity) -> !(entity.isHolding(stack -> stack.getItem() instanceof BowItem)))
-        );
+                new SetWalkTargetToAttackTarget<>().startCondition((entity) -> !(entity.isHolding(stack -> stack.getItem() instanceof BowItem))));
     }
 }

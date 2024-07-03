@@ -4,9 +4,7 @@ import dev.thomasglasser.tommylib.impl.platform.services.PlatformHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 
-public class FabricPlatformHelper implements PlatformHelper
-{
-
+public class FabricPlatformHelper implements PlatformHelper {
     @Override
     public String getPlatformName() {
         return "Fabric";
@@ -14,25 +12,21 @@ public class FabricPlatformHelper implements PlatformHelper
 
     @Override
     public boolean isModLoaded(String modId) {
-
         return FabricLoader.getInstance().isModLoaded(modId);
     }
 
     @Override
     public boolean isDevelopmentEnvironment() {
-
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
     @Override
-    public boolean isClientSide()
-    {
+    public boolean isClientSide() {
         return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
     }
 
     @Override
-    public String getModVersion(String modId)
-    {
+    public String getModVersion(String modId) {
         return FabricLoader.getInstance().getModContainer(modId).orElseThrow().getMetadata().getVersion().getFriendlyString();
     }
 }

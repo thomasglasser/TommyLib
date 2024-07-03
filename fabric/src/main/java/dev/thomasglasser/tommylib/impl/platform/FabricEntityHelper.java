@@ -10,20 +10,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 
 @SuppressWarnings("UnstableApiUsage")
-public class FabricEntityHelper implements EntityHelper
-{
-	private static final AttachmentType<CompoundTag> DATA = AttachmentRegistry.<CompoundTag>builder().initializer(CompoundTag::new).persistent(CompoundTag.CODEC).buildAndRegister(TommyLib.modLoc("data"));
+public class FabricEntityHelper implements EntityHelper {
+    private static final AttachmentType<CompoundTag> DATA = AttachmentRegistry.<CompoundTag>builder().initializer(CompoundTag::new).persistent(CompoundTag.CODEC).buildAndRegister(TommyLib.modLoc("data"));
 
-	@Override
-	public CompoundTag getPersistentData(Entity entity)
-	{
-		return entity.getAttachedOrCreate(DATA);
-	}
+    @Override
+    public CompoundTag getPersistentData(Entity entity) {
+        return entity.getAttachedOrCreate(DATA);
+    }
 
-	@Override
-	public void setPersistentData(Entity entity, CompoundTag data, boolean syncToClient)
-	{
-		entity.setAttached(DATA, data);
-		if (syncToClient) TommyLibServices.NETWORK.sendToAllClients(new ClientboundSyncDataPacketPayload(data, entity.getId()), entity.level().getServer());
-	}
+    @Override
+    public void setPersistentData(Entity entity, CompoundTag data, boolean syncToClient) {
+        entity.setAttached(DATA, data);
+        if (syncToClient) TommyLibServices.NETWORK.sendToAllClients(new ClientboundSyncDataPacketPayload(data, entity.getId()), entity.level().getServer());
+    }
 }

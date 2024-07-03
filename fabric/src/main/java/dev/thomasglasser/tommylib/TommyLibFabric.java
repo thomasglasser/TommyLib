@@ -5,7 +5,6 @@ import dev.thomasglasser.tommylib.impl.network.TommyLibPayloads;
 import net.fabricmc.api.ModInitializer;
 
 public class TommyLibFabric implements ModInitializer {
-
     @Override
     public void onInitialize() {
         TommyLib.init();

@@ -15,8 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(StructureTemplate.class)
-public class StructureTemplateMixin
-{
+public class StructureTemplateMixin {
     // Injects into StructureTemplate#placeEntities, inside the lambda of createEntityIgnoreException
     @Inject(method = "method_17917", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;moveTo(DDDFF)V", shift = At.Shift.AFTER))
     private static void fixPaintingPlacement(Rotation rotation, Mirror mirror, Vec3 vec3, boolean bl, ServerLevelAccessor serverLevelAccessor, Entity entity, CallbackInfo ci) {
@@ -46,4 +45,4 @@ public class StructureTemplateMixin
 
         painting.setPos(pos.getCenter());
     }
-} 
+}

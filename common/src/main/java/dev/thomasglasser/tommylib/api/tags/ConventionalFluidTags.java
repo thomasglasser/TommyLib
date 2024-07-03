@@ -1,12 +1,9 @@
 /*
  * Copyright (c) 2016, 2017, 2018, 2019 FabricMC
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,19 +25,18 @@ import net.minecraft.world.level.material.Fluid;
  * This is the only tag category exempted from many-different-types plural rule.
  */
 public final class ConventionalFluidTags {
-	private ConventionalFluidTags() {
-	}
+    private ConventionalFluidTags() {}
 
-	public static final TagKey<Fluid> LAVA = register("lava");
-	public static final TagKey<Fluid> WATER = register("water");
-	public static final TagKey<Fluid> MILK = register("milk");
-	public static final TagKey<Fluid> HONEY = register("honey");
-	/**
-	 * Tag that holds all fluids that recipe viewers should not show to users.
-	 */
-	public static final TagKey<Fluid> HIDDEN_FROM_RECIPE_VIEWERS = register("hidden_from_recipe_viewers");
+    public static final TagKey<Fluid> LAVA = register("lava");
+    public static final TagKey<Fluid> WATER = register("water");
+    public static final TagKey<Fluid> MILK = register("milk");
+    public static final TagKey<Fluid> HONEY = register("honey");
+    /**
+     * Tag that holds all fluids that recipe viewers should not show to users.
+     */
+    public static final TagKey<Fluid> HIDDEN_FROM_RECIPE_VIEWERS = register("hidden_from_recipe_viewers");
 
-	private static TagKey<Fluid> register(String tagId) {
-		return TagUtils.registerConventional(Registries.FLUID, tagId);
-	}
+    private static TagKey<Fluid> register(String tagId) {
+        return TagUtils.registerConventional(Registries.FLUID, tagId);
+    }
 }

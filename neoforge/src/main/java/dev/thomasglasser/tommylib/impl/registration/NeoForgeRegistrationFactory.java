@@ -1,6 +1,5 @@
 /*
  * SPDX-FileCopyrightText: 2023 klikli-dev
- *
  * SPDX-License-Identifier: MIT
  */
 
@@ -10,6 +9,10 @@ import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
 import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -18,13 +21,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.javafmlmod.FMLModContainer;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Supplier;
-
-public class NeoForgeRegistrationFactory implements DeferredRegister.Factory
-{
+public class NeoForgeRegistrationFactory implements DeferredRegister.Factory {
     @Override
     public <T> DeferredRegister<T> create(ResourceKey<? extends Registry<T>> resourceKey, String modId) {
         final var containerOpt = ModList.get().getModContainerById(modId);
@@ -41,8 +38,7 @@ public class NeoForgeRegistrationFactory implements DeferredRegister.Factory
     }
 
     @Override
-    public DeferredRegister.Items createItems(String modId)
-    {
+    public DeferredRegister.Items createItems(String modId) {
         final var containerOpt = ModList.get().getModContainerById(modId);
         if (containerOpt.isEmpty())
             throw new NullPointerException("Cannot find mod container for id " + modId);
@@ -57,8 +53,7 @@ public class NeoForgeRegistrationFactory implements DeferredRegister.Factory
     }
 
     @Override
-    public DeferredRegister.Blocks createBlocks(String modId)
-    {
+    public DeferredRegister.Blocks createBlocks(String modId) {
         final var containerOpt = ModList.get().getModContainerById(modId);
         if (containerOpt.isEmpty())
             throw new NullPointerException("Cannot find mod container for id " + modId);
@@ -79,8 +74,8 @@ public class NeoForgeRegistrationFactory implements DeferredRegister.Factory
         private final Set<DeferredHolder<T, ? extends T>> entriesView = Collections.unmodifiableSet(this.entries);
 
         private Provider(String modId, net.neoforged.neoforge.registries.DeferredRegister<T> registry) {
-	        super(registry.getRegistryKey(), modId);
-	        this.registry = registry;
+            super(registry.getRegistryKey(), modId);
+            this.registry = registry;
         }
 
         @Override
@@ -104,8 +99,8 @@ public class NeoForgeRegistrationFactory implements DeferredRegister.Factory
         private final Set<DeferredHolder<Item, ? extends Item>> entriesView = Collections.unmodifiableSet(this.entries);
 
         private ItemsProvider(String modId, net.neoforged.neoforge.registries.DeferredRegister<Item> registry) {
-	        super(modId);
-	        this.registry = registry;
+            super(modId);
+            this.registry = registry;
         }
 
         @Override
@@ -129,8 +124,8 @@ public class NeoForgeRegistrationFactory implements DeferredRegister.Factory
         private final Set<DeferredHolder<Block, ? extends Block>> entriesView = Collections.unmodifiableSet(this.entries);
 
         private BlocksProvider(String modId, net.neoforged.neoforge.registries.DeferredRegister<Block> registry) {
-	        super(modId);
-	        this.registry = registry;
+            super(modId);
+            this.registry = registry;
         }
 
         @Override

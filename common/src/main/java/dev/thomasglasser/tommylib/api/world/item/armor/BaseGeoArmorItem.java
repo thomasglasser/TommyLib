@@ -7,10 +7,8 @@ import net.minecraft.world.item.ArmorMaterial;
 /**
  * Base class for {@link BaseGeoArmorItem} that performs NeoForge display setup automatically.
  */
-public abstract class BaseGeoArmorItem extends ArmorItem implements GeoArmorItem
-{
-	protected BaseGeoArmorItem(Holder<ArmorMaterial> material, Type type, Properties properties)
-	{
-		super(material, type, properties);
-	}
+public abstract class BaseGeoArmorItem extends ArmorItem implements GeoArmorItem {
+    protected BaseGeoArmorItem(Holder<ArmorMaterial> material, Type type, Properties properties) {
+        super(material, type, properties);
+    }
 }

@@ -9,6 +9,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.BowAttack;
 
 /**
  * Extends {@link BowAttack} to allow for ranged attacks with any item.
+ * 
  * @param <E> The entity type that will be performing the attack.
  */
 public class RangedItemAttack<E extends LivingEntity & RangedAttackMob> extends BowAttack<E> {

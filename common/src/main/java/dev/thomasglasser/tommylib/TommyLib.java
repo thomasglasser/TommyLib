@@ -6,8 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TommyLib
-{
+public class TommyLib {
     public static final String MOD_ID = "tommylib";
     public static final String MOD_NAME = "TommyLib";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
@@ -18,8 +17,7 @@ public class TommyLib
         TommyLibPayloads.init();
     }
 
-    public static ResourceLocation modLoc(String s)
-    {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, s);
+    public static ResourceLocation modLoc(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 }

@@ -6,8 +6,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Interface for block entities that can hold items.
  */
-public interface ItemHolder
-{
+public interface ItemHolder {
     void handleTag(CompoundTag tag);
 
     int getSlotCount();

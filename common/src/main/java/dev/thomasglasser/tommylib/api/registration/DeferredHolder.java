@@ -1,6 +1,12 @@
 package dev.thomasglasser.tommylib.api.registration;
 
 import com.mojang.datafixers.util.Either;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderOwner;
@@ -9,14 +15,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-
-import javax.annotation.Nullable;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import org.jetbrains.annotations.Nullable;
 
 // Copied from NeoForge's implementation
 
@@ -27,8 +26,7 @@ import java.util.stream.Stream;
  *
  * @param <T> The type of object being held by this DeferredHolder.
  */
-public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T>
-{
+public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     /**
      * Creates a new DeferredHolder targeting the value with the specified name in the specified registry.
      *
@@ -107,11 +105,11 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T>
 
     /**
      * Gets a {@link Reference} to the object stored by this DeferredHolder using the provided {@link HolderLookup.Provider}.
+     * 
      * @param registries The registries to use to look up the object.
      * @return A reference to the object stored by this DeferredHolder.
      */
-    public Reference<R> asReferenceFrom(HolderLookup.Provider registries)
-    {
+    public Reference<R> asReferenceFrom(HolderLookup.Provider registries) {
         if (getRegistry() != null)
             return registries.lookupOrThrow(getRegistry().key()).getOrThrow(key);
         return null;
@@ -280,6 +278,7 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T>
      * Returns the resource key of this holder.
      * <br>
      * This method is implemented for {@link Holder} compatibility, but {@link #getKey()} should be preferred.
+     * 
      * @return a present optional containing {@linkplain #getKey() the resource key of this holder}
      */
     @Override

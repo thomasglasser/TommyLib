@@ -20,6 +20,7 @@ import net.minecraft.world.item.component.DyedItemColor;
 
 /**
  * A layer that renders horse armor on an abstract horse entity.
+ * 
  * @param <T> The type of horse entity.
  */
 public class AbstractHorseArmorLayer<T extends AbstractHorse> extends RenderLayer<T, HorseModel<T>> {
@@ -31,8 +32,7 @@ public class AbstractHorseArmorLayer<T extends AbstractHorse> extends RenderLaye
     }
 
     public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount,
-                       float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
-    {
+            float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         ItemStack itemStack = livingEntity.getBodyArmorItem();
         Item var13 = itemStack.getItem();
         if (var13 instanceof AnimalArmorItem animalArmorItem) {

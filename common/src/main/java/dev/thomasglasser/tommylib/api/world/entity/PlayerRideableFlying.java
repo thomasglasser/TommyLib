@@ -6,12 +6,15 @@ import net.minecraft.world.entity.player.Player;
 /**
  * Extension of {@link PlayerRideable} for entities that can fly.
  */
-public interface PlayerRideableFlying extends PlayerRideable
-{
+public interface PlayerRideableFlying extends PlayerRideable {
     void ascend();
+
     void descend();
+
     void stop();
+
     double getVerticalSpeed();
+
     enum Flight {
         ASCENDING,
         DESCENDING,
@@ -20,6 +23,7 @@ public interface PlayerRideableFlying extends PlayerRideable
 
     /**
      * Check if the player is riding a flying entity.
+     * 
      * @param player The player rider to check.
      * @return True if the player is riding a flying entity.
      */

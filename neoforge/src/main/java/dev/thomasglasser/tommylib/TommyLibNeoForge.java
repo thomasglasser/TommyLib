@@ -10,8 +10,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(TommyLib.MOD_ID)
-public class TommyLibNeoForge
-{
+public class TommyLibNeoForge {
     public TommyLibNeoForge(IEventBus eventBus) {
         TommyLib.init();
         NeoForgeEntityHelper.ATTACHMENT_TYPES.register(eventBus);
@@ -19,8 +18,7 @@ public class TommyLibNeoForge
         eventBus.addListener(TommyLibDataGenerators::onGatherData);
         eventBus.addListener(TommyLibNeoForgeCoreEvents::onRegisterPackets);
 
-        if (TommyLibServices.PLATFORM.isClientSide())
-        {
+        if (TommyLibServices.PLATFORM.isClientSide()) {
             NeoForge.EVENT_BUS.addListener(TommyLibNeoForgeClientEvents::onEntityJoinLevel);
 
             eventBus.addListener(TommyLibNeoForgeClientEvents::onBuildCreativeTabContent);

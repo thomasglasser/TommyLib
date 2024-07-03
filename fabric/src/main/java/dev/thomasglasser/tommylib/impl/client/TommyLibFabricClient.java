@@ -10,26 +10,20 @@ import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 
-public class TommyLibFabricClient implements ClientModInitializer
-{
-	@Override
-	public void onInitializeClient()
-	{
-		if (TommyLibServices.PLATFORM.isModLoaded("playeranimator"))
-			AnimationUtils.registerPlayerForAnimation();
+public class TommyLibFabricClient implements ClientModInitializer {
+    @Override
+    public void onInitializeClient() {
+        if (TommyLibServices.PLATFORM.isModLoaded("playeranimator"))
+            AnimationUtils.registerPlayerForAnimation();
 
-		ItemGroupEvents.MODIFY_ENTRIES_ALL.register((group, entries) ->
-				entries.acceptAll(ClientUtils.getItemsForTab(BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(group).orElseThrow())));
+        ItemGroupEvents.MODIFY_ENTRIES_ALL.register((group, entries) -> entries.acceptAll(ClientUtils.getItemsForTab(BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(group).orElseThrow())));
 
-		BuiltInRegistries.ITEM.stream().forEach(item ->
-		{
-			if (item instanceof ModeledItem modeledItem)
-			{
-				BuiltinItemRendererRegistry.INSTANCE.register(item, modeledItem.getBEWLR()::renderByItem);
-			}
-		});
+        BuiltInRegistries.ITEM.stream().forEach(item -> {
+            if (item instanceof ModeledItem modeledItem) {
+                BuiltinItemRendererRegistry.INSTANCE.register(item, modeledItem.getBEWLR()::renderByItem);
+            }
+        });
 
-		ClientEntityEvents.ENTITY_LOAD.register(((trackedEntity, player) ->
-				TommyLibClientEvents.onEntityJoinLevel(trackedEntity)));
-	}
+        ClientEntityEvents.ENTITY_LOAD.register(((trackedEntity, player) -> TommyLibClientEvents.onEntityJoinLevel(trackedEntity)));
+    }
 }

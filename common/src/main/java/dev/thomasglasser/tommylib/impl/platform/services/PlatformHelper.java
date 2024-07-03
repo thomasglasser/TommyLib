@@ -1,8 +1,6 @@
 package dev.thomasglasser.tommylib.impl.platform.services;
 
-public interface PlatformHelper
-{
-
+public interface PlatformHelper {
     /**
      * Gets the name of the current platform
      *
@@ -31,7 +29,6 @@ public interface PlatformHelper
      * @return The name of the environment type.
      */
     default String getEnvironmentName() {
-
         return isDevelopmentEnvironment() ? "development" : "production";
     }
 

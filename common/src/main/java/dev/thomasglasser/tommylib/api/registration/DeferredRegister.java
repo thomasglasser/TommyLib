@@ -6,6 +6,10 @@
 package dev.thomasglasser.tommylib.api.registration;
 
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,11 +22,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 // Copied from NeoForge's implementation
 
@@ -323,8 +322,7 @@ public abstract class DeferredRegister<T> {
             return this.register(name, () -> new BlockItem(block.get(), properties));
         }
 
-        public DeferredItem<BlockItem> registerSimpleBlockItem(String name, Supplier<? extends Block> block)
-        {
+        public DeferredItem<BlockItem> registerSimpleBlockItem(String name, Supplier<? extends Block> block) {
             return registerSimpleBlockItem(name, block, new Item.Properties());
         }
 
@@ -448,7 +446,6 @@ public abstract class DeferredRegister<T> {
      * should exist per mod loader.
      */
     public interface Factory {
-
         /**
          * The singleton instance of the {@link DeferredRegister.Factory}. This is different on each loader.
          */
@@ -479,7 +476,7 @@ public abstract class DeferredRegister<T> {
         /**
          * Creates a {@link DeferredRegister.Items}.
          *
-         * @param modId    the mod id for which the provider will register objects
+         * @param modId the mod id for which the provider will register objects
          * @return the provider
          */
         Items createItems(String modId);
@@ -487,7 +484,7 @@ public abstract class DeferredRegister<T> {
         /**
          * Creates a {@link DeferredRegister.Blocks}.
          *
-         * @param modId    the mod id for which the provider will register objects
+         * @param modId the mod id for which the provider will register objects
          * @return the provider
          */
         Blocks createBlocks(String modId);

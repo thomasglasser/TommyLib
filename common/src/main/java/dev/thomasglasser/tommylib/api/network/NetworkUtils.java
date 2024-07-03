@@ -11,15 +11,14 @@ import com.mojang.datafixers.util.Function7;
 import com.mojang.datafixers.util.Function8;
 import com.mojang.datafixers.util.Function9;
 import io.netty.buffer.Unpooled;
+import java.util.function.Function;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
-import java.util.function.Function;
-
-public class NetworkUtils
-{
+public class NetworkUtils {
     /**
      * Creates an empty {@link FriendlyByteBuf}.
+     * 
      * @return An empty {@link FriendlyByteBuf}.
      */
     public static FriendlyByteBuf empty() {
@@ -28,6 +27,7 @@ public class NetworkUtils
 
     /**
      * Creates a new {@link FriendlyByteBuf}.
+     * 
      * @return A new {@link FriendlyByteBuf}.
      */
     public static FriendlyByteBuf create() {
@@ -36,6 +36,7 @@ public class NetworkUtils
 
     /**
      * Creates a {@link StreamCodec} for an enum.
+     * 
      * @param enumClass The class of the enum.
      * @return A {@link StreamCodec} for the enum.
      * @param <B> The type of the {@link FriendlyByteBuf}.
@@ -57,8 +58,9 @@ public class NetworkUtils
 
     /**
      * Creates a {@link StreamCodec} for more generics than the base class provides helpers for.
+     * 
      * @param streamCodec The {@link StreamCodec} to use for the object parameter.
-     * @param function The getter {@link Function} to use for the object parameter.
+     * @param function    The getter {@link Function} to use for the object parameter.
      * @param initializer The initializer {@link Function} for the object.
      * @return A {@link StreamCodec}.
      * @param <B> The type of the {@link FriendlyByteBuf}.
@@ -139,8 +141,7 @@ public class NetworkUtils
             final StreamCodec<? super B, T7> streamCodec7, final Function<C, T7> function7,
             final StreamCodec<? super B, T8> streamCodec8, final Function<C, T8> function8,
             final StreamCodec<? super B, T9> streamCodec9, final Function<C, T9> function9,
-            final Function9<T1, T2, T3, T4, T5, T6, T7, T8, T9, C> initializer)
-    {
+            final Function9<T1, T2, T3, T4, T5, T6, T7, T8, T9, C> initializer) {
         return new StreamCodec<B, C>() {
             public C decode(B object) {
                 T1 object2 = streamCodec1.decode(object);
@@ -493,8 +494,7 @@ public class NetworkUtils
             final Function16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, C> initializer) {
         return new StreamCodec<B, C>() {
             @Override
-            public C decode(B object)
-            {
+            public C decode(B object) {
                 T1 object2 = streamCodec1.decode(object);
                 T2 object3 = streamCodec2.decode(object);
                 T3 object4 = streamCodec3.decode(object);
@@ -515,8 +515,7 @@ public class NetworkUtils
             }
 
             @Override
-            public void encode(B object, C object2)
-            {
+            public void encode(B object, C object2) {
                 streamCodec1.encode(object, function1.apply(object2));
                 streamCodec2.encode(object, function2.apply(object2));
                 streamCodec3.encode(object, function3.apply(object2));

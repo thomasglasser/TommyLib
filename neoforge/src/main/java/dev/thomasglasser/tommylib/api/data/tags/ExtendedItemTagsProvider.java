@@ -3,6 +3,7 @@ package dev.thomasglasser.tommylib.api.data.tags;
 import dev.thomasglasser.tommylib.api.world.item.armor.ArmorSet;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -11,33 +12,30 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
-import java.util.concurrent.CompletableFuture;
-
 /**
  * Extension of {@link ItemTagsProvider} that provides functionality for mod holders.
  */
-public abstract class ExtendedItemTagsProvider extends ItemTagsProvider
-{
+public abstract class ExtendedItemTagsProvider extends ItemTagsProvider {
     public ExtendedItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> blockTagsProvider, String modId, ExistingFileHelper existingFileHelper) {
         super(output, future, blockTagsProvider, modId, existingFileHelper);
     }
 
     /**
      * Creates a {@link ResourceLocation} with the given path and the "c" namespace.
+     * 
      * @param path The path of the resource location.
      * @return A new {@link ResourceLocation} with the "c" namespace.
      */
-    protected static ResourceLocation cLoc(String path)
-    {
+    protected static ResourceLocation cLoc(String path) {
         return ResourceLocation.fromNamespaceAndPath("c", path);
     }
 
     /**
      * Generates relevant tags for a {@link WoodSet}.
+     * 
      * @param set The {@link WoodSet} to generate tags for.
      */
-    protected void woodSet(WoodSet set)
-    {
+    protected void woodSet(WoodSet set) {
         copy(set.logsBlockTag(), set.logsItemTag());
 
         tag(ItemTags.PLANKS)
@@ -49,10 +47,10 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider
 
     /**
      * Generates relevant tags for a {@link LeavesSet}.
+     * 
      * @param set The {@link LeavesSet} to generate tags for.
      */
-    protected void leavesSet(LeavesSet set)
-    {
+    protected void leavesSet(LeavesSet set) {
         tag(ItemTags.LEAVES)
                 .add(set.leaves().get().asItem());
 
@@ -62,10 +60,10 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider
 
     /**
      * Generates relevant tags for an {@link ArmorSet}.
+     * 
      * @param armorSet The {@link ArmorSet} to generate tags for.
      */
-    protected void armorSet(ArmorSet armorSet)
-    {
+    protected void armorSet(ArmorSet armorSet) {
         tag(ItemTags.HEAD_ARMOR).add(armorSet.HEAD.get());
         tag(ItemTags.CHEST_ARMOR).add(armorSet.CHEST.get());
         tag(ItemTags.LEG_ARMOR).add(armorSet.LEGS.get());
@@ -73,8 +71,7 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return modId + " Item Tags";
     }
 }

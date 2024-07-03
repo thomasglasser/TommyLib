@@ -11,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * An extension of {@link HumanoidArmorLayer} that allows for selective rendering of armor slots.
+ * 
  * @param <T> The entity type
  * @param <M> The inner model type
  * @param <A> The outer model type

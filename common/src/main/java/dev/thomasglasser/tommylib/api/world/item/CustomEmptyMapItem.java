@@ -1,5 +1,6 @@
 package dev.thomasglasser.tommylib.api.world.item;
 
+import java.util.function.BiFunction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
@@ -10,8 +11,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.EmptyMapItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-
-import java.util.function.BiFunction;
 
 /**
  * Extension of {@link EmptyMapItem} that allows for a custom fill function to be used when the map is filled.

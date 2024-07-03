@@ -1,46 +1,46 @@
 plugins {
-    id "tommylib-common"
-    id 'net.neoforged.moddev' version "${mdg_version}"
+	id "tommylib-common"
+	id 'net.neoforged.moddev' version "${mdg_version}"
 }
 
 
 neoForge {
-    neoFormVersion = "${minecraft_version}-20240613.152323"
+	neoFormVersion = "${minecraft_version}-20240613.152323"
 
-    parchment {
-        minecraftVersion = parchment_minecraft_version
-        mappingsVersion = parchment_version
-    }
+	parchment {
+		minecraftVersion = parchment_minecraft_version
+		mappingsVersion = parchment_version
+	}
 }
 
 dependencies {
-    compileOnly group:'net.fabricmc', name:'sponge-mixin', version:mixin_version
-    implementation "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+	compileOnly group:'net.fabricmc', name:'sponge-mixin', version:mixin_version
+	implementation "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
+	implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
-    compileOnly "net.tslat.smartbrainlib:SmartBrainLib-common-${minecraft_version}:${sbl_version}"
-    compileOnly "net.tslat.effectslib:TslatEffectsLib-common-${minecraft_version}:${tslateffectslib_version}"
-    compileOnly "dev.kosmx.player-anim:player-animation-lib:${playeranimator_version}"
-    compileOnly "dev.kosmx.player-anim:anim-core:${playeranimator_version}"
-    compileOnly "software.bernie.geckolib:geckolib-common-${minecraft_version}:${geckolib_version}"
+	compileOnly "net.tslat.smartbrainlib:SmartBrainLib-common-${minecraft_version}:${sbl_version}"
+	compileOnly "net.tslat.effectslib:TslatEffectsLib-common-${minecraft_version}:${tslateffectslib_version}"
+	compileOnly "dev.kosmx.player-anim:player-animation-lib:${playeranimator_version}"
+	compileOnly "dev.kosmx.player-anim:anim-core:${playeranimator_version}"
+	compileOnly "software.bernie.geckolib:geckolib-common-${minecraft_version}:${geckolib_version}"
 }
 
 sourceSets.main.resources { srcDir './src/generated/resources' }
 
 configurations {
-    commonJava {
-        canBeResolved = false
-        canBeConsumed = true
-    }
-    commonResources {
-        canBeResolved = false
-        canBeConsumed = true
-    }
+	commonJava {
+		canBeResolved = false
+		canBeConsumed = true
+	}
+	commonResources {
+		canBeResolved = false
+		canBeConsumed = true
+	}
 }
 
 artifacts {
-    commonJava sourceSets.main.java.sourceDirectories.singleFile
-    sourceSets.main.resources.sourceDirectories.files.each {
-        commonResources it
-    }
+	commonJava sourceSets.main.java.sourceDirectories.singleFile
+	sourceSets.main.resources.sourceDirectories.files.each {
+		commonResources it
+	}
 }

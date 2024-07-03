@@ -15,29 +15,28 @@ import net.minecraft.world.level.Level;
 /**
  * A {@link SwordItem} that can be thrown and enchanted with Loyalty.
  */
-public abstract class ThrowableSwordItem extends SwordItem
-{
-    public ThrowableSwordItem(Tier pTier, Properties pProperties) {
-        super(pTier, pProperties);
+public abstract class ThrowableSwordItem extends SwordItem {
+    public ThrowableSwordItem(Tier tier, Properties properties) {
+        super(tier, properties);
     }
 
-    public UseAnim getUseAnimation(ItemStack pStack) {
+    public UseAnim getUseAnimation(ItemStack stack) {
         return UseAnim.SPEAR;
     }
 
     /**
      * How long it takes to use or consume an item
      */
-    public int getUseDuration(ItemStack pStack) {
+    public int getUseDuration(ItemStack stack) {
         return 3600;
     }
 
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
-        ItemStack itemstack = pPlayer.getItemInHand(pHand);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack itemstack = player.getItemInHand(hand);
         if (itemstack.getDamageValue() >= itemstack.getMaxDamage() - 1 && !itemstack.has(DataComponents.UNBREAKABLE)) {
             return InteractionResultHolder.fail(itemstack);
         } else {
-            pPlayer.startUsingItem(pHand);
+            player.startUsingItem(hand);
             return InteractionResultHolder.consume(itemstack);
         }
     }
