@@ -7,6 +7,7 @@ import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -15,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -148,8 +150,8 @@ public abstract class ExtendedLanguageProvider extends LanguageProvider {
      * @param sound The sound to add the translation for.
      * @param name  The name of the sound.
      */
-    public void add(DeferredHolder<SoundEvent, ?> sound, String name) {
-        add("subtitles." + sound.get().getLocation().getPath(), name);
+    public void add(SoundEvent sound, String name) {
+        add("subtitles." + sound.getLocation().getPath(), name);
     }
 
     /**
@@ -272,5 +274,9 @@ public abstract class ExtendedLanguageProvider extends LanguageProvider {
      */
     protected void addConfigTitle(String title) {
         add(modId + ".midnightconfig.title", title);
+    }
+
+    protected void addProfession(DeferredHolder<VillagerProfession, ?> profession, String name) {
+        add(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.VILLAGER).toLanguageKey("entity") + "." + profession.getKey().location().toShortLanguageKey(), name);
     }
 }
