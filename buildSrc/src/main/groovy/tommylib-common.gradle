@@ -234,6 +234,9 @@ spotless {
 tasks.named('spotlessMiscCheck') {
     dependsOn 'spotlessApply'
 }
+tasks.named('compileJava') {
+    dependsOn 'spotlessApply'
+}
 
 javadoc {
     failOnError = false

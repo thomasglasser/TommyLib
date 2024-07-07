@@ -1,0 +1,49 @@
+package dev.thomasglasser.tommylib.api.client.renderer.entity;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import dev.thomasglasser.tommylib.api.world.entity.projectile.ThrownSword;
+import java.util.function.Function;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+
+/**
+ * Renders a {@link ThrownSword} entity.
+ * 
+ * @param <T> The type of {@link ThrownSword} entity to render.
+ */
+public class ThrownSwordRenderer<T extends ThrownSword> extends EntityRenderer<T> {
+    public static final Function<ResourceLocation, ResourceLocation> TEXTURE = (loc) -> loc.withPrefix("textures/entity/item/").withSuffix(".png");
+
+    private final Model model;
+    private final ResourceLocation texture;
+
+    public ThrownSwordRenderer(EntityRendererProvider.Context context, ResourceLocation itemLoc, Model model) {
+        super(context);
+        this.texture = TEXTURE.apply(itemLoc);
+        this.model = model;
+    }
+
+    @Override
+    public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+        poseStack.pushPose();
+        poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, entity.yRotO, entity.getYRot()) - 90.0F));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, entity.xRotO, entity.getXRot()) + 90.0F));
+        VertexConsumer vertexconsumer = ItemRenderer.getFoilBufferDirect(bufferSource, this.model.renderType(this.getTextureLocation(entity)), false, entity.isFoil());
+        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
+        poseStack.popPose();
+        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(T entity) {
+        return texture;
+    }
+}

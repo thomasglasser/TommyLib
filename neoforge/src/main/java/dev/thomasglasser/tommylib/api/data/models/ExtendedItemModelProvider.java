@@ -1,16 +1,20 @@
 package dev.thomasglasser.tommylib.api.data.models;
 
+import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.SpawnEggItem;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.loaders.SeparateTransformsModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 /**
@@ -22,10 +26,20 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
     }
 
     /**
+     * Generates a basic item model with the default texture location.
+     * 
+     * @param item The item to generate the model for.
+     * @return The {@link ItemModelBuilder} for the item.
+     */
+    protected ItemModelBuilder basicItem(DeferredItem<?> item) {
+        return basicItem(item.getId(), item.getId().getPath());
+    }
+
+    /**
      * Generates a basic item model appended with "_inventory" for the item texture.
      * 
      * @param item The item to generate the model for.
-     * @return The item model builder for the item.
+     * @return The {@link ItemModelBuilder} for the item.
      */
     public ItemModelBuilder basicInventoryItem(ResourceLocation item) {
         return basicItem(ResourceLocation.fromNamespaceAndPath(item.getNamespace(), item.getPath() + "_inventory"), item.getPath());
@@ -40,7 +54,7 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      * 
      * @param item       The item to generate the model for.
      * @param textureLoc The location of the texture for the item.
-     * @return The item model builder for the item.
+     * @return The {@link ItemModelBuilder} for the item.
      */
     public ItemModelBuilder basicItem(ResourceLocation item, String textureLoc) {
         return getBuilder(item.toString())
@@ -56,13 +70,14 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      * Generates a basic handheld item model with the default texture location.
      * 
      * @param item The item to generate the model for.
+     * @return The {@link ItemModelBuilder} for the item.
      */
-    protected void basicItemHandheld(ResourceLocation item) {
-        singleTexture(item.getPath(), mcLoc("item/handheld"), "layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "item/" + item.getPath()));
+    protected ItemModelBuilder basicItemHandheld(ResourceLocation item) {
+        return singleTexture(item.getPath(), mcLoc("item/handheld"), "layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "item/" + item.getPath()));
     }
 
-    protected void basicItemHandheld(DeferredItem<?> item) {
-        basicItemHandheld(item.getId());
+    protected ItemModelBuilder basicItemHandheld(DeferredItem<?> item) {
+        return basicItemHandheld(item.getId());
     }
 
     /**
@@ -70,26 +85,28 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      * 
      * @param item       The item to generate the model for.
      * @param textureLoc The location of the texture for the item.
+     * @return The {@link ItemModelBuilder} for the item.
      */
-    protected void basicItemHandheld(ResourceLocation item, String textureLoc) {
-        singleTexture(item.getPath(), mcLoc("item/handheld"), "layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "item/" + textureLoc));
+    protected ItemModelBuilder basicItemHandheld(ResourceLocation item, String textureLoc) {
+        return singleTexture(item.getPath(), mcLoc("item/handheld"), "layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "item/" + textureLoc));
     }
 
-    protected void basicItemHandheld(DeferredItem<?> item, String textureLoc) {
-        basicItemHandheld(item.getId(), textureLoc);
+    protected ItemModelBuilder basicItemHandheld(DeferredItem<?> item, String textureLoc) {
+        return basicItemHandheld(item.getId(), textureLoc);
     }
 
     /**
      * Generates a spawn egg model
      * 
      * @param path The path of the spawn egg
+     * @return The {@link ItemModelBuilder} for the item.
      */
-    protected void spawnEgg(String path) {
-        withExistingParent(path, mcLoc("item/template_spawn_egg"));
+    protected ItemModelBuilder spawnEgg(String path) {
+        return withExistingParent(path, mcLoc("item/template_spawn_egg"));
     }
 
-    protected void spawnEgg(DeferredItem<SpawnEggItem> egg) {
-        withExistingParent(egg.getId().getPath(), mcLoc("item/template_spawn_egg"));
+    protected ItemModelBuilder spawnEgg(DeferredItem<SpawnEggItem> egg) {
+        return withExistingParent(egg.getId().getPath(), mcLoc("item/template_spawn_egg"));
     }
 
     /**
@@ -119,10 +136,93 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      * Generates an item model for a block.
      * 
      * @param block The block to generate the model for.
+     * @return The {@link ItemModelBuilder} for the item.
      */
-    protected void basicBlockItem(Block block) {
-        ResourceLocation rl = BuiltInRegistries.BLOCK.getKey(block);
-        withExistingParent(rl.getPath(), ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), "block/" + rl.getPath()));
+    protected ItemModelBuilder basicBlockItem(DeferredBlock<?> block) {
+        ResourceLocation id = block.getId();
+        return withExistingParent(id.getPath(), ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath()));
+    }
+
+    /**
+     * Generates an item model for an item that renders with a {@link BlockEntityWithoutLevelRenderer}.
+     *
+     * @param item The item to generate the model for.
+     * @return The {@link ItemModelBuilder} for the item.
+     */
+    protected ItemModelBuilder withEntityModel(DeferredItem<?> item) {
+        return getBuilder(item.getId().getPath())
+                .parent(new ModelFile.UncheckedModelFile("builtin/entity"));
+    }
+
+    protected ItemModelBuilder withEntityModel(ResourceLocation location) {
+        return getBuilder(location.getPath())
+                .parent(new ModelFile.UncheckedModelFile("builtin/entity"));
+    }
+
+    /**
+     * Generates a {@link SeparateTransformsModelBuilder} for making a perspective aware model
+     * 
+     * @param location The location of the model
+     * @return The {@link SeparateTransformsModelBuilder} for the model
+     */
+    protected SeparateTransformsModelBuilder<ItemModelBuilder> withSeparateTransforms(ResourceLocation location) {
+        return getBuilder(location.getPath()).guiLight(BlockModel.GuiLight.FRONT).customLoader(SeparateTransformsModelBuilder::begin);
+    }
+
+    protected SeparateTransformsModelBuilder<ItemModelBuilder> withSeparateTransforms(DeferredItem<?> item) {
+        return getBuilder(item.getId().getPath()).customLoader(SeparateTransformsModelBuilder::begin);
+    }
+
+    /**
+     * Generates an item model for an item that renders in the world with a {@link BlockEntityWithoutLevelRenderer} and a flat model for the inventory.
+     * 
+     * @param location The location of the model
+     * @return The {@link ItemModelBuilder} for the model
+     */
+    protected ItemModelBuilder withEntityModelInHand(ResourceLocation location) {
+        return withEntityModelInHand(location, basicInventoryItem(location));
+    }
+
+    protected ItemModelBuilder withEntityModelInHand(DeferredItem<?> item) {
+        return withEntityModelInHand(item.getId());
+    }
+
+    /**
+     * Generates an item model for an item that renders in the world with a {@link BlockEntityWithoutLevelRenderer} and a separate model for the inventory.
+     * 
+     * @param location    The location of the model
+     * @param inHandModel The model for the item in hand
+     * @return The {@link ItemModelBuilder} for the model
+     */
+    protected ItemModelBuilder withEntityModelInHand(ResourceLocation location, ItemModelBuilder inHandModel) {
+        return withEntityModelInHand(location, inHandModel, basicInventoryItem(location));
+    }
+
+    protected ItemModelBuilder withEntityModelInHand(DeferredItem<?> item, ItemModelBuilder inHandModel) {
+        return withEntityModelInHand(item.getId(), inHandModel);
+    }
+
+    /**
+     * Generates an item model for an item that renders different models in the world and in the inventory.
+     * 
+     * @param item           The item to generate the model for
+     * @param inHandModel    The model for the item in hand
+     * @param inventoryModel The model for the item in the inventory
+     * @return The {@link ItemModelBuilder} for the model
+     */
+    protected ItemModelBuilder withEntityModelInHand(DeferredItem<?> item, ItemModelBuilder inHandModel, ItemModelBuilder inventoryModel) {
+        return withEntityModelInHand(item.getId(), inHandModel, inventoryModel);
+    }
+
+    protected ItemModelBuilder withEntityModelInHand(ResourceLocation location, ItemModelBuilder inHandModel, ItemModelBuilder inventoryModel) {
+        generatedModels.remove(inHandModel.getLocation());
+        generatedModels.remove(inventoryModel.getLocation());
+        return withSeparateTransforms(location)
+                .base(inHandModel)
+                .perspective(ItemDisplayContext.GUI, inventoryModel)
+                .perspective(ItemDisplayContext.FIXED, inventoryModel)
+                .perspective(ItemDisplayContext.GROUND, inventoryModel)
+                .end();
     }
 
     /**
@@ -143,6 +243,16 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      */
     public ResourceLocation modBlockModel(String path) {
         return modLoc("block/" + path);
+    }
+
+    /**
+     * Generates a {@link ResourceLocation} for a Minecraft block model.
+     * 
+     * @param path The path of the block model.
+     * @return The {@link ResourceLocation} for the block model.
+     */
+    public ResourceLocation mcBlockModel(String path) {
+        return mcLoc("block/" + path);
     }
 
     /**

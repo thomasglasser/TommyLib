@@ -14,8 +14,19 @@ public class TagUtils {
      * @param tagId    the id of the tag
      * @return the tag key
      */
-    public static <T> TagKey<T> registerConventional(ResourceKey<? extends Registry<T>> registry, String tagId) {
+    public static <T> TagKey<T> createConventional(ResourceKey<? extends Registry<T>> registry, String tagId) {
         return TagKey.create(registry, ResourceLocation.fromNamespaceAndPath("c", tagId));
+    }
+
+    /**
+     * Registers a vanilla tag for the given registry.
+     * 
+     * @param registry the registry the tag is for
+     * @param tagId    the id of the tag
+     * @return the tag key
+     */
+    public static <T> TagKey<T> createVanilla(ResourceKey<? extends Registry<T>> registry, String tagId) {
+        return TagKey.create(registry, ResourceLocation.withDefaultNamespace(tagId));
     }
 
     /**

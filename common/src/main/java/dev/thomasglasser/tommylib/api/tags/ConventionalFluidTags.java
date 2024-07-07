@@ -36,7 +36,13 @@ public final class ConventionalFluidTags {
      */
     public static final TagKey<Fluid> HIDDEN_FROM_RECIPE_VIEWERS = register("hidden_from_recipe_viewers");
 
+    /**
+     * Creates a new tag key for fluids
+     * 
+     * @param tagId The ID of the tag
+     * @return The tag key
+     */
     private static TagKey<Fluid> register(String tagId) {
-        return TagUtils.registerConventional(Registries.FLUID, tagId);
+        return TagUtils.createConventional(Registries.FLUID, tagId);
     }
 }

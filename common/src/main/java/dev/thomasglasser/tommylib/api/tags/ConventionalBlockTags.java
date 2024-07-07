@@ -152,7 +152,13 @@ public final class ConventionalBlockTags {
      */
     public static final TagKey<Block> UNBREAKABLE_BLOCKS = register("unbreakable_blocks");
 
+    /**
+     * Creates a new tag key for blocks
+     * 
+     * @param tagId The ID of the tag
+     * @return The tag key
+     */
     private static TagKey<Block> register(String tagId) {
-        return TagUtils.registerConventional(Registries.BLOCK, tagId);
+        return TagUtils.createConventional(Registries.BLOCK, tagId);
     }
 }

@@ -296,8 +296,14 @@ public final class ConventionalItemTags {
      */
     public static final TagKey<Item> UNBREAKABLE_BLOCKS = register("unbreakable_blocks");
 
+    /**
+     * Creates a new tag key for items
+     * 
+     * @param tagId The ID of the tag
+     * @return The tag key
+     */
     private static TagKey<Item> register(String tagId) {
-        return TagUtils.registerConventional(Registries.ITEM, tagId);
+        return TagUtils.createConventional(Registries.ITEM, tagId);
     }
 
     public static TagKey<Item> forDyeColor(DyeColor color) {

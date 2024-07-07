@@ -35,7 +35,13 @@ public final class ConventionalStructureTags {
      */
     public static final TagKey<Structure> HIDDEN_FROM_LOCATOR_SELECTION = register("hidden_from_locator_selection");
 
+    /**
+     * Creates a new tag key for structures
+     * 
+     * @param tagId The ID of the tag
+     * @return The tag key
+     */
     private static TagKey<Structure> register(String tagId) {
-        return TagUtils.registerConventional(Registries.STRUCTURE, tagId);
+        return TagUtils.createConventional(Registries.STRUCTURE, tagId);
     }
 }

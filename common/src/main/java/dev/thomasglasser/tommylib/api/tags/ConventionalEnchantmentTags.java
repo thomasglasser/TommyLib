@@ -48,7 +48,13 @@ public final class ConventionalEnchantmentTags {
      */
     public static final TagKey<Enchantment> ENTITY_DEFENSE_ENHANCEMENTS = register("entity_defense_enhancements");
 
+    /**
+     * Creates a new tag key for enchantments
+     * 
+     * @param tagId The ID of the tag
+     * @return The tag key
+     */
     private static TagKey<Enchantment> register(String tagId) {
-        return TagUtils.registerConventional(Registries.ENCHANTMENT, tagId);
+        return TagUtils.createConventional(Registries.ENCHANTMENT, tagId);
     }
 }

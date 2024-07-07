@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -20,6 +23,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SmithingTemplateItem;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.armortrim.TrimPattern;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 
 public final class ItemUtils {
     private static final HashMap<ResourceKey<CreativeModeTab>, ArrayList<ResourceLocation>> ITEM_TABS = new HashMap<>();
@@ -113,5 +118,19 @@ public final class ItemUtils {
      */
     public static boolean isGeckoLoaded() {
         return TommyLibServices.PLATFORM.isModLoaded("geckolib");
+    }
+
+    /**
+     * Gets the loyalty enchantment level from the given item stack.
+     * 
+     * @param stack  The item stack to get the loyalty enchantment level from.
+     * @param level  The level to use.
+     * @param entity The thrown entity
+     * @return The loyalty enchantment level from the given item stack.
+     */
+    public static byte getLoyaltyFromItem(ItemStack stack, Level level, Entity entity) {
+        return level instanceof ServerLevel serverlevel
+                ? (byte) Mth.clamp(EnchantmentHelper.getTridentReturnToOwnerAcceleration(serverlevel, stack, entity), 0, 127)
+                : 0;
     }
 }

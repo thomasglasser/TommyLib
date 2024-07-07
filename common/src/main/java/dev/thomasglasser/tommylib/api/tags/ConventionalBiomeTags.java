@@ -181,7 +181,13 @@ public final class ConventionalBiomeTags {
      */
     public static final TagKey<Biome> IS_OUTER_END_ISLAND = register("is_outer_end_island");
 
+    /**
+     * Creates a new tag key for biomes
+     * 
+     * @param tagId The ID of the tag
+     * @return The tag key
+     */
     private static TagKey<Biome> register(String tagId) {
-        return TagUtils.registerConventional(Registries.BIOME, tagId);
+        return TagUtils.createConventional(Registries.BIOME, tagId);
     }
 }

@@ -46,7 +46,13 @@ public final class ConventionalEntityTypeTags {
      */
     public static final TagKey<EntityType<?>> TELEPORTING_NOT_SUPPORTED = register("teleporting_not_supported");
 
+    /**
+     * Creates a new tag key for entity types
+     * 
+     * @param tagId The ID of the tag
+     * @return The tag key
+     */
     private static TagKey<EntityType<?>> register(String tagId) {
-        return TagUtils.registerConventional(Registries.ENTITY_TYPE, tagId);
+        return TagUtils.createConventional(Registries.ENTITY_TYPE, tagId);
     }
 }

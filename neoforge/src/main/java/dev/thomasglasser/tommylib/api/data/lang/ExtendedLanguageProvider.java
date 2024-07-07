@@ -224,38 +224,6 @@ public abstract class ExtendedLanguageProvider extends LanguageProvider {
     }
 
     /**
-     * Adds a translation for a given config value.
-     * 
-     * @param field The field to add the translation for.
-     * @param name  The name of the field.
-     */
-    protected void addConfig(String field, String name) {
-        add(modId + ".midnightconfig." + field, name);
-    }
-
-    /**
-     * Adds a translation for a given config enum.
-     * 
-     * @param e    The enum to add the translation for.
-     * @param name The name of the enum.
-     */
-    protected void addConfig(Enum<?> e, String name) {
-        {
-            add(modId + ".midnightconfig.enum." + e.getDeclaringClass().getSimpleName() + "." + e.name(), name);
-        }
-    }
-
-    /**
-     * Adds a translation for a given config category.
-     * 
-     * @param field The field to add the translation for.
-     * @param name  The name of the field.
-     */
-    protected void addConfigCategory(String field, String name) {
-        add(modId + ".midnightconfig.category." + field, name);
-    }
-
-    /**
      * Adds a translation for a given built-in pack.
      * 
      * @param packInfo    The pack to add the translation for.
@@ -268,14 +236,11 @@ public abstract class ExtendedLanguageProvider extends LanguageProvider {
     }
 
     /**
-     * Adds a translation for a given config title.
+     * Adds a translation for a given villager profession.
      * 
-     * @param title The title to add the translation for.
+     * @param profession The profession to add the translation for.
+     * @param name       The name of the profession.
      */
-    protected void addConfigTitle(String title) {
-        add(modId + ".midnightconfig.title", title);
-    }
-
     protected void addProfession(DeferredHolder<VillagerProfession, ?> profession, String name) {
         add(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.VILLAGER).toLanguageKey("entity") + "." + profession.getKey().location().toShortLanguageKey(), name);
     }
