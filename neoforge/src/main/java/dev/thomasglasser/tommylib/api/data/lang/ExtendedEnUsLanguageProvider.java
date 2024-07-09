@@ -30,13 +30,13 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 import org.apache.commons.lang3.text.WordUtils;
 
 /**
- * Extension of {@link LanguageProvider} that provides functionality for mod holders.
+ * Extension of {@link LanguageProvider} for English that provides functionality for mod holders.
  */
-public abstract class ExtendedLanguageProvider extends LanguageProvider {
+public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
     protected String modId;
 
-    public ExtendedLanguageProvider(PackOutput output, String modid, String locale) {
-        super(output, modid, locale);
+    public ExtendedEnUsLanguageProvider(PackOutput output, String modid) {
+        super(output, modid, "en_us");
         modId = modid;
     }
 
@@ -102,9 +102,10 @@ public abstract class ExtendedLanguageProvider extends LanguageProvider {
      * @param name   The name of the potion.
      */
     public void addPotions(Holder<Potion> potion, String name) {
-        add(Items.POTION, potion, "Bottle of " + name);
-        add(Items.SPLASH_POTION, potion, "Splash Bottle of " + name);
-        add(Items.LINGERING_POTION, potion, "Lingering Bottle of " + name);
+        String title = potion.value().getEffects().isEmpty() ? "Bottle" : "Potion";
+        add(Items.POTION, potion, title + " of " + name);
+        add(Items.SPLASH_POTION, potion, "Splash " + title + " of " + name);
+        add(Items.LINGERING_POTION, potion, "Lingering " + title + " of " + name);
         add(Items.TIPPED_ARROW, potion, "Arrow of " + name);
     }
 
