@@ -248,10 +248,10 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
 
     /**
      * Adds a translation for a given smithing template {@link Item}.
+     * 
      * @param item The item to add the translation for.
      */
-    protected void addSmithingTemplate(Item item)
-    {
+    protected void addSmithingTemplate(Item item) {
         add(item, "Smithing Template");
     }
 }
