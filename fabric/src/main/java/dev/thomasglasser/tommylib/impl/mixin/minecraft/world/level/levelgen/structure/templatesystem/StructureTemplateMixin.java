@@ -27,8 +27,8 @@ public class StructureTemplateMixin {
         pos.set(painting.getPos());
         var variant = painting.getVariant().value();
 
-        var width = variant.width() / 16;
-        var height = variant.height() / 16;
+        var width = variant.width();
+        var height = variant.height();
         var direction = painting.getDirection();
 
         // paintings with an even height seem to always be moved upwards...
