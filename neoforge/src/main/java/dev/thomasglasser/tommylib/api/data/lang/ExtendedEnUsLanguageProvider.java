@@ -245,4 +245,13 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
     protected void addProfession(DeferredHolder<VillagerProfession, ?> profession, String name) {
         add(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.VILLAGER).toLanguageKey("entity") + "." + profession.getKey().location().toShortLanguageKey(), name);
     }
+
+    /**
+     * Adds a translation for a given smithing template {@link Item}.
+     * @param item The item to add the translation for.
+     */
+    protected void addSmithingTemplate(Item item)
+    {
+        add(item, "Smithing Template");
+    }
 }
