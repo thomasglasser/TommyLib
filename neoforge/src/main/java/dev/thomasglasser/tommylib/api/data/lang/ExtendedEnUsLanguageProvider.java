@@ -14,6 +14,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -253,5 +254,39 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      */
     protected void addSmithingTemplate(Item item) {
         add(item, "Smithing Template");
+    }
+
+    /**
+     * Adds a translation for a given {@link DamageType}.
+     * 
+     * @param key     the key of the damage type
+     * @param message the message of the damage type
+     */
+    protected void addAttack(ResourceKey<DamageType> key, String message) {
+        add("death.attack." + key.location().getPath(), message);
+    }
+
+    /**
+     * Adds a translation for a given {@link DamageType} with a player suffix.
+     * 
+     * @param key          the key of the damage type
+     * @param message      the message of the damage type
+     * @param playerSuffix the message suffix for the player-specific attack
+     */
+    protected void addAttackWithPlayer(ResourceKey<DamageType> key, String message, String playerSuffix) {
+        addAttack(key, message);
+        add("death.attack." + key.location().getPath() + ".player", message + " " + playerSuffix);
+    }
+
+    /**
+     * Adds a translation for a given {@link DamageType} with an item suffix.
+     * 
+     * @param key        the key of the damage type
+     * @param message    the message of the damage type
+     * @param itemSuffix the message suffix for the item-specific attack
+     */
+    protected void addAttackWithItem(ResourceKey<DamageType> key, String message, String itemSuffix) {
+        addAttack(key, message);
+        add("death.attack." + key.location().toShortLanguageKey() + ".item", message + " " + itemSuffix);
     }
 }
