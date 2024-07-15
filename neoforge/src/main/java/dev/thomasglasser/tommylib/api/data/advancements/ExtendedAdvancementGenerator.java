@@ -1,5 +1,9 @@
 package dev.thomasglasser.tommylib.api.data.advancements;
 
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.function.Consumer;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
@@ -16,11 +20,6 @@ import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.function.Consumer;
 
 /**
  * Implementation of {@link AdvancementProvider.AdvancementGenerator} that provides helpers.
@@ -41,8 +40,9 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
 
     /**
      * Generates advancements, storing the saver and existing file helper for later use.
-     * @param provider The {@link HolderLookup.Provider} to use for registries
-     * @param consumer The consumer to save advancements to
+     * 
+     * @param provider           The {@link HolderLookup.Provider} to use for registries
+     * @param consumer           The consumer to save advancements to
      * @param existingFileHelper The existing file helper to use for saving advancements
      */
     @Override
@@ -55,6 +55,7 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
 
     /**
      * Generates advancements.
+     * 
      * @param provider The {@link HolderLookup.Provider} to use for registries
      */
     public abstract void generate(HolderLookup.Provider provider);
