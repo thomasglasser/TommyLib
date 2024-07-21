@@ -27,8 +27,11 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BannerPattern;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import org.apache.commons.lang3.text.WordUtils;
+
+import java.util.List;
 
 /**
  * Extension of {@link LanguageProvider} for English that provides functionality for mod holders.
@@ -288,5 +291,35 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
     protected void addAttackWithItem(ResourceKey<DamageType> key, String message, String itemSuffix) {
         addAttack(key, message);
         add("death.attack." + key.location().toShortLanguageKey() + ".item", message + " " + itemSuffix);
+    }
+
+    /**
+     * Adds a translation for a given {@link ModConfigSpec.ConfigValue} with a tooltip.
+     * @param configValue The config value to add the translation for.
+     * @param name The name of the config value.
+     * @param tooltip The tooltip of the config value.
+     */
+    protected void addConfig(ModConfigSpec.ConfigValue<?> configValue, String name, String tooltip) {
+        List<String> keys = configValue.getPath();
+        String configKey = modId + ".configuration." + keys.getLast();
+        add(configKey, name);
+        add(configKey + ".tooltip", tooltip);
+    }
+
+    /**
+     * Adds a translation for a mod config screen.
+     * @param name The name of the config screen (typically the mod name).
+     */
+    protected void addConfigTitle(String name) {
+        add(modId + ".configuration.title", name);
+    }
+
+    /**
+     * Adds a translation for a config section.
+     * @param key The key of the config section.
+     * @param name The name of the config section.
+     */
+    protected void addConfigSection(String key, String name) {
+        add(modId + ".configuration." + key, name);
     }
 }

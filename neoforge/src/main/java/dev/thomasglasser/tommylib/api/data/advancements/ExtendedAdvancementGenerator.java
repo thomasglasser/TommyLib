@@ -112,6 +112,36 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
     }
 
     /**
+     * Creates a root advancement.
+     *
+     * @param displayItem The item to display in the advancement tab.
+     * @param id          The ID of the advancement.
+     * @param background  The background texture of the advancement.
+     * @param frameType   The type of frame to use for the advancement.
+     * @param toast       Whether to display a toast notification for the advancement.
+     * @param announce    Whether to announce the advancement in chat.
+     * @param hidden      Whether the advancement is hidden.
+     * @param rewards     The rewards for the advancement.
+     * @param triggerKey  The key for the trigger.
+     * @param trigger     The trigger for the advancement.
+     * @param title       The title of the advancement.
+     * @param desc        The description of the advancement.
+     * @return The root advancement.
+     */
+    protected AdvancementHolder root(ItemLike displayItem, String id, ResourceLocation background, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
+        Component titleKey = title(category, id);
+        Component descKey = desc(category, id);
+
+        add(titleKey, title);
+        add(descKey, desc);
+
+        Advancement.Builder builder = Advancement.Builder.advancement()
+                .display(displayItem, titleKey, descKey, background, frameType, toast, announce, hidden);
+
+        return makeInternal(builder, id, rewards, AdvancementRequirements.Strategy.AND, Map.of(triggerKey, trigger));
+    }
+
+    /**
      * Creates an advancement.
      * 
      * @param root        The parent advancement.
@@ -139,6 +169,37 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
                 .display(displayItem, titleKey, descKey, null, frameType, toast, announce, hidden);
 
         return makeInternal(builder, id, rewards, strategy, triggers);
+    }
+
+    /**
+     * Creates an advancement.
+     *
+     * @param root        The parent advancement.
+     * @param displayItem The item to display in the advancement tab.
+     * @param id          The ID of the advancement.
+     * @param frameType   The type of frame to use for the advancement.
+     * @param toast       Whether to display a toast notification for the advancement.
+     * @param announce    Whether to announce the advancement in chat.
+     * @param hidden      Whether the advancement is hidden.
+     * @param rewards     The rewards for the advancement.
+     * @param triggerKey  The key for the trigger.
+     * @param trigger     The trigger for the advancement.
+     * @param title       The title of the advancement.
+     * @param desc        The description of the advancement.
+     * @return The advancement.
+     */
+    protected AdvancementHolder create(AdvancementHolder root, ItemLike displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
+        Component titleKey = title(category, id);
+        Component descKey = desc(category, id);
+
+        add(titleKey, title);
+        add(descKey, desc);
+
+        Advancement.Builder builder = Advancement.Builder.advancement()
+                .parent(root)
+                .display(displayItem, titleKey, descKey, null, frameType, toast, announce, hidden);
+
+        return makeInternal(builder, id, rewards, AdvancementRequirements.Strategy.AND, Map.of(triggerKey, trigger));
     }
 
     /**
@@ -173,6 +234,37 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
 
     /**
      * Creates an advancement.
+     *
+     * @param root        The parent advancement.
+     * @param displayItem The item to display in the advancement tab.
+     * @param id          The ID of the advancement.
+     * @param frameType   The type of frame to use for the advancement.
+     * @param toast       Whether to display a toast notification for the advancement.
+     * @param announce    Whether to announce the advancement in chat.
+     * @param hidden      Whether the advancement is hidden.
+     * @param rewards     The rewards for the advancement.
+     * @param triggerKey  The key for the trigger.
+     * @param trigger     The trigger for the advancement.
+     * @param title       The title of the advancement.
+     * @param desc        The description of the advancement.
+     * @return The advancement.
+     */
+    protected AdvancementHolder create(AdvancementHolder root, ItemStack displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
+        Component titleKey = title(category, id);
+        Component descKey = desc(category, id);
+
+        add(titleKey, title);
+        add(descKey, desc);
+
+        Advancement.Builder builder = Advancement.Builder.advancement()
+                .parent(root)
+                .display(displayItem, titleKey, descKey, null, frameType, toast, announce, hidden);
+
+        return makeInternal(builder, id, rewards, AdvancementRequirements.Strategy.AND, Map.of(triggerKey, trigger));
+    }
+
+    /**
+     * Creates an advancement.
      * 
      * @param root        The parent advancement.
      * @param displayItem The item to display in the advancement tab.
@@ -203,6 +295,37 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
 
     /**
      * Creates an advancement.
+     *
+     * @param root        The parent advancement.
+     * @param displayItem The item to display in the advancement tab.
+     * @param id          The ID of the advancement.
+     * @param frameType   The type of frame to use for the advancement.
+     * @param toast       Whether to display a toast notification for the advancement.
+     * @param announce    Whether to announce the advancement in chat.
+     * @param hidden      Whether the advancement is hidden.
+     * @param rewards     The rewards for the advancement.
+     * @param triggerKey  The key for the trigger.
+     * @param trigger     The trigger for the advancement.
+     * @param title       The title of the advancement.
+     * @param desc        The description of the advancement.
+     * @return The advancement.
+     */
+    protected AdvancementHolder create(ResourceLocation root, ItemLike displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
+        Component titleKey = title(category, id);
+        Component descKey = desc(category, id);
+
+        add(titleKey, title);
+        add(descKey, desc);
+
+        Advancement.Builder builder = Advancement.Builder.advancement()
+                .parent(new AdvancementHolder(root, null))
+                .display(displayItem, titleKey, descKey, null, frameType, toast, announce, hidden);
+
+        return makeInternal(builder, id, rewards, AdvancementRequirements.Strategy.AND, Map.of(triggerKey, trigger));
+    }
+
+    /**
+     * Creates an advancement.
      * 
      * @param root        The parent advancement.
      * @param displayItem The item to display in the advancement tab.
@@ -229,6 +352,37 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
                 .display(displayItem, titleKey, descKey, null, frameType, toast, announce, hidden);
 
         return makeInternal(builder, id, rewards, strategy, triggers);
+    }
+
+    /**
+     * Creates an advancement.
+     *
+     * @param root        The parent advancement.
+     * @param displayItem The item to display in the advancement tab.
+     * @param id          The ID of the advancement.
+     * @param frameType   The type of frame to use for the advancement.
+     * @param toast       Whether to display a toast notification for the advancement.
+     * @param announce    Whether to announce the advancement in chat.
+     * @param hidden      Whether the advancement is hidden.
+     * @param rewards     The rewards for the advancement.
+     * @param triggerKey  The key for the trigger.
+     * @param trigger     The trigger for the advancement.
+     * @param title       The title of the advancement.
+     * @param desc        The description of the advancement.
+     * @return The advancement.
+     */
+    protected AdvancementHolder create(ResourceLocation root, ItemStack displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
+        Component titleKey = title(category, id);
+        Component descKey = desc(category, id);
+
+        add(titleKey, title);
+        add(descKey, desc);
+
+        Advancement.Builder builder = Advancement.Builder.advancement()
+                .parent(new AdvancementHolder(root, null))
+                .display(displayItem, titleKey, descKey, null, frameType, toast, announce, hidden);
+
+        return makeInternal(builder, id, rewards, AdvancementRequirements.Strategy.AND, Map.of(triggerKey, trigger));
     }
 
     /**
