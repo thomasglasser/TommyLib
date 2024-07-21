@@ -4,6 +4,7 @@ import dev.thomasglasser.tommylib.api.packs.PackInfo;
 import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
+import java.util.List;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.Holder;
@@ -30,8 +31,6 @@ import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import org.apache.commons.lang3.text.WordUtils;
-
-import java.util.List;
 
 /**
  * Extension of {@link LanguageProvider} for English that provides functionality for mod holders.
@@ -295,9 +294,10 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
 
     /**
      * Adds a translation for a given {@link ModConfigSpec.ConfigValue} with a tooltip.
+     * 
      * @param configValue The config value to add the translation for.
-     * @param name The name of the config value.
-     * @param tooltip The tooltip of the config value.
+     * @param name        The name of the config value.
+     * @param tooltip     The tooltip of the config value.
      */
     protected void addConfig(ModConfigSpec.ConfigValue<?> configValue, String name, String tooltip) {
         List<String> keys = configValue.getPath();
@@ -308,6 +308,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
 
     /**
      * Adds a translation for a mod config screen.
+     * 
      * @param name The name of the config screen (typically the mod name).
      */
     protected void addConfigTitle(String name) {
@@ -316,7 +317,8 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
 
     /**
      * Adds a translation for a config section.
-     * @param key The key of the config section.
+     * 
+     * @param key  The key of the config section.
      * @param name The name of the config section.
      */
     protected void addConfigSection(String key, String name) {
