@@ -324,4 +324,16 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
     protected void addConfigSection(String key, String name) {
         add(modId + ".configuration." + key, name);
     }
+
+    /**
+     * Adds a translation for a config section with a tooltip.
+     *
+     * @param key     The key of the config section.
+     * @param name    The name of the config section.
+     * @param tooltip The tooltip of the config section.
+     */
+    protected void addConfigSection(String key, String name, String tooltip) {
+        add(modId + ".configuration." + key, name);
+        add(modId + ".configuration." + key + ".tooltip", tooltip);
+    }
 }
