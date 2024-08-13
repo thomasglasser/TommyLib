@@ -8,6 +8,7 @@ import dev.kosmx.playerAnim.api.layered.ModifierLayer;
 import dev.kosmx.playerAnim.api.layered.modifier.AbstractFadeModifier;
 import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.Ease;
+import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -18,8 +19,7 @@ public class AnimationUtils {
     public static final Map<AbstractClientPlayer, ModifierLayer<IAnimation>> animationData = new IdentityHashMap<>();
 
     public static void registerPlayerForAnimation() {
-        // TODO: Update playerAnimator
-//		PlayerAnimationAccess.REGISTER_ANIMATION_EVENT.register(AnimationUtils::registerPlayerInternal);
+        PlayerAnimationAccess.REGISTER_ANIMATION_EVENT.register(AnimationUtils::registerPlayerInternal);
     }
 
     /**
