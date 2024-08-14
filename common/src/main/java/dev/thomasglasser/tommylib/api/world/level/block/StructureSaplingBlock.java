@@ -2,7 +2,7 @@ package dev.thomasglasser.tommylib.api.world.level.block;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.thomasglasser.tommylib.api.world.level.block.grower.StructureGrower;
+import dev.thomasglasser.tommylib.api.world.level.block.grower.JigsawStructureGrower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -11,12 +11,12 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class StructureSaplingBlock extends SaplingBlock {
     public static final MapCodec<StructureSaplingBlock> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(StructureGrower.CODEC.fieldOf("structure").forGetter(block -> block.structureGrower), propertiesCodec())
+            instance -> instance.group(JigsawStructureGrower.CODEC.fieldOf("structure").forGetter(block -> block.structureGrower), propertiesCodec())
                     .apply(instance, StructureSaplingBlock::new));
 
-    protected final StructureGrower structureGrower;
+    protected final JigsawStructureGrower structureGrower;
 
-    public StructureSaplingBlock(StructureGrower structureGrower, Properties properties) {
+    public StructureSaplingBlock(JigsawStructureGrower structureGrower, Properties properties) {
         super(null, properties);
         this.structureGrower = structureGrower;
     }
