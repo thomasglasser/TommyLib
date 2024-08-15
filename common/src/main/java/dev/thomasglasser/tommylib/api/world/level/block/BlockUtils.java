@@ -3,7 +3,7 @@ package dev.thomasglasser.tommylib.api.world.level.block;
 import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
-import dev.thomasglasser.tommylib.api.world.level.block.grower.JigsawStructureGrower;
+import dev.thomasglasser.tommylib.api.world.level.block.grower.ExtendedTreeGrower;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,15 +147,15 @@ public class BlockUtils {
     }
 
     /**
-     * Register a {@link LeavesSet} with the given provider and name in the provider's namespace with a special {@link StructureSaplingBlock} sapling
-     * 
-     * @param provider        The provider to register the blocks with
-     * @param structureGrower The structure grower for the sapling
-     * @param itemFactory     The item factory
+     * Register a {@link LeavesSet} with the given provider and name in the provider's namespace
+     *
+     * @param provider    The provider to register the blocks with
+     * @param treeGrower  The tree grower for the sapling
+     * @param itemFactory The item factory
      * @return The leaves set
      */
-    public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, String name, JigsawStructureGrower structureGrower, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory) {
-        DeferredBlock<?> sapling = registerBlockAndItemAndWrap(provider, name + "_sapling", () -> new StructureSaplingBlock(structureGrower, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS));
+    public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, String name, ExtendedTreeGrower treeGrower, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory) {
+        DeferredBlock<?> sapling = registerBlockAndItemAndWrap(provider, name + "_sapling", () -> new ExtendedSaplingBlock(treeGrower, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS));
         return new LeavesSet(ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name),
                 registerBlockAndItemAndWrap(provider, name + "_leaves", () -> Blocks.leaves(SoundType.GRASS), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS)),
                 sapling,

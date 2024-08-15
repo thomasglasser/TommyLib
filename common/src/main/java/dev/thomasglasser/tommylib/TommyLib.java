@@ -1,6 +1,7 @@
 package dev.thomasglasser.tommylib;
 
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
+import dev.thomasglasser.tommylib.api.world.level.levelgen.feature.TommyLibFeatures;
 import dev.thomasglasser.tommylib.impl.network.TommyLibPayloads;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
@@ -15,6 +16,8 @@ public class TommyLib {
         LOGGER.info("Initializing {} for {} in a {} environment...", MOD_NAME, TommyLibServices.PLATFORM.getPlatformName(), TommyLibServices.PLATFORM.getEnvironmentName());
 
         TommyLibPayloads.init();
+
+        TommyLibFeatures.init();
     }
 
     public static ResourceLocation modLoc(String path) {
