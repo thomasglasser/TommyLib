@@ -15,7 +15,6 @@ package dev.thomasglasser.tommylib.api.tags;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -36,7 +35,6 @@ public final class ConventionalItemTags {
     // Tool tags
     public static final TagKey<Item> TOOLS = register("tools");
     public static final TagKey<Item> SHEAR_TOOLS = register("tools/shear");
-
     /**
      * For spear tools, like Minecraft's tridents.
      * Note, other weapons like boomerangs and throwing knives are best put into their own tools tag.
@@ -47,10 +45,28 @@ public final class ConventionalItemTags {
     public static final TagKey<Item> SHIELD_TOOLS = register("tools/shield");
     public static final TagKey<Item> FISHING_ROD_TOOLS = register("tools/fishing_rod");
     public static final TagKey<Item> BRUSH_TOOLS = register("tools/brush");
+    /**
+     * A tag containing all existing fire starting tools such as Flint and Steel.
+     * Fire Charge is not a tool (no durability) and thus, does not go in this tag.
+     */
+    public static final TagKey<Item> IGNITER_TOOLS = register("tools/igniter");
+    public static final TagKey<Item> MACE_TOOLS = register("tools/mace");
 
     // Action-based tool tags
+    /**
+     * A tag containing melee-based weapons for recipes and loot tables.
+     * Tools are considered melee if they are intentionally intended to be used for melee attack as a primary purpose.
+     * (In other words, Pickaxes are not melee weapons as they are not intended to be a weapon as a primary purpose)
+     */
     public static final TagKey<Item> MELEE_WEAPON_TOOLS = register("tools/melee_weapon");
+    /**
+     * A tag containing ranged-based weapons for recipes and loot tables.
+     * Tools are considered ranged if they can damage entities beyond the weapon's and player's melee attack range.
+     */
     public static final TagKey<Item> RANGED_WEAPON_TOOLS = register("tools/ranged_weapon");
+    /**
+     * A tag containing mining-based tools for recipes and loot tables.
+     */
     public static final TagKey<Item> MINING_TOOL_TOOLS = register("tools/mining_tool");
 
     // Armor tags
@@ -101,6 +117,10 @@ public final class ConventionalItemTags {
     public static final TagKey<Item> EMERALD_GEMS = register("gems/emerald");
     public static final TagKey<Item> PRISMARINE_GEMS = register("gems/prismarine");
 
+    // Nuggets - vanilla instances
+    public static final TagKey<Item> IRON_NUGGETS = register("nuggets/iron");
+    public static final TagKey<Item> GOLD_NUGGETS = register("nuggets/gold");
+
     // Dusts and Misc - vanilla instances
     public static final TagKey<Item> REDSTONE_DUSTS = register("dusts/redstone");
     public static final TagKey<Item> GLOWSTONE_DUSTS = register("dusts/glowstone");
@@ -114,30 +134,34 @@ public final class ConventionalItemTags {
      * Apples and other foods that are considered fruits in the culinary field belong in this tag.
      * Cherries would go here as they are considered a "stone fruit" within culinary fields.
      */
-    public static final TagKey<Item> FRUITS_FOODS = register("foods/fruits");
+    public static final TagKey<Item> FRUIT_FOODS = register("foods/fruit");
     /**
      * Tomatoes and other foods that are considered vegetables in the culinary field belong in this tag.
      */
-    public static final TagKey<Item> VEGETABLES_FOODS = register("foods/vegetables");
+    public static final TagKey<Item> VEGETABLE_FOODS = register("foods/vegetable");
     /**
      * Strawberries, raspberries, and other berry foods belong in this tag.
      * Cherries would NOT go here as they are considered a "stone fruit" within culinary fields.
      */
-    public static final TagKey<Item> BERRIES_FOODS = register("foods/berries");
-    public static final TagKey<Item> BREADS_FOODS = register("foods/breads");
-    public static final TagKey<Item> COOKIES_FOODS = register("foods/cookies");
-    public static final TagKey<Item> RAW_MEATS_FOODS = register("foods/raw_meats");
-    public static final TagKey<Item> COOKED_MEATS_FOODS = register("foods/cooked_meats");
-    public static final TagKey<Item> RAW_FISHES_FOODS = register("foods/raw_fishes");
-    public static final TagKey<Item> COOKED_FISHES_FOODS = register("foods/cooked_fishes");
+    public static final TagKey<Item> BERRY_FOODS = register("foods/berry");
+    public static final TagKey<Item> BREAD_FOODS = register("foods/bread");
+    public static final TagKey<Item> COOKIE_FOODS = register("foods/cookie");
+    public static final TagKey<Item> RAW_MEAT_FOODS = register("foods/raw_meat");
+    public static final TagKey<Item> COOKED_MEAT_FOODS = register("foods/cooked_meat");
+    public static final TagKey<Item> RAW_FISH_FOODS = register("foods/raw_fish");
+    public static final TagKey<Item> COOKED_FISH_FOODS = register("foods/cooked_fish");
     /**
      * Soups, stews, and other liquid food in bowls belongs in this tag.
      */
-    public static final TagKey<Item> SOUPS_FOODS = register("foods/soups");
+    public static final TagKey<Item> SOUP_FOODS = register("foods/soup");
     /**
      * Sweets and candies like lollipops or chocolate belong in this tag.
      */
-    public static final TagKey<Item> CANDIES_FOODS = register("foods/candies");
+    public static final TagKey<Item> CANDY_FOODS = register("foods/candy");
+    /**
+     * Any gold-based foods would go in this tag. Such as Golden Apples or Glistering Melon Slice.
+     */
+    public static final TagKey<Item> GOLDEN_FOODS = register("foods/golden");
     /**
      * Foods like cake that can be eaten when placed in the world belong in this tag.
      */
@@ -166,7 +190,17 @@ public final class ConventionalItemTags {
     public static final TagKey<Item> CHESTS = register("chests");
     public static final TagKey<Item> WOODEN_CHESTS = register("chests/wooden");
     public static final TagKey<Item> GLASS_BLOCKS = register("glass_blocks");
+    public static final TagKey<Item> GLASS_BLOCKS_COLORLESS = register("glass_blocks/colorless");
+    /**
+     * Glass which is made from cheap resources like sand and only minor additional ingredients like dyes.
+     */
+    public static final TagKey<Item> GLASS_BLOCKS_CHEAP = register("glass_blocks/cheap");
+    public static final TagKey<Item> GLASS_BLOCKS_TINTED = register("glass_blocks/tinted");
     public static final TagKey<Item> GLASS_PANES = register("glass_panes");
+    public static final TagKey<Item> GLASS_PANES_COLORLESS = register("glass_panes/colorless");
+    /**
+     * Block tag equivalent is {@link BlockTags#SHULKER_BOXES}.
+     */
     public static final TagKey<Item> SHULKER_BOXES = register("shulker_boxes");
     public static final TagKey<Item> GLAZED_TERRACOTTAS = register("glazed_terracottas");
     public static final TagKey<Item> CONCRETES = register("concretes");
@@ -216,7 +250,10 @@ public final class ConventionalItemTags {
     /**
      * Tag that holds all blocks and items that can be dyed a specific color.
      * (Does not include color blending items like leather armor.
-     * Use {@link ItemTags#DYEABLE} tag instead for color blending items)
+     * Use {@link net.minecraft.tags.ItemTags#DYEABLE} tag instead for color blending items)
+     * <p></p>
+     * Note: Use custom ingredients in recipes to do tag intersections and/or tag exclusions
+     * to make more powerful recipes utilizing multiple tags such as dyed tags for an ingredient.
      */
     public static final TagKey<Item> DYED = register("dyed");
     public static final TagKey<Item> BLACK_DYED = register("dyed/black");
@@ -262,6 +299,23 @@ public final class ConventionalItemTags {
     public static final TagKey<Item> STORAGE_BLOCKS_SLIME = register("storage_blocks/slime");
     public static final TagKey<Item> STORAGE_BLOCKS_WHEAT = register("storage_blocks/wheat");
 
+    // Crops
+    /**
+     * For raw materials harvested from growable plants. Crop items can be edible like carrots or non-edible like
+     * wheat and cocoa beans.
+     */
+    public static final TagKey<Item> CROPS = register("crops");
+    public static final TagKey<Item> BEETROOT_CROPS = register("crops/beetroot");
+    public static final TagKey<Item> CACTUS_CROPS = register("crops/cactus");
+    public static final TagKey<Item> CARROT_CROPS = register("crops/carrot");
+    public static final TagKey<Item> COCOA_BEAN_CROPS = register("crops/cocoa_bean");
+    public static final TagKey<Item> MELON_CROPS = register("crops/melon");
+    public static final TagKey<Item> NETHER_WART_CROPS = register("crops/nether_wart");
+    public static final TagKey<Item> POTATO_CROPS = register("crops/potato");
+    public static final TagKey<Item> PUMPKIN_CROPS = register("crops/pumpkin");
+    public static final TagKey<Item> SUGAR_CANE_CROPS = register("crops/sugar_cane");
+    public static final TagKey<Item> WHEAT_CROPS = register("crops/wheat");
+
     // Other
     public static final TagKey<Item> PLAYER_WORKSTATIONS_CRAFTING_TABLES = register("player_workstations/crafting_tables");
     public static final TagKey<Item> PLAYER_WORKSTATIONS_FURNACES = register("player_workstations/furnaces");
@@ -285,6 +339,13 @@ public final class ConventionalItemTags {
     public static final TagKey<Item> BREEZE_RODS = register("rods/breeze");
     public static final TagKey<Item> ROPES = register("ropes");
     public static final TagKey<Item> CHAINS = register("chains");
+    public static final TagKey<Item> ENDER_PEARLS = register("ender_pearls");
+    public static final TagKey<Item> SLIME_BALLS = register("slime_balls");
+    /**
+     * For bonemeal-like items that can grow plants.
+     * (Note: Could include durability-based modded bonemeal-like items. Check for durability {@link net.minecraft.core.component.DataComponents#DAMAGE} to handle them properly)
+     */
+    public static final TagKey<Item> FERTILIZERS = register("fertilizers");
 
     /**
      * Tag that holds all items that recipe viewers should not show to users.
