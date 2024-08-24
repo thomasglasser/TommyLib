@@ -2,6 +2,7 @@ package dev.thomasglasser.tommylib.api.data.lang;
 
 import dev.thomasglasser.tommylib.api.packs.PackInfo;
 import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
+import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import java.util.List;
@@ -19,6 +20,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -55,7 +57,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
 
     /**
      * Adds a translation for a given {@link BannerPattern} for all {@link DyeColor}s.
-     * 
+     *
      * @param pattern The pattern to add the translation for.
      * @param name    The name of the pattern.
      */
@@ -335,5 +337,28 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
     protected void addConfigSection(String key, String name, String tooltip) {
         add(modId + ".configuration." + key, name);
         add(modId + ".configuration." + key + ".tooltip", tooltip);
+    }
+
+    /**
+     * Adds a translation for a banner pattern item.
+     * 
+     * @param item The item to add the translation for.
+     * @param name The name of the pattern item.
+     */
+    protected void addPatternItem(DeferredItem<BannerPatternItem> item, String name) {
+        add(item.get(), "Banner Pattern");
+        addDesc(item.get(), name);
+    }
+
+    /**
+     * Adds a translation for a banner pattern and item.
+     * 
+     * @param pattern The pattern
+     * @param item    The item for the pattern
+     * @param name    The name of the pattern
+     */
+    protected void addPatternAndItem(ResourceKey<BannerPattern> pattern, DeferredItem<BannerPatternItem> item, String name) {
+        addPattern(pattern, name);
+        addPatternItem(item, name);
     }
 }
