@@ -5,7 +5,6 @@ import dev.thomasglasser.tommylib.impl.platform.services.BlockEntityHelper;
 import dev.thomasglasser.tommylib.impl.platform.services.EntityHelper;
 import dev.thomasglasser.tommylib.impl.platform.services.ItemHelper;
 import dev.thomasglasser.tommylib.impl.platform.services.NetworkHelper;
-import dev.thomasglasser.tommylib.impl.platform.services.ParticleHelper;
 import dev.thomasglasser.tommylib.impl.platform.services.PlatformHelper;
 import java.util.ServiceLoader;
 
@@ -18,7 +17,6 @@ public class TommyLibServices {
     // For example this can be used to check if the code is running on Forge vs Fabric, or to ask the modloader if another
     // mod is loaded.
     public static final PlatformHelper PLATFORM = load(PlatformHelper.class);
-    public static final ParticleHelper PARTICLE = load(ParticleHelper.class);
     public static final NetworkHelper NETWORK = load(NetworkHelper.class);
     public static final BlockEntityHelper BLOCK_ENTITY = load(BlockEntityHelper.class);
     public static final ItemHelper ITEM = load(ItemHelper.class);

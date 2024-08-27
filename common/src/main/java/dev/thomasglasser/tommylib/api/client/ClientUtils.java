@@ -9,7 +9,6 @@ import java.util.UUID;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -35,8 +34,8 @@ public class ClientUtils {
      * @param uuid The UUID of the player.
      * @return The client player.
      */
-    public static AbstractClientPlayer getClientPlayerByUUID(UUID uuid) {
-        return (AbstractClientPlayer) Minecraft.getInstance().level.getPlayerByUUID(uuid);
+    public static Player getPlayerByUUID(UUID uuid) {
+        return Minecraft.getInstance().level.getPlayerByUUID(uuid);
     }
 
     /**

@@ -11,12 +11,11 @@ import dev.kosmx.playerAnim.core.util.Ease;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class AnimationUtils {
-    public static final Map<AbstractClientPlayer, ModifierLayer<IAnimation>> animationData = new IdentityHashMap<>();
+    public static final Map<Player, ModifierLayer<IAnimation>> animationData = new IdentityHashMap<>();
 
     public static void registerPlayerForAnimation() {
         PlayerAnimationAccess.REGISTER_ANIMATION_EVENT.register(AnimationUtils::registerPlayerInternal);
@@ -28,7 +27,7 @@ public class AnimationUtils {
      * @param player The player to register
      * @param stack  The animation stack to register to
      */
-    private static void registerPlayerInternal(AbstractClientPlayer player, AnimationStack stack) {
+    private static void registerPlayerInternal(Player player, AnimationStack stack) {
         var layer = new ModifierLayer<>();
         stack.addAnimLayer(1000, layer);
         animationData.put(player, layer);
@@ -67,7 +66,7 @@ public class AnimationUtils {
      * 
      * @param player The player to stop the animation for
      */
-    public static void stopAnimation(AbstractClientPlayer player) {
+    public static void stopAnimation(Player player) {
         var animation = animationData.get(player);
         animation.setAnimation(null);
     }
