@@ -6,7 +6,6 @@ import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -14,6 +13,7 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.client.model.generators.loaders.SeparateTransformsModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
@@ -115,11 +115,23 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      * @param set The set of blocks to generate models for.
      */
     protected void woodSet(WoodSet set) {
-        withExistingParent(set.planks().getId().getPath(), modBlockModel(set.planks().getId().getPath()));
-        withExistingParent(set.log().getId().getPath(), modBlockModel(set.log().getId().getPath()));
-        withExistingParent(set.strippedLog().getId().getPath(), modBlockModel(set.strippedLog().getId().getPath()));
-        withExistingParent(set.wood().getId().getPath(), modBlockModel(set.wood().getId().getPath()));
-        withExistingParent(set.strippedWood().getId().getPath(), modBlockModel(set.strippedWood().getId().getPath()));
+        withExistingParent(set.log().getId().getPath(), blockLoc(set.log()));
+        withExistingParent(set.strippedLog().getId().getPath(), blockLoc(set.strippedLog()));
+        withExistingParent(set.wood().getId().getPath(), blockLoc(set.wood()));
+        withExistingParent(set.strippedWood().getId().getPath(), blockLoc(set.strippedWood()));
+        withExistingParent(set.planks().getId().getPath(), blockLoc(set.planks()));
+        withExistingParent(set.slab().getId().getPath(), blockLoc(set.slab()));
+        withExistingParent(set.stairs().getId().getPath(), blockLoc(set.stairs()));
+        withExistingParent(set.pressurePlate().getId().getPath(), blockLoc(set.pressurePlate()));
+        buttonInventory(set.button().getId().getPath(), blockLoc(set.planks()));
+        fenceInventory(set.fence().getId().getPath(), blockLoc(set.fence()));
+        withExistingParent(set.fenceGate().getId().getPath(), blockLoc(set.fenceGate()));
+        basicItem(set.door().asItem());
+        withExistingParent(set.trapdoor().getId().getPath(), blockLoc(set.trapdoor()));
+        basicItem(set.sign().asItem());
+        basicItem(set.hangingSign().asItem());
+        basicItem(set.boatItem());
+        basicItem(set.chestBoatItem());
     }
 
     /**
@@ -128,8 +140,8 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      * @param set The set of blocks to generate models for.
      */
     protected void leavesSet(LeavesSet set) {
-        withExistingParent(set.leaves().getId().getPath(), modBlockModel(BuiltInRegistries.BLOCK.getKey(set.leaves().get()).getPath()));
-        singleTexture(set.sapling().getId().getPath(), mcItemModel("generated"), "layer0", modBlockModel(set.sapling().getId().getPath()));
+        withExistingParent(set.leaves().getId().getPath(), blockLoc(set.leaves()));
+        singleTexture(set.sapling().getId().getPath(), mcItemLoc("generated"), "layer0", blockLoc(set.sapling()));
     }
 
     /**
@@ -228,21 +240,21 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
     /**
      * Generates a {@link ResourceLocation} for a mod item model.
      * 
-     * @param path The path of the item model.
+     * @param item The item to generate the {@link ResourceLocation} for.
      * @return The {@link ResourceLocation} for the item model.
      */
-    public ResourceLocation modItemModel(String path) {
-        return ResourceLocation.fromNamespaceAndPath(modid, "item/" + path);
+    public ResourceLocation itemLoc(DeferredItem<?> item) {
+        return item.getId().withPrefix(ModelProvider.ITEM_FOLDER + "/");
     }
 
     /**
      * Generates a {@link ResourceLocation} for a mod block model.
      * 
-     * @param path The path of the block model.
+     * @param block The block to generate the {@link ResourceLocation} for.
      * @return The {@link ResourceLocation} for the block model.
      */
-    public ResourceLocation modBlockModel(String path) {
-        return modLoc("block/" + path);
+    public ResourceLocation blockLoc(DeferredBlock<?> block) {
+        return block.getId().withPrefix(ModelProvider.BLOCK_FOLDER + "/");
     }
 
     /**
@@ -251,8 +263,8 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      * @param path The path of the block model.
      * @return The {@link ResourceLocation} for the block model.
      */
-    public ResourceLocation mcBlockModel(String path) {
-        return mcLoc("block/" + path);
+    public static ResourceLocation mcBlockLoc(String path) {
+        return ResourceLocation.withDefaultNamespace(ModelProvider.BLOCK_FOLDER + "/" + path);
     }
 
     /**
@@ -261,7 +273,27 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      * @param path The path of the item model.
      * @return The {@link ResourceLocation} for the item model.
      */
-    public ResourceLocation mcItemModel(String path) {
-        return ResourceLocation.withDefaultNamespace("item/" + path);
+    public static ResourceLocation mcItemLoc(String path) {
+        return ResourceLocation.withDefaultNamespace(ModelProvider.ITEM_FOLDER + "/" + path);
+    }
+
+    /**
+     * Generates a {@link ResourceLocation} for a mod block model.
+     * 
+     * @param path The path of the block model.
+     * @return The {@link ResourceLocation} for the block model.
+     */
+    protected ResourceLocation modBlockLoc(String path) {
+        return ResourceLocation.fromNamespaceAndPath(modid, ModelProvider.BLOCK_FOLDER + "/" + path);
+    }
+
+    /**
+     * Generates a {@link ResourceLocation} for a mod item model.
+     * 
+     * @param path The path of the item model.
+     * @return The {@link ResourceLocation} for the item model.
+     */
+    protected ResourceLocation modItemLoc(String path) {
+        return ResourceLocation.fromNamespaceAndPath(modid, ModelProvider.ITEM_FOLDER + "/" + path);
     }
 }

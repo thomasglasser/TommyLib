@@ -97,11 +97,21 @@ public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider 
      * @param set The {@link WoodSet} to add loot tables for.
      */
     protected void woodSet(WoodSet set) {
-        dropSelf(set.planks().get());
         dropSelf(set.log().get());
         dropSelf(set.strippedLog().get());
         dropSelf(set.wood().get());
         dropSelf(set.strippedWood().get());
+        dropSelf(set.planks().get());
+        dropSelf(set.slab().get());
+        dropSelf(set.stairs().get());
+        dropSelf(set.pressurePlate().get());
+        dropSelf(set.button().get());
+        dropSelf(set.fence().get());
+        dropSelf(set.fenceGate().get());
+        dropSelf(set.door().get());
+        dropSelf(set.trapdoor().get());
+        dropSelf(set.sign().get());
+        dropSelf(set.hangingSign().get());
     }
 
     /**

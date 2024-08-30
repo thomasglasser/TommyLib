@@ -5,6 +5,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
+import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import java.nio.file.Path;
@@ -26,8 +28,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.CeilingHangingSignBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.apache.commons.lang3.function.TriFunction;
 
@@ -40,12 +46,14 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
     protected final Map<Block, BlockStateGenerator> STATE_MAP = Maps.newHashMap();
     protected final Map<ResourceLocation, Supplier<JsonElement>> MODEL_MAP = Maps.newHashMap();
     protected final ExtendedBlockModelGenerators blockModelGenerators;
+    protected final String modId;
     protected final PackOutput output;
     protected final ExistingFileHelper existingFileHelper;
 
     public ExtendedBlockStateProvider(PackOutput output, String modId, ExistingFileHelper exFileHelper) {
         super(output, modId, exFileHelper);
         this.blockModelGenerators = getBlockModelGenerators() != null ? makeBlockModelGenerators(getBlockModelGenerators()) : null;
+        this.modId = modId;
         this.output = output;
         existingFileHelper = exFileHelper;
     }
@@ -96,21 +104,21 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
     /**
      * Creates a new {@link ResourceLocation} in the block subfolder with the mod namespace.
      * 
-     * @param path The path of the new {@link ResourceLocation}.
+     * @param block The block to create the {@link ResourceLocation} for.
      * @return The new {@link ResourceLocation}.
      */
-    public ResourceLocation modBlockModel(String path) {
-        return modLoc("block/" + path);
+    public ResourceLocation blockLoc(DeferredBlock<?> block) {
+        return block.getId().withPrefix(ModelProvider.BLOCK_FOLDER + "/");
     }
 
     /**
      * Creates a new {@link ResourceLocation} in the item subfolder with the mod namespace.
      * 
-     * @param path The path of the new {@link ResourceLocation}.
+     * @param item The item to create the {@link ResourceLocation} for.
      * @return The new {@link ResourceLocation}.
      */
-    public ResourceLocation modItemModel(String path) {
-        return modLoc("item/" + path);
+    public ResourceLocation itemLoc(DeferredItem<?> item) {
+        return item.getId().withPrefix(ModelProvider.ITEM_FOLDER + "/");
     }
 
     /**
@@ -119,8 +127,38 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      * @param path The path of the new {@link ResourceLocation}.
      * @return The new {@link ResourceLocation}.
      */
-    public static ResourceLocation mcBlockModel(String path) {
-        return ResourceLocation.withDefaultNamespace("block/" + path);
+    public static ResourceLocation mcBlockLoc(String path) {
+        return ResourceLocation.withDefaultNamespace(ModelProvider.BLOCK_FOLDER + "/" + path);
+    }
+
+    /**
+     * Creates a new {@link ResourceLocation} in the item subfolder with the Minecraft namespace.
+     *
+     * @param path The path of the new {@link ResourceLocation}.
+     * @return The new {@link ResourceLocation}.
+     */
+    public static ResourceLocation mcItemLoc(String path) {
+        return ResourceLocation.withDefaultNamespace(ModelProvider.ITEM_FOLDER + "/" + path);
+    }
+
+    /**
+     * Creates a new {@link ResourceLocation} in the block subfolder with the mod namespace.
+     *
+     * @param path The path of the new {@link ResourceLocation}.
+     * @return The new {@link ResourceLocation}.
+     */
+    public ResourceLocation modBlockLoc(String path) {
+        return ResourceLocation.fromNamespaceAndPath(modId, ModelProvider.BLOCK_FOLDER + "/" + path);
+    }
+
+    /**
+     * Creates a new {@link ResourceLocation} in the item subfolder with the mod namespace.
+     *
+     * @param path The path of the new {@link ResourceLocation}.
+     * @return The new {@link ResourceLocation}.
+     */
+    public ResourceLocation modItemLoc(String path) {
+        return ResourceLocation.fromNamespaceAndPath(modId, ModelProvider.ITEM_FOLDER + "/" + path);
     }
 
     /**
@@ -129,11 +167,55 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      * @param set The {@link WoodSet} to generate blockstates and models for.
      */
     protected void woodSet(WoodSet set) {
+        logBlock(set.log().get());
+        logBlock(set.strippedLog().get());
+        simpleBlock(set.wood().get(), models().cubeAll(set.wood().getId().getPath(), blockLoc(set.log())));
+        simpleBlock(set.strippedWood().get(), models().cubeAll(set.strippedWood().getId().getPath(), blockLoc(set.strippedLog())));
         simpleBlock(set.planks().get());
-        logBlock((RotatedPillarBlock) set.log().get());
-        logBlock((RotatedPillarBlock) set.strippedLog().get());
-        simpleBlock(set.wood().get(), models().cubeAll(set.wood().getId().getPath(), modBlockModel(set.log().getId().getPath())));
-        simpleBlock(set.strippedWood().get(), models().cubeAll(set.strippedWood().getId().getPath(), modBlockModel(set.strippedLog().getId().getPath())));
+        slabBlock(set.slab().get(), blockLoc(set.planks()));
+        stairsBlock(set.stairs().get(), blockLoc(set.planks()));
+        pressurePlateBlock(set.pressurePlate().get(), blockLoc(set.planks()));
+        buttonBlock(set.button().get(), blockLoc(set.planks()));
+        fenceBlock(set.fence().get(), blockLoc(set.planks()));
+        fenceGateBlock(set.fenceGate().get(), blockLoc(set.planks()));
+        doorBlock(set.door().get(), blockLoc(set.door()).withSuffix("_bottom"), blockLoc(set.door()).withSuffix("_top"));
+        trapdoorBlock(set.trapdoor().get(), blockLoc(set.trapdoor()), true);
+        signBlock(set.sign().get(), set.wallSign().get(), blockLoc(set.log()));
+        hangingSignBlock(set.hangingSign().get(), set.wallHangingSign().get(), blockLoc(set.log()));
+    }
+
+    /**
+     * Generates a slab block with the provided texture.
+     * 
+     * @param block   The slab block to generate.
+     * @param texture The texture to use for the slab block.
+     */
+    public void slabBlock(SlabBlock block, ResourceLocation texture) {
+        super.slabBlock(block, texture, texture);
+    }
+
+    /**
+     * Generates hanging sign blocks with the provided texture.
+     * 
+     * @param signBlock     The ceiling hanging sign block to generate.
+     * @param wallSignBlock The wall hanging sign block to generate.
+     * @param texture       The texture to use for the sign blocks.
+     */
+    public void hangingSignBlock(CeilingHangingSignBlock signBlock, WallHangingSignBlock wallSignBlock, ResourceLocation texture) {
+        ModelFile sign = models().sign(BuiltInRegistries.BLOCK.getKey(signBlock).getPath(), texture);
+        hangingSignBlock(signBlock, wallSignBlock, sign);
+    }
+
+    /**
+     * Generates hanging sign blocks with the provided model.
+     * 
+     * @param signBlock     The ceiling hanging sign block to generate.
+     * @param wallSignBlock The wall hanging sign block to generate.
+     * @param sign          The model to use for the sign blocks.
+     */
+    public void hangingSignBlock(CeilingHangingSignBlock signBlock, WallHangingSignBlock wallSignBlock, ModelFile sign) {
+        simpleBlock(signBlock, sign);
+        simpleBlock(wallSignBlock, sign);
     }
 
     /**
@@ -142,9 +224,9 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      * @param set The {@link LeavesSet} to generate blockstates and models for.
      */
     protected void leavesSet(LeavesSet set) {
-        simpleBlock(set.leaves().get(), models().withExistingParent(BuiltInRegistries.BLOCK.getKey(set.leaves().get()).getPath(), mcBlockModel("leaves")).texture("all", modBlockModel(BuiltInRegistries.BLOCK.getKey(set.leaves().get()).getPath())));
-        simpleBlock(set.sapling().get(), models().cross(set.id().getPath() + "_sapling", modBlockModel(BuiltInRegistries.BLOCK.getKey(set.sapling().get()).getPath())).renderType("cutout"));
-        simpleBlock(set.pottedSapling().get(), models().withExistingParent("potted_" + set.id().getPath() + "_sapling", mcBlockModel("flower_pot_cross")).texture("plant", modBlockModel(BuiltInRegistries.BLOCK.getKey(set.sapling().get()).getPath())).renderType("cutout"));
+        simpleBlock(set.leaves().get(), models().withExistingParent(BuiltInRegistries.BLOCK.getKey(set.leaves().get()).getPath(), mcBlockLoc("leaves")).texture("all", blockLoc(set.leaves())));
+        simpleBlock(set.sapling().get(), models().cross(set.id().getPath() + "_sapling", blockLoc(set.sapling())).renderType("cutout"));
+        simpleBlock(set.pottedSapling().get(), models().withExistingParent("potted_" + set.id().getPath() + "_sapling", mcBlockLoc("flower_pot_cross")).texture("plant", blockLoc(set.sapling())).renderType("cutout"));
     }
 
     /**

@@ -38,11 +38,47 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider {
     protected void woodSet(WoodSet set) {
         copy(set.logsBlockTag(), set.logsItemTag());
 
-        tag(ItemTags.PLANKS)
-                .add(set.planks().get().asItem());
-
         tag(ItemTags.LOGS_THAT_BURN)
                 .addTag(set.logsItemTag());
+
+        tag(ItemTags.PLANKS)
+                .add(set.planks().asItem());
+
+        tag(ItemTags.WOODEN_SLABS)
+                .add(set.slab().asItem());
+
+        tag(ItemTags.WOODEN_STAIRS)
+                .add(set.stairs().asItem());
+
+        tag(ItemTags.WOODEN_PRESSURE_PLATES)
+                .add(set.pressurePlate().asItem());
+
+        tag(ItemTags.WOODEN_BUTTONS)
+                .add(set.button().asItem());
+
+        tag(ItemTags.WOODEN_FENCES)
+                .add(set.fence().asItem());
+
+        tag(ItemTags.FENCE_GATES)
+                .add(set.fenceGate().asItem());
+
+        tag(ItemTags.WOODEN_DOORS)
+                .add(set.door().asItem());
+
+        tag(ItemTags.WOODEN_TRAPDOORS)
+                .add(set.trapdoor().asItem());
+
+        tag(ItemTags.SIGNS)
+                .add(set.sign().asItem());
+
+        tag(ItemTags.HANGING_SIGNS)
+                .add(set.hangingSign().asItem());
+
+        tag(ItemTags.BOATS)
+                .add(set.boatItem().asItem());
+
+        tag(ItemTags.CHEST_BOATS)
+                .add(set.chestBoatItem().asItem());
     }
 
     /**

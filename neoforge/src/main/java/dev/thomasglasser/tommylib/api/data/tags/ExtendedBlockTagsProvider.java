@@ -27,18 +27,50 @@ public abstract class ExtendedBlockTagsProvider extends BlockTagsProvider {
         tag(set.logsBlockTag())
                 .add(set.log().get(), set.strippedLog().get(), set.wood().get(), set.strippedWood().get());
 
-        tag(BlockTags.PLANKS)
-                .add(set.planks().get());
-
         tag(BlockTags.LOGS_THAT_BURN)
                 .addTag(set.logsBlockTag());
 
         tag(BlockTags.OVERWORLD_NATURAL_LOGS)
                 .add(set.log().get());
 
-        tag(BlockTags.MINEABLE_WITH_AXE)
-                .addTag(set.logsBlockTag())
+        tag(BlockTags.PLANKS)
                 .add(set.planks().get());
+
+        tag(BlockTags.WOODEN_SLABS)
+                .add(set.slab().get());
+
+        tag(BlockTags.WOODEN_STAIRS)
+                .add(set.stairs().get());
+
+        tag(BlockTags.WOODEN_PRESSURE_PLATES)
+                .add(set.pressurePlate().get());
+
+        tag(BlockTags.WOODEN_BUTTONS)
+                .add(set.button().get());
+
+        tag(BlockTags.WOODEN_FENCES)
+                .add(set.fence().get());
+
+        tag(BlockTags.FENCE_GATES)
+                .add(set.fenceGate().get());
+
+        tag(BlockTags.WOODEN_DOORS)
+                .add(set.door().get());
+
+        tag(BlockTags.WOODEN_TRAPDOORS)
+                .add(set.trapdoor().get());
+
+        tag(BlockTags.STANDING_SIGNS)
+                .add(set.sign().get());
+
+        tag(BlockTags.WALL_SIGNS)
+                .add(set.wallSign().get());
+
+        tag(BlockTags.CEILING_HANGING_SIGNS)
+                .add(set.hangingSign().get());
+
+        tag(BlockTags.WALL_HANGING_SIGNS)
+                .add(set.wallHangingSign().get());
     }
 
     /**

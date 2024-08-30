@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.world.flag.FeatureFlagSet;
 
 /**
  * Extension of {@link RecipeProvider} that provides functionality for mod holders.
@@ -22,8 +23,12 @@ public abstract class ExtendedRecipeProvider extends RecipeProvider {
      * @param set    The {@link WoodSet} to add recipes for.
      */
     protected void woodSet(RecipeOutput writer, WoodSet set) {
-        planksFromLogs(writer, set.planks().get(), set.logsItemTag(), 4);
-        woodFromLogs(writer, set.wood().get(), set.log().get());
-        woodFromLogs(writer, set.strippedWood().get(), set.strippedLog().get());
+        planksFromLogs(writer, set.planks(), set.logsItemTag(), 4);
+        woodFromLogs(writer, set.wood(), set.log());
+        woodFromLogs(writer, set.strippedWood(), set.strippedLog());
+        woodenBoat(writer, set.boatItem(), set.planks());
+        chestBoat(writer, set.chestBoatItem(), set.boatItem());
+        hangingSign(writer, set.hangingSign(), set.strippedLog());
+        generateRecipes(writer, set.toBlockFamily(), FeatureFlagSet.of());
     }
 }

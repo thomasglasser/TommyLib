@@ -210,11 +210,25 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param name The name of the set.
      */
     public void add(WoodSet set, String name) {
-        add(set.planks().get(), name + " Planks");
         add(set.log().get(), name + " Log");
         add(set.strippedLog().get(), "Stripped " + name + " Log");
         add(set.wood().get(), name + " Wood");
         add(set.strippedWood().get(), "Stripped " + name + " Wood");
+        add(set.planks().get(), name + " Planks");
+        add(set.slab().get(), name + " Slab");
+        add(set.stairs().get(), name + " Stairs");
+        add(set.pressurePlate().get(), name + " Pressure Plate");
+        add(set.button().get(), name + " Button");
+        add(set.fence().get(), name + " Fence");
+        add(set.fenceGate().get(), name + " Fence Gate");
+        add(set.door().get(), name + " Door");
+        add(set.trapdoor().get(), name + " Trapdoor");
+        add(set.sign().get(), name + " Sign");
+        add(set.hangingSign().get(), name + " Hanging Sign");
+        add(set.boatItem().get(), name + " Boat");
+        add(set.chestBoatItem().get(), name + " Boat with Chest");
+        add(set.logsBlockTag(), name + " Logs");
+        add(set.logsItemTag(), name + " Logs");
     }
 
     /**
