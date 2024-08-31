@@ -29,16 +29,16 @@ public class CustomEmptyMapItem extends EmptyMapItem {
         if (level.isClientSide) {
             return InteractionResultHolder.success(itemStack);
         } else {
-            if (!player.getAbilities().instabuild) {
-                itemStack.shrink(1);
-            }
-
-            player.awardStat(Stats.ITEM_USED.get(this));
-            player.level().playSound(null, player, SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, player.getSoundSource(), 1.0F, 1.0F);
             ItemStack itemStack2 = fillFunction.apply((ServerLevel) level, player);
             if (itemStack.isEmpty()) {
                 return InteractionResultHolder.consume(itemStack2);
             } else {
+                if (!player.getAbilities().instabuild) {
+                    itemStack.shrink(1);
+                }
+
+                player.awardStat(Stats.ITEM_USED.get(this));
+                player.level().playSound(null, player, SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, player.getSoundSource(), 1.0F, 1.0F);
                 if (!player.getInventory().add(itemStack2.copy())) {
                     player.drop(itemStack2, false);
                 }
