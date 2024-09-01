@@ -55,6 +55,15 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
     }
 
     /**
+     * Adds a music sound to the provider.
+     *
+     * @param sound The sound to add.
+     */
+    protected void addMusic(DeferredHolder<SoundEvent, ?> sound) {
+        add(sound.get(), SoundDefinition.definition().with(sound(sound.get().getLocation()).stream()));
+    }
+
+    /**
      * Defines a {@link SoundDefinition} with multiple variants.
      * 
      * @param subtitle The subtitle to use.
