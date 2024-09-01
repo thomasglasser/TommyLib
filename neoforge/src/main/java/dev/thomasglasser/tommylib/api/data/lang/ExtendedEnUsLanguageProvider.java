@@ -46,16 +46,6 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
     }
 
     /**
-     * Adds a translation for an {@link Item} description.
-     * 
-     * @param item The item to add the description for.
-     * @param desc The description to add.
-     */
-    public void addDesc(Item item, String desc) {
-        add(item.getDescriptionId() + ".desc", desc);
-    }
-
-    /**
      * Adds a translation for a given {@link BannerPattern} for all {@link DyeColor}s.
      *
      * @param pattern The pattern to add the translation for.
@@ -361,7 +351,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      */
     protected void addPatternItem(DeferredItem<BannerPatternItem> item, String name) {
         add(item.get(), "Banner Pattern");
-        addDesc(item.get(), name);
+        add(item.get().getDescriptionId() + ".desc", name);
     }
 
     /**
