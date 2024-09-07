@@ -18,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -178,8 +179,8 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
         buttonBlock(set.button().get(), blockLoc(set.planks()));
         fenceBlock(set.fence().get(), blockLoc(set.planks()));
         fenceGateBlock(set.fenceGate().get(), blockLoc(set.planks()));
-        doorBlock(set.door().get(), blockLoc(set.door()).withSuffix("_bottom"), blockLoc(set.door()).withSuffix("_top"));
-        trapdoorBlock(set.trapdoor().get(), blockLoc(set.trapdoor()), true);
+        doorBlockWithRenderType(set.door().get(), blockLoc(set.door()).withSuffix("_bottom"), blockLoc(set.door()).withSuffix("_top"), RenderType.cutout().name);
+        trapdoorBlockWithRenderType(set.trapdoor().get(), blockLoc(set.trapdoor()), true, RenderType.cutout().name);
         signBlock(set.sign().get(), set.wallSign().get(), blockLoc(set.log()));
         hangingSignBlock(set.hangingSign().get(), set.wallHangingSign().get(), blockLoc(set.log()));
     }
