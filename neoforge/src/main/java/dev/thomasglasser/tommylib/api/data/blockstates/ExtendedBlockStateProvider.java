@@ -9,6 +9,15 @@ import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
@@ -28,16 +37,6 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.apache.commons.lang3.function.TriFunction;
-
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Extension of {@link BlockStateProvider} that provides functionality for mod holders.
