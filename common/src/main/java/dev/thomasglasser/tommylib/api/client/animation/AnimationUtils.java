@@ -9,10 +9,11 @@ import dev.kosmx.playerAnim.api.layered.modifier.AbstractFadeModifier;
 import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.Ease;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
-import java.util.IdentityHashMap;
-import java.util.Map;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 public class AnimationUtils {
     public static final Map<Player, ModifierLayer<IAnimation>> animationData = new IdentityHashMap<>();
