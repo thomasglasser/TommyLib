@@ -29,11 +29,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.CeilingHangingSignBlock;
 import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.apache.commons.lang3.function.TriFunction;
@@ -193,30 +190,6 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      */
     public void slabBlock(SlabBlock block, ResourceLocation texture) {
         super.slabBlock(block, texture, texture);
-    }
-
-    /**
-     * Generates hanging sign blocks with the provided texture.
-     * 
-     * @param signBlock     The ceiling hanging sign block to generate.
-     * @param wallSignBlock The wall hanging sign block to generate.
-     * @param texture       The texture to use for the sign blocks.
-     */
-    public void hangingSignBlock(CeilingHangingSignBlock signBlock, WallHangingSignBlock wallSignBlock, ResourceLocation texture) {
-        ModelFile sign = models().sign(BuiltInRegistries.BLOCK.getKey(signBlock).getPath(), texture);
-        hangingSignBlock(signBlock, wallSignBlock, sign);
-    }
-
-    /**
-     * Generates hanging sign blocks with the provided model.
-     * 
-     * @param signBlock     The ceiling hanging sign block to generate.
-     * @param wallSignBlock The wall hanging sign block to generate.
-     * @param sign          The model to use for the sign blocks.
-     */
-    public void hangingSignBlock(CeilingHangingSignBlock signBlock, WallHangingSignBlock wallSignBlock, ModelFile sign) {
-        simpleBlock(signBlock, sign);
-        simpleBlock(wallSignBlock, sign);
     }
 
     /**

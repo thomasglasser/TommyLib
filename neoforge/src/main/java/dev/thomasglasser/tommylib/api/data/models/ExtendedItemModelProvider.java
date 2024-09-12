@@ -124,7 +124,7 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
         withExistingParent(set.stairs().getId().getPath(), blockLoc(set.stairs()));
         withExistingParent(set.pressurePlate().getId().getPath(), blockLoc(set.pressurePlate()));
         buttonInventory(set.button().getId().getPath(), blockLoc(set.planks()));
-        fenceInventory(set.fence().getId().getPath(), blockLoc(set.fence()));
+        fenceInventory(set.fence().getId().getPath(), blockLoc(set.planks()));
         withExistingParent(set.fenceGate().getId().getPath(), blockLoc(set.fenceGate()));
         basicItem(set.door().asItem());
         withExistingParent(set.trapdoor().getId().getPath(), blockLoc(set.trapdoor()).withSuffix("_bottom"));
