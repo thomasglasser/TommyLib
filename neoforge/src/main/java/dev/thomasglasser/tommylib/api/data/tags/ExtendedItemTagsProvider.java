@@ -1,5 +1,6 @@
 package dev.thomasglasser.tommylib.api.data.tags;
 
+import dev.thomasglasser.tommylib.api.tags.ConventionalItemTags;
 import dev.thomasglasser.tommylib.api.world.item.armor.ArmorSet;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
@@ -40,6 +41,12 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider {
 
         tag(ItemTags.LOGS_THAT_BURN)
                 .addTag(set.logsItemTag());
+
+        tag(ConventionalItemTags.STRIPPED_LOGS)
+                .add(set.strippedLog().asItem());
+
+        tag(ConventionalItemTags.STRIPPED_WOODS)
+                .add(set.strippedWood().asItem());
 
         tag(ItemTags.PLANKS)
                 .add(set.planks().asItem());

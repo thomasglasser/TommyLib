@@ -32,7 +32,7 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      * @return The {@link ItemModelBuilder} for the item.
      */
     protected ItemModelBuilder basicItem(DeferredItem<?> item) {
-        return basicItem(item.getId(), item.getId().getPath());
+        return basicItem(item.getId());
     }
 
     /**
@@ -68,16 +68,12 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
 
     /**
      * Generates a basic handheld item model with the default texture location.
-     * 
+     *
      * @param item The item to generate the model for.
      * @return The {@link ItemModelBuilder} for the item.
      */
-    protected ItemModelBuilder basicItemHandheld(ResourceLocation item) {
-        return singleTexture(item.getPath(), mcLoc("item/handheld"), "layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "item/" + item.getPath()));
-    }
-
-    protected ItemModelBuilder basicItemHandheld(DeferredItem<?> item) {
-        return basicItemHandheld(item.getId());
+    protected ItemModelBuilder handheldItem(DeferredItem<?> item) {
+        return handheldItem(item.getId());
     }
 
     /**
@@ -97,16 +93,12 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
 
     /**
      * Generates a spawn egg model
-     * 
-     * @param path The path of the spawn egg
+     *
+     * @param egg The spawn egg
      * @return The {@link ItemModelBuilder} for the item.
      */
-    protected ItemModelBuilder spawnEgg(String path) {
-        return withExistingParent(path, mcLoc("item/template_spawn_egg"));
-    }
-
-    protected ItemModelBuilder spawnEgg(DeferredItem<SpawnEggItem> egg) {
-        return withExistingParent(egg.getId().getPath(), mcLoc("item/template_spawn_egg"));
+    protected ItemModelBuilder spawnEggItem(DeferredItem<SpawnEggItem> egg) {
+        return spawnEggItem(egg.getId());
     }
 
     /**
@@ -151,8 +143,7 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      * @return The {@link ItemModelBuilder} for the item.
      */
     protected ItemModelBuilder basicBlockItem(DeferredBlock<?> block) {
-        ResourceLocation id = block.getId();
-        return withExistingParent(id.getPath(), ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath()));
+        return simpleBlockItem(block.getId());
     }
 
     /**

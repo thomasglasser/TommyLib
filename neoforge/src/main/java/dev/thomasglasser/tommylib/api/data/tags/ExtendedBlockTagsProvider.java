@@ -1,5 +1,6 @@
 package dev.thomasglasser.tommylib.api.data.tags;
 
+import dev.thomasglasser.tommylib.api.tags.ConventionalBlockTags;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import java.util.concurrent.CompletableFuture;
@@ -32,6 +33,12 @@ public abstract class ExtendedBlockTagsProvider extends BlockTagsProvider {
 
         tag(BlockTags.OVERWORLD_NATURAL_LOGS)
                 .add(set.log().get());
+
+        tag(ConventionalBlockTags.STRIPPED_LOGS)
+                .add(set.strippedLog().get());
+
+        tag(ConventionalBlockTags.STRIPPED_WOODS)
+                .add(set.strippedWood().get());
 
         tag(BlockTags.PLANKS)
                 .add(set.planks().get());
