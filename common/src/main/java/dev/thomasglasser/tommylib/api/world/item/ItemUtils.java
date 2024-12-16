@@ -8,11 +8,13 @@ import java.util.function.Supplier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SmithingTemplateItem;
@@ -20,6 +22,7 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.armortrim.TrimPattern;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BannerPattern;
 
 public final class ItemUtils {
     /**
@@ -70,6 +73,23 @@ public final class ItemUtils {
      */
     public static DeferredItem<SpawnEggItem> registerSpawnEgg(DeferredRegister.Items provider, String name, Supplier<EntityType<? extends Mob>> entityType, int primaryColor, int secondaryColor) {
         return register(provider, name, () -> new SpawnEggItem(entityType.get(), primaryColor, secondaryColor, new Item.Properties()));
+    }
+
+    /**
+     * Registers a banner pattern item with the given name, patterns, and properties.
+     *
+     * @param provider   The item provider.
+     * @param name       The registry name of the banner pattern item.
+     * @param patterns   The patterns of the banner pattern item.
+     * @param properties The item properties.
+     * @return The registered banner pattern item holder.
+     */
+    public static DeferredItem<BannerPatternItem> registerBannerPattern(DeferredRegister.Items provider, String name, TagKey<BannerPattern> patterns, Item.Properties properties) {
+        return register(provider, name + "_banner_pattern", () -> new BannerPatternItem(patterns, properties.stacksTo(1)));
+    }
+
+    public static DeferredItem<BannerPatternItem> registerBannerPattern(DeferredRegister.Items provider, TagKey<BannerPattern> patterns, Item.Properties properties) {
+        return registerBannerPattern(provider, patterns.location().getPath().replace("pattern_item/", ""), patterns, properties);
     }
 
     /**

@@ -18,7 +18,6 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.HangingSignItem;
 import net.minecraft.world.item.Item;
@@ -47,7 +46,6 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import org.apache.commons.lang3.function.TriFunction;
 
 public class BlockUtils {
     /**
@@ -82,7 +80,6 @@ public class BlockUtils {
      * @param name         The registry name of the block
      * @param blockFactory The block supplier
      * @param itemFactory  The item supplier
-     * @param tabs         The creative mode tabs to add the item to
      * @return The block holder
      * @param <T> The block type
      */
@@ -90,10 +87,9 @@ public class BlockUtils {
             DeferredRegister.Blocks provider,
             String name,
             Supplier<T> blockFactory,
-            TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory,
-            List<ResourceKey<CreativeModeTab>> tabs) {
+            BiFunction<String, Supplier<Item>, DeferredItem<?>> itemFactory) {
         DeferredBlock<T> block = register(provider, name, blockFactory);
-        itemFactory.apply(name, () -> BLOCK_ITEM_FUNCTION.apply(block), tabs);
+        itemFactory.apply(name, () -> BLOCK_ITEM_FUNCTION.apply(block));
         return block;
     }
 
@@ -105,7 +101,6 @@ public class BlockUtils {
      * @param blockFactory      The block supplier
      * @param itemFactory       The item registration factory
      * @param blockItemFunction The function to create the block item
-     * @param tabs              The creative mode tabs to add the item to
      * @return The block holder
      * @param <T> The block type
      */
@@ -113,11 +108,10 @@ public class BlockUtils {
             DeferredRegister.Blocks provider,
             String name,
             Supplier<T> blockFactory,
-            TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory,
-            Function<Block, Item> blockItemFunction,
-            List<ResourceKey<CreativeModeTab>> tabs) {
+            BiFunction<String, Supplier<Item>, DeferredItem<?>> itemFactory,
+            Function<Block, Item> blockItemFunction) {
         DeferredBlock<T> block = register(provider, name, blockFactory);
-        itemFactory.apply(name, () -> blockItemFunction.apply(block.get()), tabs);
+        itemFactory.apply(name, () -> blockItemFunction.apply(block.get()));
         return block;
     }
 
@@ -137,11 +131,11 @@ public class BlockUtils {
             DeferredRegister.Blocks provider,
             String name,
             Supplier<T> blockFactory,
-            TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory,
+            BiFunction<String, Supplier<Item>, DeferredItem<?>> itemFactory,
             Item.Properties properties,
             List<ResourceKey<CreativeModeTab>> tabs) {
         DeferredBlock<T> block = register(provider, name, blockFactory);
-        itemFactory.apply(name, () -> BLOCK_ITEM_WITH_PROPERTIES_FUNCTION.apply(block, properties), tabs);
+        itemFactory.apply(name, () -> BLOCK_ITEM_WITH_PROPERTIES_FUNCTION.apply(block, properties));
         return block;
     }
 
@@ -157,40 +151,40 @@ public class BlockUtils {
      * @param itemFactory The item registration factory
      * @return The wood set
      */
-    public static WoodSet registerWoodSet(DeferredRegister.Blocks provider, String name, MapColor mapColor, MapColor logMapColor, WoodType woodType, Boat.Type boatType, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory) {
-        DeferredBlock<RotatedPillarBlock> log = registerBlockAndItemAndWrap(provider, name + "_log", () -> (RotatedPillarBlock) Blocks.log(mapColor, logMapColor, woodType.soundType()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS, CreativeModeTabs.NATURAL_BLOCKS));
-        DeferredBlock<RotatedPillarBlock> strippedLog = registerBlockAndItemAndWrap(provider, "stripped_" + name + "_log", () -> (RotatedPillarBlock) Blocks.log(mapColor, mapColor, woodType.soundType()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
-        DeferredBlock<RotatedPillarBlock> wood = registerBlockAndItemAndWrap(provider, name + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(woodType.soundType()).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
-        DeferredBlock<RotatedPillarBlock> strippedWood = registerBlockAndItemAndWrap(provider, "stripped_" + name + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(woodType.soundType()).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
+    public static WoodSet registerWoodSet(DeferredRegister.Blocks provider, String name, MapColor mapColor, MapColor logMapColor, Supplier<WoodType> woodType, Boat.Type boatType, BiFunction<String, Supplier<Item>, DeferredItem<?>> itemFactory) {
+        DeferredBlock<RotatedPillarBlock> log = registerBlockAndItemAndWrap(provider, name + "_log", () -> (RotatedPillarBlock) Blocks.log(mapColor, logMapColor, woodType.get().soundType()), itemFactory);
+        DeferredBlock<RotatedPillarBlock> strippedLog = registerBlockAndItemAndWrap(provider, "stripped_" + name + "_log", () -> (RotatedPillarBlock) Blocks.log(mapColor, mapColor, woodType.get().soundType()), itemFactory);
+        DeferredBlock<RotatedPillarBlock> wood = registerBlockAndItemAndWrap(provider, name + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(woodType.get().soundType()).ignitedByLava()), itemFactory);
+        DeferredBlock<RotatedPillarBlock> strippedWood = registerBlockAndItemAndWrap(provider, "stripped_" + name + "_wood", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(woodType.get().soundType()).ignitedByLava()), itemFactory);
         STRIPPABLES.put(log.getId(), strippedLog);
         STRIPPABLES.put(wood.getId(), strippedWood);
-        DeferredBlock<Block> planks = registerBlockAndItemAndWrap(provider, name + "_planks", () -> new Block(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(woodType.soundType()).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS));
-        DeferredBlock<StandingSignBlock> sign = register(provider, name + "_sign", () -> new StandingSignBlock(woodType, BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).ignitedByLava()));
-        DeferredBlock<WallSignBlock> wallSign = register(provider, name + "_wall_sign", () -> new WallSignBlock(woodType, BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).dropsLike(sign.get()).ignitedByLava()));
-        itemFactory.apply(name + "_sign", () -> new SignItem(new Item.Properties().stacksTo(16), sign.get(), wallSign.get()), List.of(CreativeModeTabs.FUNCTIONAL_BLOCKS));
-        DeferredBlock<CeilingHangingSignBlock> hangingSign = register(provider, name + "_hanging_sign", () -> new CeilingHangingSignBlock(woodType, BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).ignitedByLava()));
-        DeferredBlock<WallHangingSignBlock> wallHangingSign = register(provider, name + "_wall_hanging_sign", () -> new WallHangingSignBlock(woodType, BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).dropsLike(hangingSign.get()).ignitedByLava()));
-        itemFactory.apply(name + "_hanging_sign", () -> new HangingSignItem(hangingSign.get(), wallHangingSign.get(), new Item.Properties().stacksTo(16)), List.of(CreativeModeTabs.FUNCTIONAL_BLOCKS));
+        DeferredBlock<Block> planks = registerBlockAndItemAndWrap(provider, name + "_planks", () -> new Block(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(woodType.get().soundType()).ignitedByLava()), itemFactory);
+        DeferredBlock<StandingSignBlock> sign = register(provider, name + "_sign", () -> new StandingSignBlock(woodType.get(), BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).ignitedByLava()));
+        DeferredBlock<WallSignBlock> wallSign = register(provider, name + "_wall_sign", () -> new WallSignBlock(woodType.get(), BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).dropsLike(sign.get()).ignitedByLava()));
+        itemFactory.apply(name + "_sign", () -> new SignItem(new Item.Properties().stacksTo(16), sign.get(), wallSign.get()));
+        DeferredBlock<CeilingHangingSignBlock> hangingSign = register(provider, name + "_hanging_sign", () -> new CeilingHangingSignBlock(woodType.get(), BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).ignitedByLava()));
+        DeferredBlock<WallHangingSignBlock> wallHangingSign = register(provider, name + "_wall_hanging_sign", () -> new WallHangingSignBlock(woodType.get(), BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).dropsLike(hangingSign.get()).ignitedByLava()));
+        itemFactory.apply(name + "_hanging_sign", () -> new HangingSignItem(hangingSign.get(), wallHangingSign.get(), new Item.Properties().stacksTo(16)));
         return new WoodSet(ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name),
                 log,
                 strippedLog,
                 wood,
                 strippedWood,
                 planks,
-                registerBlockAndItemAndWrap(provider, name + "_slab", () -> new SlabBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(woodType.soundType()).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
-                registerBlockAndItemAndWrap(provider, name + "_stairs", () -> (StairBlock) Blocks.legacyStair(planks.get()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
-                registerBlockAndItemAndWrap(provider, name + "_pressure_plate", () -> new PressurePlateBlock(woodType.setType(), BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(0.5F).ignitedByLava().pushReaction(PushReaction.DESTROY)), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
-                registerBlockAndItemAndWrap(provider, name + "_button", () -> (ButtonBlock) Blocks.woodenButton(woodType.setType()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
-                registerBlockAndItemAndWrap(provider, name + "_fence", () -> new FenceBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).ignitedByLava().sound(woodType.soundType())), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
-                registerBlockAndItemAndWrap(provider, name + "_fence_gate", () -> new FenceGateBlock(woodType, BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
-                registerBlockAndItemAndWrap(provider, name + "_door", () -> new DoorBlock(woodType.setType(), BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(3.0F).noOcclusion().ignitedByLava().pushReaction(PushReaction.DESTROY)), itemFactory, (block) -> new DoubleHighBlockItem(block, new Item.Properties()), List.of(CreativeModeTabs.BUILDING_BLOCKS)),
-                registerBlockAndItemAndWrap(provider, name + "_trapdoor", () -> new TrapDoorBlock(woodType.setType(), BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(3.0F).noOcclusion().isValidSpawn(Blocks::never).ignitedByLava()), itemFactory, List.of(CreativeModeTabs.BUILDING_BLOCKS)),
+                registerBlockAndItemAndWrap(provider, name + "_slab", () -> new SlabBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(woodType.get().soundType()).ignitedByLava()), itemFactory),
+                registerBlockAndItemAndWrap(provider, name + "_stairs", () -> (StairBlock) Blocks.legacyStair(planks.get()), itemFactory),
+                registerBlockAndItemAndWrap(provider, name + "_pressure_plate", () -> new PressurePlateBlock(woodType.get().setType(), BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(0.5F).ignitedByLava().pushReaction(PushReaction.DESTROY)), itemFactory),
+                registerBlockAndItemAndWrap(provider, name + "_button", () -> (ButtonBlock) Blocks.woodenButton(woodType.get().setType()), itemFactory),
+                registerBlockAndItemAndWrap(provider, name + "_fence", () -> new FenceBlock(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).ignitedByLava().sound(woodType.get().soundType())), itemFactory),
+                registerBlockAndItemAndWrap(provider, name + "_fence_gate", () -> new FenceGateBlock(woodType.get(), BlockBehaviour.Properties.of().mapColor(mapColor).forceSolidOn().instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).ignitedByLava()), itemFactory),
+                registerBlockAndItemAndWrap(provider, name + "_door", () -> new DoorBlock(woodType.get().setType(), BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(3.0F).noOcclusion().ignitedByLava().pushReaction(PushReaction.DESTROY)), itemFactory, (block) -> new DoubleHighBlockItem(block, new Item.Properties())),
+                registerBlockAndItemAndWrap(provider, name + "_trapdoor", () -> new TrapDoorBlock(woodType.get().setType(), BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASS).strength(3.0F).noOcclusion().isValidSpawn(Blocks::never).ignitedByLava()), itemFactory),
                 sign,
                 wallSign,
                 hangingSign,
                 wallHangingSign,
-                (DeferredItem<? extends BoatItem>) itemFactory.apply(name + "_boat", () -> new BoatItem(false, boatType, new Item.Properties().stacksTo(1)), List.of(CreativeModeTabs.TOOLS_AND_UTILITIES)),
-                (DeferredItem<? extends BoatItem>) itemFactory.apply(name + "_chest_boat", () -> new BoatItem(true, boatType, new Item.Properties().stacksTo(1)), List.of(CreativeModeTabs.TOOLS_AND_UTILITIES)),
+                (DeferredItem<? extends BoatItem>) itemFactory.apply(name + "_boat", () -> new BoatItem(false, boatType, new Item.Properties().stacksTo(1))),
+                (DeferredItem<? extends BoatItem>) itemFactory.apply(name + "_chest_boat", () -> new BoatItem(true, boatType, new Item.Properties().stacksTo(1))),
                 TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name + "_logs")),
                 TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name + "_logs")));
     }
@@ -203,10 +197,10 @@ public class BlockUtils {
      * @param itemFactory The item factory
      * @return The leaves set
      */
-    public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, String name, TreeGrower treeGrower, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory) {
-        DeferredBlock<?> sapling = registerBlockAndItemAndWrap(provider, name + "_sapling", () -> new SaplingBlock(treeGrower, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS));
+    public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, String name, TreeGrower treeGrower, BiFunction<String, Supplier<Item>, DeferredItem<?>> itemFactory) {
+        DeferredBlock<?> sapling = registerBlockAndItemAndWrap(provider, name + "_sapling", () -> new SaplingBlock(treeGrower, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)), itemFactory);
         return new LeavesSet(ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name),
-                registerBlockAndItemAndWrap(provider, name + "_leaves", () -> Blocks.leaves(SoundType.GRASS), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS)),
+                registerBlockAndItemAndWrap(provider, name + "_leaves", () -> Blocks.leaves(SoundType.GRASS), itemFactory),
                 sapling,
                 register(provider, "potted_" + name + "_sapling", () -> Blocks.flowerPot(sapling.get())));
     }
@@ -219,10 +213,10 @@ public class BlockUtils {
      * @param itemFactory The item factory
      * @return The leaves set
      */
-    public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, String name, ExtendedTreeGrower treeGrower, TriFunction<String, Supplier<Item>, List<ResourceKey<CreativeModeTab>>, DeferredItem<?>> itemFactory) {
-        DeferredBlock<?> sapling = registerBlockAndItemAndWrap(provider, name + "_sapling", () -> new ExtendedSaplingBlock(treeGrower, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS));
+    public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, String name, ExtendedTreeGrower treeGrower, BiFunction<String, Supplier<Item>, DeferredItem<?>> itemFactory) {
+        DeferredBlock<?> sapling = registerBlockAndItemAndWrap(provider, name + "_sapling", () -> new ExtendedSaplingBlock(treeGrower, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY)), itemFactory);
         return new LeavesSet(ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name),
-                registerBlockAndItemAndWrap(provider, name + "_leaves", () -> Blocks.leaves(SoundType.GRASS), itemFactory, List.of(CreativeModeTabs.NATURAL_BLOCKS)),
+                registerBlockAndItemAndWrap(provider, name + "_leaves", () -> Blocks.leaves(SoundType.GRASS), itemFactory),
                 sapling,
                 register(provider, "potted_" + name + "_sapling", () -> Blocks.flowerPot(sapling.get())));
     }
