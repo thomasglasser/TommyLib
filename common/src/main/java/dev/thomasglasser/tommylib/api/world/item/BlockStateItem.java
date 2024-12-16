@@ -1,77 +1,34 @@
 package dev.thomasglasser.tommylib.api.world.item;
 
-import java.util.List;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.BlockItemStateProperties;
-import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * An {@link Item} that places a {@link BlockState} when used.
  */
-public class BlockStateItem extends Item {
-    private final BlockState block;
+public class BlockStateItem extends BlockItem {
+    private final BlockState state;
 
-    public BlockStateItem(BlockState block, Properties properties) {
-        super(properties);
-        this.block = block;
-    }
-
-    @Nullable
-    protected BlockState getPlacementState(BlockPlaceContext context) {
-        BlockState blockstate = this.getBlock().getStateForPlacement(context);
-        if (blockstate != null) {
-            for (Property<?> property : block.getProperties()) {
-                if (blockstate.hasProperty(property)) {
-                    blockstate = block.setValue((Property) property, block.getValue(property));
-                }
-            }
-        }
-        return blockstate != null && this.canPlace(context, blockstate) ? blockstate : null;
-    }
-
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        InteractionResult interactionresult = this.place(new BlockPlaceContext(context));
-        if (!interactionresult.consumesAction() && context.getItemInHand().has(DataComponents.FOOD)) {
-            InteractionResult interactionresult1 = super.use(context.getLevel(), context.getPlayer(), context.getHand()).getResult();
-            return interactionresult1 == InteractionResult.CONSUME ? InteractionResult.CONSUME_PARTIAL : interactionresult1;
-        } else {
-            return interactionresult;
-        }
+    public BlockStateItem(BlockState state, Properties properties) {
+        super(state.getBlock(), properties);
+        this.state = state;
     }
 
     public InteractionResult place(BlockPlaceContext context) {
-        if (!this.getBlock().isEnabled(context.getLevel().enabledFeatures())) {
+        if (!state.getBlock().isEnabled(context.getLevel().enabledFeatures())) {
             return InteractionResult.FAIL;
         } else if (!context.canPlace()) {
             return InteractionResult.FAIL;
@@ -105,121 +62,14 @@ public class BlockStateItem extends Item {
                     level.playSound(player, blockpos, this.getPlaceSound(blockstate1), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
                     level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
                     itemstack.consume(1, player);
-                    return InteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.SUCCESS;
                 }
             }
         }
-    }
-
-    protected SoundEvent getPlaceSound(BlockState state) {
-        return state.getSoundType().getPlaceSound();
     }
 
     @Nullable
-    public BlockPlaceContext updatePlacementContext(BlockPlaceContext context) {
-        return context;
-    }
-
-    private static void updateBlockEntityComponents(Level level, BlockPos poa, ItemStack stack) {
-        BlockEntity blockentity = level.getBlockEntity(poa);
-        if (blockentity != null) {
-            blockentity.applyComponentsFromItemStack(stack);
-            blockentity.setChanged();
-        }
-    }
-
-    protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, @Nullable Player player, ItemStack stack, BlockState state) {
-        return updateCustomBlockEntityTag(level, player, pos, stack);
-    }
-
-    private BlockState updateBlockStateFromTag(BlockPos pos, Level level, ItemStack stack, BlockState state) {
-        BlockItemStateProperties blockitemstateproperties = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY);
-        if (blockitemstateproperties.isEmpty()) {
-            return state;
-        } else {
-            BlockState blockstate = blockitemstateproperties.apply(state);
-            if (blockstate != state) {
-                level.setBlock(pos, blockstate, 2);
-            }
-
-            return blockstate;
-        }
-    }
-
-    protected boolean canPlace(BlockPlaceContext context, BlockState state) {
-        Player player = context.getPlayer();
-        CollisionContext collisioncontext = player == null ? CollisionContext.empty() : CollisionContext.of(player);
-        return (!this.mustSurvive() || state.canSurvive(context.getLevel(), context.getClickedPos())) && context.getLevel().isUnobstructed(state, context.getClickedPos(), collisioncontext);
-    }
-
-    protected boolean mustSurvive() {
-        return true;
-    }
-
-    protected boolean placeBlock(BlockPlaceContext context, BlockState state) {
-        return context.getLevel().setBlock(context.getClickedPos(), state, 11);
-    }
-
-    public static boolean updateCustomBlockEntityTag(Level level, @Nullable Player player, BlockPos pos, ItemStack stack) {
-        MinecraftServer minecraftserver = level.getServer();
-        if (minecraftserver == null) {
-            return false;
-        } else {
-            CustomData customdata = stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY);
-            if (!customdata.isEmpty()) {
-                BlockEntity blockentity = level.getBlockEntity(pos);
-                if (blockentity != null) {
-                    if (!level.isClientSide && blockentity.onlyOpCanSetNbt() && (player == null || !player.canUseGameMasterBlocks())) {
-                        return false;
-                    }
-
-                    return customdata.loadInto(blockentity, level.registryAccess());
-                }
-            }
-
-            return false;
-        }
-    }
-
-    public String getDescriptionId() {
-        return this.getOrCreateDescriptionId();
-    }
-
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        this.getBlock().appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-    }
-
-    public Block getBlock() {
-        return this.block.getBlock();
-    }
-
-    public BlockState getBlockState() {
-        return this.block;
-    }
-
-    public boolean canFitInsideContainerItems() {
-        return !(this.getBlock() instanceof ShulkerBoxBlock);
-    }
-
-    public void onDestroyed(ItemEntity itemEntity) {
-        ItemContainerContents itemcontainercontents = (ItemContainerContents) itemEntity.getItem().set(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-        if (itemcontainercontents != null) {
-            ItemUtils.onContainerDestroyed(itemEntity, itemcontainercontents.nonEmptyItemsCopy());
-        }
-    }
-
-    public static void setBlockEntityData(ItemStack stack, BlockEntityType<?> blockEntityType, CompoundTag blockEntityData) {
-        blockEntityData.remove("id");
-        if (blockEntityData.isEmpty()) {
-            stack.remove(DataComponents.BLOCK_ENTITY_DATA);
-        } else {
-            BlockEntity.addEntityType(blockEntityData, blockEntityType);
-            stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(blockEntityData));
-        }
-    }
-
-    public FeatureFlagSet requiredFeatures() {
-        return this.getBlock().requiredFeatures();
+    protected BlockState getPlacementState(BlockPlaceContext context) {
+        return this.canPlace(context, state) ? state : null;
     }
 }

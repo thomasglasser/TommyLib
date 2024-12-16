@@ -265,8 +265,8 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
 
     /**
      * Returns an {@link Either#left()} containing {@linkplain #getKey() the resource key of this holder}.
-     * <br>
-     * This method is implemented for {@link Holder} compatibility, but {@link #getKey()} should be preferred.
+     * 
+     * @apiNote This method is implemented for {@link Holder} compatibility, but {@link #getKey()} should be preferred.
      */
     @Override
     public Either<ResourceKey<R>, R> unwrap() {
@@ -276,8 +276,8 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
 
     /**
      * Returns the resource key of this holder.
-     * <br>
-     * This method is implemented for {@link Holder} compatibility, but {@link #getKey()} should be preferred.
+     * 
+     * @apiNote This method is implemented for {@link Holder} compatibility, but {@link #getKey()} should be preferred.
      * 
      * @return a present optional containing {@linkplain #getKey() the resource key of this holder}
      */

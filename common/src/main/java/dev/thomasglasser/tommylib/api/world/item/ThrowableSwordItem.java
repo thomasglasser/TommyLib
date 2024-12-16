@@ -94,10 +94,6 @@ public class ThrowableSwordItem extends SwordItem implements ProjectileItem {
         stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
     }
 
-    public int getEnchantmentValue() {
-        return 1;
-    }
-
     @Override
     public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseDuration) {
         if (remainingUseDuration <= 1) {

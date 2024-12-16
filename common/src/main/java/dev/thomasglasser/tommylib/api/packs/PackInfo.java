@@ -16,6 +16,16 @@ import net.minecraft.server.packs.repository.PackSource;
 public record PackInfo(KnownPack knownPack, PackType type, PackSource source) {
 
     /**
+     * A built-in pack that is not automatically enabled
+     */
+    public static final PackSource BUILT_IN_OPTIONAL = PackSource.create(PackSource.BUILT_IN::decorate, false);
+
+    /**
+     * A pack source for features that aren't experiments so shouldn't be in the experiments screen
+     */
+    public static final PackSource FEATURE_NOT_EXPERIMENT = PackSource.create(PackSource.FEATURE::decorate, false);
+
+    /**
      * The default pack selection config for built-in packs.
      */
     public static final PackSelectionConfig BUILT_IN_SELECTION_CONFIG = new PackSelectionConfig(false, Pack.Position.TOP, false);

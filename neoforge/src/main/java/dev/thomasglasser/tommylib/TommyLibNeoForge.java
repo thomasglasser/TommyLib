@@ -21,7 +21,7 @@ public class TommyLibNeoForge {
         if (TommyLibServices.PLATFORM.isClientSide()) {
             NeoForge.EVENT_BUS.addListener(TommyLibNeoForgeClientEvents::onEntityJoinLevel);
 
-            eventBus.addListener(TommyLibNeoForgeClientEvents::onBuildCreativeTabContent);
+            eventBus.addListener(TommyLibNeoForgeClientEvents::onRegisterClientExtensions);
             eventBus.addListener(TommyLibNeoForgeClientEvents::onRegisterKeyMappings);
             eventBus.addListener(TommyLibNeoForgeClientEvents::onClientSetup);
         }

@@ -13,9 +13,40 @@ neoForge {
 	}
 }
 
+@CacheableRule
+abstract class MakeLibraryLenient implements ComponentMetadataRule {
+	final String targetGroup
+	final Set<String> targetModule
+
+	@javax.inject.Inject MakeLibraryLenient(String targetGroup, Collection<String> targetModule) {
+		this.targetGroup = targetGroup
+		this.targetModule = Set.copyOf(targetModule)
+	}
+
+	void execute(ComponentMetadataContext context) {
+		context.details.allVariants {
+			it.withDependencies {
+				it.each {
+					if (it.group == targetGroup && targetModule.contains(it.name)) {
+						it.version {
+							it.require(it.strictVersion)
+							it.strictly("+")
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 dependencies {
 	compileOnly group:'net.fabricmc', name:'sponge-mixin', version:mixin_version
 	implementation "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
+	components {
+		withModule("net.neoforged:minecraft-dependencies", MakeLibraryLenient) {
+			params("org.ow2.asm", ["asm", "asm-tree", "asm-commons", "asm-util"])
+		}
+	}
 	implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
 	compileOnly "net.tslat.smartbrainlib:SmartBrainLib-common-${minecraft_version}:${smartbrainlib_version}"
@@ -23,6 +54,7 @@ dependencies {
 //	compileOnly "net.tslat.effectslib:TslatEffectsLib-common-${minecraft_version}:${tslateffectslib_version}"
 	compileOnly "dev.kosmx.player-anim:player-animation-lib-forge:${playeranimator_version}"
 	compileOnly "software.bernie.geckolib:geckolib-common-${minecraft_version}:${geckolib_version}"
+	compileOnly "dev.thomasglasser.sherdsapi:sherdsapi-common-${minecraft_version}:${sherdsapi_version}"
 }
 
 sourceSets.main.resources { srcDir './src/generated/resources' }

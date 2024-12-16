@@ -9,8 +9,7 @@
     "minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateMixin"
   ],
   "client": [
-    "minecraft.client.KeyMappingMixin",
-    "minecraft.client.OptionsMixin"
+    "minecraft.client.KeyMappingMixin"
   ],
   "server": [
   ],

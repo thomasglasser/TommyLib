@@ -102,13 +102,13 @@ public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider 
         dropSelf(set.wood().get());
         dropSelf(set.strippedWood().get());
         dropSelf(set.planks().get());
-        dropSelf(set.slab().get());
+        add(set.slab().get(), this::createSlabItemTable);
         dropSelf(set.stairs().get());
         dropSelf(set.pressurePlate().get());
         dropSelf(set.button().get());
         dropSelf(set.fence().get());
         dropSelf(set.fenceGate().get());
-        dropSelf(set.door().get());
+        add(set.door().get(), this::createDoorTable);
         dropSelf(set.trapdoor().get());
         dropSelf(set.sign().get());
         dropSelf(set.hangingSign().get());

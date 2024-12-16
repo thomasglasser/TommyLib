@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Holder for a set of armor, with a helmet, chestplate, leggings, and boots.
@@ -61,6 +62,10 @@ public class ArmorSet {
 
     public List<ArmorItem> getAllAsItems() {
         return List.of(HEAD.get(), CHEST.get(), LEGS.get(), FEET.get());
+    }
+
+    public List<ItemStack> getAllAsStacks() {
+        return List.of(HEAD.toStack(), CHEST.toStack(), LEGS.toStack(), FEET.toStack());
     }
 
     public String getDisplayName() {

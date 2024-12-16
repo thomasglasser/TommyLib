@@ -1,33 +1,20 @@
 package dev.thomasglasser.tommylib.api.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.thomasglasser.tommylib.api.world.item.ItemUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class ClientUtils {
-    /**
-     * A list of all key mappings registered via {@link #registerKeyMapping(ResourceLocation, int, String)} to be registered by the mod.
-     */
-    private static final ArrayList<KeyMapping> KEY_MAPPINGS = new ArrayList<>();
-
     /**
      * Gets the client player by their UUID.
      * 
@@ -82,47 +69,6 @@ public class ClientUtils {
      */
     public static Minecraft getMinecraft() {
         return Minecraft.getInstance();
-    }
-
-    /**
-     * Gets the items for the provided {@link CreativeModeTab}.
-     * 
-     * @param tab The tab to get the items for.
-     * @return The items for the tab.
-     */
-    public static List<ItemStack> getItemsForTab(ResourceKey<CreativeModeTab> tab) {
-        List<ItemStack> items = new ArrayList<>();
-
-        ItemUtils.getItemTabs().forEach((itemTab, itemLikes) -> {
-            if (tab == itemTab) {
-                itemLikes.forEach((itemLike) -> items.add(Objects.requireNonNull(BuiltInRegistries.ITEM.get(itemLike)).getDefaultInstance()));
-            }
-        });
-
-        return items;
-    }
-
-    /**
-     * Gets the key mappings registered via {@link #registerKeyMapping(ResourceLocation, int, String)}.
-     * 
-     * @return The key mappings.
-     */
-    public static ArrayList<KeyMapping> getKeyMappings() {
-        return KEY_MAPPINGS;
-    }
-
-    /**
-     * Registers a key mapping to be registered by the mod.
-     * 
-     * @param name     The name of the key mapping.
-     * @param key      The key code of the key mapping.
-     * @param category The category of the key mapping.
-     * @return The key mapping.
-     */
-    public static KeyMapping registerKeyMapping(ResourceLocation name, int key, String category) {
-        KeyMapping mapping = new KeyMapping(name.toLanguageKey("key"), key, category);
-        KEY_MAPPINGS.add(mapping);
-        return mapping;
     }
 
     /**

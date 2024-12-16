@@ -8,7 +8,6 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -19,16 +18,6 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 public abstract class ExtendedItemTagsProvider extends ItemTagsProvider {
     public ExtendedItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> blockTagsProvider, String modId, ExistingFileHelper existingFileHelper) {
         super(output, future, blockTagsProvider, modId, existingFileHelper);
-    }
-
-    /**
-     * Creates a {@link ResourceLocation} with the given path and the "c" namespace.
-     * 
-     * @param path The path of the resource location.
-     * @return A new {@link ResourceLocation} with the "c" namespace.
-     */
-    protected static ResourceLocation cLoc(String path) {
-        return ResourceLocation.fromNamespaceAndPath("c", path);
     }
 
     /**

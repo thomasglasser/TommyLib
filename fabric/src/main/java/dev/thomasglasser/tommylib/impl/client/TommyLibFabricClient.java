@@ -1,6 +1,5 @@
 package dev.thomasglasser.tommylib.impl.client;
 
-import dev.thomasglasser.tommylib.api.client.ClientUtils;
 import dev.thomasglasser.tommylib.api.client.animation.AnimationUtils;
 import dev.thomasglasser.tommylib.api.client.renderer.BewlrProvider;
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
@@ -9,7 +8,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 
@@ -18,8 +16,6 @@ public class TommyLibFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         if (TommyLibServices.PLATFORM.isModLoaded("playeranimator"))
             AnimationUtils.registerPlayerForAnimation();
-
-        ItemGroupEvents.MODIFY_ENTRIES_ALL.register((group, entries) -> entries.acceptAll(ClientUtils.getItemsForTab(BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(group).orElseThrow())));
 
         BuiltInRegistries.ITEM.stream().forEach(item -> {
             if (item instanceof ModeledItem modeledItem) {

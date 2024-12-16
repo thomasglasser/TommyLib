@@ -6,7 +6,6 @@ import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import java.util.List;
-import net.minecraft.advancements.Advancement;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,11 +23,11 @@ import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -43,6 +42,26 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
     public ExtendedEnUsLanguageProvider(PackOutput output, String modid) {
         super(output, modid, "en_us");
         modId = modid;
+    }
+
+    @Override
+    public void add(Item key, String name) {
+        add(key.getName(key.getDefaultInstance()), name);
+    }
+
+    @Override
+    public void add(ItemStack key, String name) {
+        add(key.getItem().getName(key), name);
+    }
+
+    /**
+     * Adds a translation for a {@link ResourceKey} and name.
+     *
+     * @param key  The key to add the translation for.
+     * @param name The name of the key.
+     */
+    protected void add(ResourceKey<?> key, String name) {
+        add(key.location().toLanguageKey(key.registry().getPath()), name);
     }
 
     /**
@@ -70,27 +89,6 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
     }
 
     /**
-     * Adds a translation for a given {@link Item} with the given {@link Potion}
-     * 
-     * @param key    The item to add the translation for.
-     * @param potion The potion to add the translation for.
-     * @param name   The name of the potion.
-     */
-    public void add(Item key, Holder<Potion> potion, String name) {
-        add(PotionContents.createItemStack(key, potion), name);
-    }
-
-    /**
-     * Adds a translation for a given {@link Biome}.
-     * 
-     * @param biome The biome to add the translation for.
-     * @param name  The name of the biome.
-     */
-    public void addBiome(ResourceKey<Biome> biome, String name) {
-        add("biome." + biome.location().getNamespace() + "." + biome.location().getPath(), name);
-    }
-
-    /**
      * Adds a translation for a given {@link Potion} with the default {@link PotionItem}s.
      * 
      * @param potion The potion to add the translation for.
@@ -98,10 +96,10 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      */
     public void addPotions(Holder<Potion> potion, String name) {
         String title = potion.value().getEffects().isEmpty() ? "Bottle" : "Potion";
-        add(Items.POTION, potion, title + " of " + name);
-        add(Items.SPLASH_POTION, potion, "Splash " + title + " of " + name);
-        add(Items.LINGERING_POTION, potion, "Lingering " + title + " of " + name);
-        add(Items.TIPPED_ARROW, potion, "Arrow of " + name);
+        add(PotionContents.createItemStack(Items.POTION, potion), title + " of " + name);
+        add(PotionContents.createItemStack(Items.SPLASH_POTION, potion), "Splash " + title + " of " + name);
+        add(PotionContents.createItemStack(Items.LINGERING_POTION, potion), "Lingering " + title + " of " + name);
+        add(PotionContents.createItemStack(Items.TIPPED_ARROW, potion), "Arrow of " + name);
     }
 
     /**
@@ -112,22 +110,6 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      */
     public void add(KeyMapping key, String name) {
         add(key.getName(), name);
-    }
-
-    /**
-     * Adds a translation for a given {@link Advancement} name and description.
-     * 
-     * @param category    The category of the advancement.
-     * @param key         The key of the advancement.
-     * @param titleString The title of the advancement.
-     * @param descString  The description of the advancement.
-     */
-    public void addAdvancement(String category, String key, String titleString, String descString) {
-        String title = "advancement." + modId + "." + category + "." + key + ".title";
-        String desc = "advancement." + modId + "." + category + "." + key + ".desc";
-
-        add(title, titleString);
-        add(desc, descString);
     }
 
     /**
@@ -256,12 +238,12 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
     }
 
     /**
-     * Adds a translation for a given smithing template {@link Item}.
-     * 
+     * Adds a translation for a given armor trim {@link Item}.
+     *
      * @param item The item to add the translation for.
      */
-    protected void addSmithingTemplate(Item item) {
-        add(item, "Smithing Template");
+    protected void addArmorTrim(Item item, String name) {
+        add(item, name + " Armor Trim");
     }
 
     /**

@@ -2,8 +2,8 @@ package dev.thomasglasser.tommylib.api.platform;
 
 import dev.thomasglasser.tommylib.TommyLib;
 import dev.thomasglasser.tommylib.impl.platform.services.BlockEntityHelper;
+import dev.thomasglasser.tommylib.impl.platform.services.ClientHelper;
 import dev.thomasglasser.tommylib.impl.platform.services.EntityHelper;
-import dev.thomasglasser.tommylib.impl.platform.services.ItemHelper;
 import dev.thomasglasser.tommylib.impl.platform.services.NetworkHelper;
 import dev.thomasglasser.tommylib.impl.platform.services.PlatformHelper;
 import java.util.ServiceLoader;
@@ -19,7 +19,7 @@ public class TommyLibServices {
     public static final PlatformHelper PLATFORM = load(PlatformHelper.class);
     public static final NetworkHelper NETWORK = load(NetworkHelper.class);
     public static final BlockEntityHelper BLOCK_ENTITY = load(BlockEntityHelper.class);
-    public static final ItemHelper ITEM = load(ItemHelper.class);
+    public static final ClientHelper CLIENT = load(ClientHelper.class);
     public static final EntityHelper ENTITY = load(EntityHelper.class);
 
     // This code is used to load a service for the current environment. Your implementation of the service must be defined

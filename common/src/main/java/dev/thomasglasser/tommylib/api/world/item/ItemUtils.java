@@ -1,12 +1,9 @@
 package dev.thomasglasser.tommylib.api.world.item;
 
+import dev.thomasglasser.sherdsapi.api.SherdsApiDataComponents;
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -16,8 +13,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SmithingTemplateItem;
@@ -27,44 +22,29 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 
 public final class ItemUtils {
-    private static final HashMap<ResourceKey<CreativeModeTab>, ArrayList<ResourceLocation>> ITEM_TABS = new HashMap<>();
-
-    /**
-     * Gets a map of all mod items and the tabs they should appear in.
-     * 
-     * @return A map of all mod items and the tabs they should appear in.
-     */
-    public static Map<ResourceKey<CreativeModeTab>, ArrayList<ResourceLocation>> getItemTabs() {
-        return ITEM_TABS;
-    }
-
     /**
      * Registers an item with the given name and properties.
      * 
      * @param provider The item provider.
      * @param name     The registry name of the item.
      * @param item     The item supplier.
-     * @param tabs     The tabs the item should appear in.
      * @return The registered item holder.
      * @param <T> The item type.
      */
-    public static <T extends Item> DeferredItem<T> register(DeferredRegister.Items provider, String name, Supplier<T> item, List<ResourceKey<CreativeModeTab>> tabs) {
-        for (ResourceKey<CreativeModeTab> tab : tabs) {
-            ArrayList<ResourceLocation> list = ItemUtils.getItemTabs().computeIfAbsent(tab, empty -> new ArrayList<>());
-            list.add(ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name));
-        }
+    public static <T extends Item> DeferredItem<T> register(DeferredRegister.Items provider, String name, Supplier<T> item) {
         return provider.register(name, item);
     }
 
     /**
      * Registers a sherd item with the given name.
-     * 
-     * @param provider The item provider.
-     * @param name     The registry name of the sherd item.
+     *
+     * @param provider   The item provider.
+     * @param name       The registry name of the sherd item.
+     * @param properties The item properties.
      * @return The registered sherd item holder.
      */
-    public static DeferredItem<Item> registerSherd(DeferredRegister.Items provider, String name) {
-        return register(provider, name + "_pottery_sherd", () -> new Item(new Item.Properties()), List.of(CreativeModeTabs.INGREDIENTS));
+    public static DeferredItem<Item> registerSherd(DeferredRegister.Items provider, String name, Item.Properties properties) {
+        return register(provider, name + "_pottery_sherd", () -> new Item(properties.component(SherdsApiDataComponents.SHERD_PATTERN.get(), ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name + "_pottery_pattern"))));
     }
 
     /**
@@ -75,26 +55,7 @@ public final class ItemUtils {
      * @return The registered smithing template item holder.
      */
     public static DeferredItem<SmithingTemplateItem> registerSmithingTemplate(DeferredRegister.Items provider, ResourceKey<TrimPattern> key) {
-        return register(provider, key.location().getPath() + "_armor_trim_smithing_template", () -> (SmithingTemplateItem.createArmorTrimTemplate(key)), List.of(CreativeModeTabs.INGREDIENTS));
-    }
-
-    /**
-     * Safely shrinks the item stack by the given amount, checking for creative mode.
-     * 
-     * @param d      The amount to shrink the item stack by.
-     * @param item   The item stack to shrink.
-     * @param player The player to check.
-     * @return The remainder of the item stack.
-     */
-    public static ItemStack safeShrink(int d, ItemStack item, Player player) {
-        if (!player.getAbilities().instabuild) {
-            Item remainder = item.getItem().getCraftingRemainingItem();
-            item.shrink(d);
-            if (remainder != null)
-                return remainder.getDefaultInstance();
-            return ItemStack.EMPTY;
-        }
-        return ItemStack.EMPTY;
+        return register(provider, key.location().getPath() + "_armor_trim_smithing_template", () -> (SmithingTemplateItem.createArmorTrimTemplate(key)));
     }
 
     /**
@@ -108,7 +69,24 @@ public final class ItemUtils {
      * @return The registered spawn egg item holder.
      */
     public static DeferredItem<SpawnEggItem> registerSpawnEgg(DeferredRegister.Items provider, String name, Supplier<EntityType<? extends Mob>> entityType, int primaryColor, int secondaryColor) {
-        return register(provider, name, TommyLibServices.ITEM.makeSpawnEgg(entityType, primaryColor, secondaryColor, new Item.Properties()), List.of(CreativeModeTabs.SPAWN_EGGS));
+        return register(provider, name, () -> new SpawnEggItem(entityType.get(), primaryColor, secondaryColor, new Item.Properties()));
+    }
+
+    /**
+     * Safely shrinks the item stack by the given amount, checking for creative mode.
+     *
+     * @param d      The amount to shrink the item stack by.
+     * @param item   The item stack to shrink.
+     * @param player The player to check.
+     * @return The remainder of the item stack.
+     */
+    public static ItemStack safeShrink(int d, ItemStack item, Player player) {
+        if (!player.getAbilities().instabuild) {
+            Item remainder = item.getItem().getCraftingRemainingItem();
+            item.shrink(d);
+            return remainder == null ? ItemStack.EMPTY : new ItemStack(remainder);
+        }
+        return ItemStack.EMPTY;
     }
 
     /**
