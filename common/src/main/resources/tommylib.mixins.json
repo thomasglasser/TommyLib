@@ -8,7 +8,6 @@
     "minecraft.world.item.alchemy.PotionContentsMixin"
   ],
   "client": [
-    "minecraft.client.model.HumanoidModelMixin",
     "minecraft.client.renderer.entity.player.PlayerRendererMixin"
   ],
   "server": [
