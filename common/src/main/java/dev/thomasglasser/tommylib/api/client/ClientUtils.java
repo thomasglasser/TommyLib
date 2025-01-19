@@ -1,6 +1,11 @@
 package dev.thomasglasser.tommylib.api.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.thomasglasser.tommylib.TommyLib;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -13,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.apache.commons.io.IOUtils;
 
 public class ClientUtils {
     /**
@@ -69,6 +75,94 @@ public class ClientUtils {
      */
     public static Minecraft getMinecraft() {
         return Minecraft.getInstance();
+    }
+
+    /**
+     * Checks if the player is a VIP of the specified type in the specified gist.
+     *
+     * @param gist The ID of the gist.
+     * @param uuid The UUID of the player.
+     * @param type The VIP type.
+     * @return Whether the player is a VIP of the specified type.
+     */
+    public static boolean isVip(String gist, UUID uuid, String type) {
+        BufferedReader fileReader = null;
+
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL("https://gist.github.com/" + gist + "/raw/").openConnection();
+
+            connection.setConnectTimeout(1000);
+            connection.connect();
+
+            if (HttpURLConnection.HTTP_OK != connection.getResponseCode()) {
+                TommyLib.LOGGER.error("Failed connection to cloud based special player list, response code " + connection.getResponseMessage());
+
+                return false;
+            }
+
+            fileReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+
+            while ((line = fileReader.readLine()) != null) {
+                if (!line.startsWith(" <!DOCTYPE")) {
+                    String[] lineSplit = line.split("\\|");
+                    UUID givenUUID;
+
+                    if (lineSplit.length > 2) {
+                        try {
+                            givenUUID = UUID.fromString(lineSplit[1]);
+
+                            if (givenUUID.equals(uuid) && lineSplit[2].contains(type)) {
+                                return true;
+                            }
+                        } catch (IllegalArgumentException ex) {
+                            TommyLib.LOGGER.error("Invalid UUID format from web: " + lineSplit[1]);
+                        }
+                    }
+                }
+            }
+
+            connection.disconnect();
+        } catch (Exception e) {
+            TommyLib.LOGGER.error("Error while performing HTTP Tasks, dropping.", e);
+        } finally {
+            IOUtils.closeQuietly(fileReader);
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the player is a snapshot tester in the specified gist.
+     *
+     * @param gist The ID of the gist.
+     * @param uuid The UUID of the player.
+     * @return Whether the player is a snapshot tester.
+     */
+    public static boolean checkSnapshotTester(String gist, UUID uuid) {
+        return isVip(gist, uuid, "snapshot");
+    }
+
+    /**
+     * Checks if the player is a dev team member in the specified gist.
+     *
+     * @param gist The ID of the gist.
+     * @param uuid The UUID of the player.
+     * @return Whether the player is a dev team member.
+     */
+    public static boolean checkDevTeam(String gist, UUID uuid) {
+        return isVip(gist, uuid, "dev");
+    }
+
+    /**
+     * Checks if the player is a legacy dev team member in the specified gist.
+     *
+     * @param gist The ID of the gist.
+     * @param uuid The UUID of the player.
+     * @return Whether the player is a legacy dev team member.
+     */
+    public static boolean checkLegacyDevTeam(String gist, UUID uuid) {
+        return isVip(gist, uuid, "legacy_dev");
     }
 
     /**
