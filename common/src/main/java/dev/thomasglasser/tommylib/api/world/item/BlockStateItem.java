@@ -72,4 +72,8 @@ public class BlockStateItem extends BlockItem {
     protected BlockState getPlacementState(BlockPlaceContext context) {
         return this.canPlace(context, state) ? state : null;
     }
+
+    public BlockState getState() {
+        return state;
+    }
 }

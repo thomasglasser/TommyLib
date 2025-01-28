@@ -5,19 +5,16 @@ import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
 import dev.thomasglasser.tommylib.api.world.level.block.grower.ExtendedTreeGrower;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BoatItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.HangingSignItem;
 import net.minecraft.world.item.Item;
@@ -123,7 +120,6 @@ public class BlockUtils {
      * @param blockFactory The block supplier
      * @param itemFactory  The item supplier
      * @param properties   The item properties
-     * @param tabs         The creative mode tabs to add the item to
      * @return The block holder
      * @param <T> The block type
      */
@@ -132,8 +128,7 @@ public class BlockUtils {
             String name,
             Supplier<T> blockFactory,
             BiFunction<String, Supplier<Item>, DeferredItem<?>> itemFactory,
-            Item.Properties properties,
-            List<ResourceKey<CreativeModeTab>> tabs) {
+            Item.Properties properties) {
         DeferredBlock<T> block = register(provider, name, blockFactory);
         itemFactory.apply(name, () -> BLOCK_ITEM_WITH_PROPERTIES_FUNCTION.apply(block, properties));
         return block;
