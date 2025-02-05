@@ -1,0 +1,8 @@
+{
+  "minecraft:worldgen/feature": [
+    "tommylib:nbt_feature"
+  ],
+  "neoforge:attachment_types": [
+    "tommylib:data"
+  ]
+}
