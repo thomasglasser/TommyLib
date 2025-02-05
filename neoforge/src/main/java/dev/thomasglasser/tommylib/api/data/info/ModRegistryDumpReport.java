@@ -4,7 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -32,7 +34,7 @@ public class ModRegistryDumpReport implements DataProvider {
 
     private JsonElement dumpRegistry(HolderLookup.RegistryLookup<?> registry) {
         JsonArray jsonarray = new JsonArray();
-        registry.listElements().forEach((reference) -> {
+        registry.listElements().sorted(Comparator.comparing(Holder.Reference::key)).forEach((reference) -> {
             if (reference.key().location().getNamespace().equals(modId)) {
                 jsonarray.add(reference.key().location().toString());
             }
