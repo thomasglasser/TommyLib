@@ -3,7 +3,6 @@ package dev.thomasglasser.tommylib.api.data.info;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.Holder;
@@ -12,6 +11,9 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 
+/**
+ * Data provider that dumps the contents of all registry objects with a specific mod ID.
+ */
 public class ModRegistryDumpReport implements DataProvider {
     protected final PackOutput output;
     protected final String modId;
@@ -26,16 +28,15 @@ public class ModRegistryDumpReport implements DataProvider {
     public CompletableFuture<?> run(CachedOutput output) {
         return this.lookupProvider.thenCompose((registries) -> {
             JsonObject jsonobject = new JsonObject();
-            registries.listRegistries().map(registries::lookup).forEach((registry) -> registry.ifPresent(reference -> jsonobject.add(reference.key().location().toString(), dumpRegistry(reference))));
-            Path path = this.output.getOutputFolder(PackOutput.Target.REPORTS).resolve("registries.json");
-            return DataProvider.saveStable(output, jsonobject, path);
+            registries.listRegistries().map(registries::lookup).forEach((registry) -> registry.ifPresent(reference -> jsonobject.add(reference.key().location().toString(), dumpRegistry(reference, modId))));
+            return DataProvider.saveStable(output, jsonobject, this.output.getOutputFolder(PackOutput.Target.REPORTS).resolve("registries.json"));
         });
     }
 
-    private JsonElement dumpRegistry(HolderLookup.RegistryLookup<?> registry) {
+    public static JsonElement dumpRegistry(HolderLookup.RegistryLookup<?> registry, String modId) {
         JsonArray jsonarray = new JsonArray();
         registry.listElements().sorted(Comparator.comparing(Holder.Reference::key)).forEach((reference) -> {
-            if (reference.key().location().getNamespace().equals(modId)) {
+            if (modId.isEmpty() || reference.key().location().getNamespace().equals(modId)) {
                 jsonarray.add(reference.key().location().toString());
             }
         });

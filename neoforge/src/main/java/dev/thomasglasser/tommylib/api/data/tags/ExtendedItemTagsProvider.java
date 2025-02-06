@@ -6,18 +6,29 @@ import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 /**
- * Extension of {@link ItemTagsProvider} that provides functionality for mod holders.
+ * Extension of {@link ItemTagsProvider} that provides functionality for mod holders
+ * and dumps the contents of all generated tags without the default namespace.
  */
 public abstract class ExtendedItemTagsProvider extends ItemTagsProvider {
+    protected final PackOutput output;
+
     public ExtendedItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> blockTagsProvider, String modId, ExistingFileHelper existingFileHelper) {
         super(output, future, blockTagsProvider, modId, existingFileHelper);
+        this.output = output;
+    }
+
+    @Override
+    public CompletableFuture<?> run(CachedOutput output) {
+        return ExtendedTagsProvider.runAndDump(output, createContentsProvider(), contentsDone, CompletableFuture.completedFuture(TagsProvider.TagLookup.empty()), registryKey, builders, existingFileHelper, this::getPath, this.output);
     }
 
     /**
