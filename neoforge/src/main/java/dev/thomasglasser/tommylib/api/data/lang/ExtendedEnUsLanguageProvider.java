@@ -118,8 +118,8 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param tab  The tab to add the translation for.
      * @param name The name of the tab.
      */
-    public void addCreativeTab(DeferredHolder<CreativeModeTab, ?> tab, String name) {
-        add(tab.getId().toLanguageKey("item_group"), name);
+    public void add(CreativeModeTab tab, String name) {
+        add(tab.getDisplayName().getString(), name);
     }
 
     /**
