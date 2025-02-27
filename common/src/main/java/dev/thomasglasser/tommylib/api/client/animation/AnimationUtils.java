@@ -1,5 +1,6 @@
 package dev.thomasglasser.tommylib.api.client.animation;
 
+import dev.kosmx.playerAnim.api.firstPerson.FirstPersonConfiguration;
 import dev.kosmx.playerAnim.api.firstPerson.FirstPersonMode;
 import dev.kosmx.playerAnim.api.layered.AnimationStack;
 import dev.kosmx.playerAnim.api.layered.IAnimation;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class AnimationUtils {
     public static final Map<Player, ModifierLayer<IAnimation>> animationData = new IdentityHashMap<>();
+    public static final FirstPersonConfiguration SHOW_ARMS_CONFIG = new FirstPersonConfiguration().setShowLeftArm(true).setShowRightArm(true);
 
     public static void registerPlayerForAnimation() {
         PlayerAnimationAccess.REGISTER_ANIMATION_EVENT.register(AnimationUtils::registerPlayerInternal);
@@ -41,13 +43,17 @@ public class AnimationUtils {
      * @param player          The player to start the animation for
      * @param firstPersonMode The first person mode to use
      */
-    public static void startAnimation(KeyframeAnimation startAnim, @Nullable KeyframeAnimation goAnim, Player player, FirstPersonMode firstPersonMode) {
+    public static void startAnimation(KeyframeAnimation startAnim, @Nullable KeyframeAnimation goAnim, Player player, FirstPersonMode firstPersonMode, FirstPersonConfiguration configuration) {
         var animation = animationData.get(player);
         if (animation != null) {
-            animation.setAnimation(new KeyframeAnimationPlayer(startAnim).setFirstPersonMode(firstPersonMode));
+            animation.setAnimation(new KeyframeAnimationPlayer(startAnim).setFirstPersonMode(firstPersonMode).setFirstPersonConfiguration(configuration));
             if (goAnim != null)
-                animation.replaceAnimationWithFade(AbstractFadeModifier.standardFadeIn(20, Ease.CONSTANT), new KeyframeAnimationPlayer(goAnim).setFirstPersonMode(firstPersonMode));
+                animation.replaceAnimationWithFade(AbstractFadeModifier.standardFadeIn(20, Ease.CONSTANT), new KeyframeAnimationPlayer(goAnim).setFirstPersonMode(firstPersonMode).setFirstPersonConfiguration(configuration));
         }
+    }
+
+    public static void startAnimation(KeyframeAnimation startAnim, @Nullable KeyframeAnimation goAnim, Player player) {
+        startAnimation(startAnim, goAnim, player, FirstPersonMode.THIRD_PERSON_MODEL, SHOW_ARMS_CONFIG);
     }
 
     /**
@@ -57,8 +63,12 @@ public class AnimationUtils {
      * @param player          The player to start the animation for
      * @param firstPersonMode The first person mode to use
      */
-    public static void startAnimation(KeyframeAnimation anim, Player player, FirstPersonMode firstPersonMode) {
-        startAnimation(anim, null, player, firstPersonMode);
+    public static void startAnimation(KeyframeAnimation anim, Player player, FirstPersonMode firstPersonMode, FirstPersonConfiguration configuration) {
+        startAnimation(anim, null, player, firstPersonMode, configuration);
+    }
+
+    public static void startAnimation(KeyframeAnimation anim, Player player) {
+        startAnimation(anim, null, player, FirstPersonMode.THIRD_PERSON_MODEL, SHOW_ARMS_CONFIG);
     }
 
     /**

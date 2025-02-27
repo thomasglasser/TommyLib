@@ -347,4 +347,32 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
         addPattern(pattern, name);
         addPatternItem(item, name);
     }
+
+    /**
+     * Adds a translation for a curios slot.
+     *
+     * @param name The id and name of the curios slot.
+     */
+    protected void addCuriosSlot(String name) {
+        add("curios.identifier." + name, capitalize(name));
+    }
+
+    /**
+     * Capitalizes a string.
+     *
+     * @param name The string to capitalize.
+     * @return The capitalized string.
+     */
+    protected String capitalize(String name) {
+        return WordUtils.capitalize(name.toLowerCase().replace('_', ' '));
+    }
+
+    /**
+     * Adds a translation for a resource key with a capitalized name.
+     *
+     * @param key The resource key to add the translation for.
+     */
+    protected void addCapitalized(ResourceKey<?> key) {
+        add(key, capitalize(key.location().getPath()));
+    }
 }
