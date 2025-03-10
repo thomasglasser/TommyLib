@@ -22,8 +22,13 @@ public record ClientboundSyncDataPacketPayload(CompoundTag compoundTag, int enti
     @Override
     public void handle(Player player) {
         Entity target = player.level().getEntity(entity);
-        if (target != null)
-            TommyLibServices.ENTITY.setPersistentData(target, compoundTag, false);
+        if (target != null) {
+            CompoundTag data = TommyLibServices.ENTITY.getPersistentData(target);
+            for (String key : compoundTag.getAllKeys()) {
+                data.put(key, compoundTag.get(key));
+            }
+            TommyLibServices.ENTITY.setPersistentData(target, data, false);
+        }
     }
 
     @Override
