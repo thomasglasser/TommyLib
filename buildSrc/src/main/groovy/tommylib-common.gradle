@@ -101,15 +101,6 @@ repositories {
     exclusiveContent {
         forRepository {
             maven {
-                name = 'TslatEffectsLib'
-                url = 'https://dl.cloudsmith.io/public/tslat/tel/maven/'
-            }
-        }
-        filter { includeGroupAndSubgroups("net.tslat.effectslib") }
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
                 name = 'SmartBrainLib'
                 url = 'https://dl.cloudsmith.io/public/tslat/sbl/maven/'
             }
