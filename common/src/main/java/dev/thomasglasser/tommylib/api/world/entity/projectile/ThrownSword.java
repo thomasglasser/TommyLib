@@ -15,6 +15,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.ProjectileDeflection;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -25,7 +27,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A projectile that moves and behaves like a Trident. Can be enchanted with {@link Enchantments#LOYALTY}
+ * A projectile that moves and behaves like a {@link ThrownTrident}. Can be enchanted with {@link Enchantments#LOYALTY}
  */
 public class ThrownSword extends AbstractArrow {
     private static final EntityDataAccessor<Byte> ID_LOYALTY = SynchedEntityData.defineId(ThrownSword.class, EntityDataSerializers.BYTE);
@@ -62,9 +64,6 @@ public class ThrownSword extends AbstractArrow {
         builder.define(ID_FOIL, false);
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
     @Override
     public void tick() {
         if (this.inGroundTime > 4) {
@@ -75,8 +74,8 @@ public class ThrownSword extends AbstractArrow {
         int i = this.entityData.get(ID_LOYALTY);
         if (i > 0 && (this.dealtDamage || this.isNoPhysics()) && entity != null) {
             if (!this.isAcceptibleReturnOwner()) {
-                if (!this.level().isClientSide && this.pickup == Pickup.ALLOWED) {
-                    this.spawnAtLocation(this.getPickupItem(), 0.1F);
+                if (level() instanceof ServerLevel serverlevel && this.pickup == Pickup.ALLOWED) {
+                    this.spawnAtLocation(serverlevel, this.getPickupItem(), 0.1F);
                 }
 
                 this.discard();
@@ -109,43 +108,38 @@ public class ThrownSword extends AbstractArrow {
         return this.entityData.get(ID_FOIL);
     }
 
-    /**
-     * Gets the EntityHitResult representing the entity hit
-     */
     @Nullable
     protected EntityHitResult findHitEntity(Vec3 pStartVec, Vec3 pEndVec) {
         return this.dealtDamage ? null : super.findHitEntity(pStartVec, pEndVec);
     }
 
-    /**
-     * Called when the arrow hits an entity
-     */
-    protected void onHitEntity(EntityHitResult pResult) {
-        Entity entity = pResult.getEntity();
+    protected void onHitEntity(EntityHitResult result) {
+        Entity entity = result.getEntity();
         float f = 8.0F;
-        Entity entity1 = this.getOwner();
-        DamageSource damagesource = this.damageSources().arrow(this, entity1 == null ? this : entity1);
-        if (this.level() instanceof ServerLevel serverlevel) {
-            f = EnchantmentHelper.modifyDamage(serverlevel, getPickupItem(), entity, damagesource, f);
+        Entity entity2 = this.getOwner();
+        DamageSource damageSource = this.damageSources().trident(this, (Entity) (entity2 == null ? this : entity2));
+        if (level() instanceof ServerLevel serverLevel) {
+            f = EnchantmentHelper.modifyDamage(serverLevel, this.getWeaponItem(), entity, damageSource, f);
         }
 
         this.dealtDamage = true;
-        if (entity.hurt(damagesource, f)) {
+        if (entity.hurtOrSimulate(damageSource, f)) {
             if (entity.getType() == EntityType.ENDERMAN) {
                 return;
             }
 
-            if (this.level() instanceof ServerLevel serverlevel1) {
-                EnchantmentHelper.doPostAttackEffectsWithItemSource(serverlevel1, entity, damagesource, this.getWeaponItem());
+            if (level() instanceof ServerLevel serverLevel) {
+                EnchantmentHelper.doPostAttackEffectsWithItemSourceOnBreak(serverLevel, entity, damageSource, this.getWeaponItem(), (item) -> this.kill(serverLevel));
             }
 
-            if (entity instanceof LivingEntity livingentity) {
-                this.doKnockback(livingentity, damagesource);
-                this.doPostHurtEffects(livingentity);
+            if (entity instanceof LivingEntity livingEntity) {
+                this.doKnockback(livingEntity, damageSource);
+                this.doPostHurtEffects(livingEntity);
             }
         }
 
-        this.setDeltaMovement(this.getDeltaMovement().multiply(-0.01, -0.1, -0.01));
+        this.deflect(ProjectileDeflection.REVERSE, entity, this.getOwner(), false);
+        this.setDeltaMovement(this.getDeltaMovement().multiply(0.02, 0.2, 0.02));
         this.playSound(getDefaultHitGroundSoundEvent());
     }
 
@@ -158,21 +152,15 @@ public class ThrownSword extends AbstractArrow {
         return Items.AIR.getDefaultInstance();
     }
 
-    /**
-     * Called by a player entity when they collide with an entity
-     */
     public void playerTouch(Player pEntity) {
         if (this.ownedBy(pEntity) || this.getOwner() == null) {
             super.playerTouch(pEntity);
         }
     }
 
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
-    public void readAdditionalSaveData(CompoundTag pCompound) {
-        super.readAdditionalSaveData(pCompound);
-        this.dealtDamage = pCompound.getBoolean("DealtDamage");
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.dealtDamage = tag.getBooleanOr("DealtDamage", false);
         this.entityData.set(ID_LOYALTY, ItemUtils.getLoyaltyFromItem(getDefaultPickupItem(), level(), this));
     }
 

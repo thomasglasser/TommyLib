@@ -24,8 +24,6 @@ import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagFile;
 import net.minecraft.tags.TagKey;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link TagsProvider} that dumps a list of all generated tags without the default namespace.
@@ -36,39 +34,36 @@ public abstract class ExtendedTagsProvider<T> extends TagsProvider<T> {
     protected final CompletableFuture<TagsProvider.TagLookup<T>> parentProvider;
     protected final PackOutput output;
 
-    protected ExtendedTagsProvider(PackOutput output, ResourceKey<? extends Registry<T>> registryKey, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
-        this(output, registryKey, lookupProvider, CompletableFuture.completedFuture(TagsProvider.TagLookup.empty()), modId, existingFileHelper);
+    protected ExtendedTagsProvider(PackOutput output, ResourceKey<? extends Registry<T>> registryKey, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId) {
+        this(output, registryKey, lookupProvider, CompletableFuture.completedFuture(TagsProvider.TagLookup.empty()), modId);
     }
 
-    protected ExtendedTagsProvider(PackOutput output, ResourceKey<? extends Registry<T>> registryKey, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<T>> parentProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
-        super(output, registryKey, lookupProvider, parentProvider, modId, existingFileHelper);
+    protected ExtendedTagsProvider(PackOutput output, ResourceKey<? extends Registry<T>> registryKey, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<T>> parentProvider, String modId) {
+        super(output, registryKey, lookupProvider, parentProvider, modId);
         this.parentProvider = parentProvider;
         this.output = output;
     }
 
     @Override
     public CompletableFuture<?> run(CachedOutput output) {
-        return runAndDump(output, createContentsProvider(), contentsDone, parentProvider, registryKey, builders, existingFileHelper, this::getPath, this.output);
+        return runAndDump(output, createContentsProvider(), contentsDone, parentProvider, registryKey, builders, this::getPath, this.output, modId);
     }
 
-    public static <T> CompletableFuture<?> runAndDump(CachedOutput output, CompletableFuture<HolderLookup.Provider> contentsProvider, CompletableFuture<Void> contentsDone, CompletableFuture<TagLookup<T>> parentProvider, ResourceKey<? extends Registry<T>> registryKey, Map<ResourceLocation, TagBuilder> builders, ExistingFileHelper existingFileHelper, Function<ResourceLocation, Path> pathGetter, PackOutput packOutput) {
+    public static <T> CompletableFuture<?> runAndDump(CachedOutput output, CompletableFuture<HolderLookup.Provider> contentsProvider, CompletableFuture<Void> contentsDone, CompletableFuture<TagLookup<T>> parentProvider, ResourceKey<? extends Registry<T>> registryKey, Map<ResourceLocation, TagBuilder> builders, Function<ResourceLocation, Path> pathGetter, PackOutput packOutput, String modId) {
         record CombinedData<T>(HolderLookup.Provider contents, TagsProvider.TagLookup<T> parent) {}
-        ExistingFileHelper.ResourceType resourceType = new ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", net.minecraft.core.registries.Registries.tagsDirPath(registryKey));
-        ExistingFileHelper.ResourceType elementResourceType = new ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", net.neoforged.neoforge.common.CommonHooks.prefixNamespace(registryKey.location()));
-
         return contentsProvider
-                .thenApply(p_275895_ -> {
+                .thenApply(provider -> {
                     contentsDone.complete(null);
-                    return p_275895_;
+                    return provider;
                 })
                 .thenCombineAsync(
                         parentProvider, CombinedData::new, Util.backgroundExecutor())
                 .thenCompose(
-                        p_323140_ -> {
-                            HolderLookup.RegistryLookup<T> registrylookup = p_323140_.contents.lookupOrThrow(registryKey);
-                            Predicate<ResourceLocation> predicate = p_255496_ -> registrylookup.get(ResourceKey.create(registryKey, p_255496_)).isPresent();
-                            Predicate<ResourceLocation> predicate1 = p_274776_ -> builders.containsKey(p_274776_)
-                                    || p_323140_.parent.contains(TagKey.create(registryKey, p_274776_));
+                        combinedData -> {
+                            HolderLookup.RegistryLookup<T> registrylookup = combinedData.contents.lookupOrThrow(registryKey);
+                            Predicate<ResourceLocation> lookupContains = location -> registrylookup.get(ResourceKey.create(registryKey, location)).isPresent();
+                            Predicate<ResourceLocation> buildersOrParentContains = location -> builders.containsKey(location)
+                                    || combinedData.parent.contains(TagKey.create(registryKey, location));
                             JsonArray jsonarray = new JsonArray();
                             builders.keySet().stream().filter(rl -> !rl.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)).sorted().forEach(rl -> jsonarray.add(rl.toString()));
                             CompletableFuture<Void> tags = CompletableFuture.allOf(
@@ -77,13 +72,13 @@ public abstract class ExtendedTagsProvider<T> extends TagsProvider<T> {
                                             .stream()
                                             .sorted(Map.Entry.comparingByKey())
                                             .map(
-                                                    p_323138_ -> {
-                                                        ResourceLocation resourcelocation = p_323138_.getKey();
-                                                        TagBuilder tagbuilder = p_323138_.getValue();
+                                                    entry -> {
+                                                        ResourceLocation resourcelocation = entry.getKey();
+                                                        TagBuilder tagbuilder = entry.getValue();
                                                         List<TagEntry> list = tagbuilder.build();
                                                         List<TagEntry> list1 = Stream.concat(list.stream(), tagbuilder.getRemoveEntries())
-                                                                .filter((p_274771_) -> !p_274771_.verifyIfPresent(predicate, predicate1))
-                                                                .filter(entry -> missing(entry, existingFileHelper, resourceType, elementResourceType))
+                                                                // Neo: Assume tags from other namespaces always exists
+                                                                .filter((tagEntry) -> tagEntry.getId().getNamespace().equals(modId) && !tagEntry.verifyIfPresent(lookupContains, buildersOrParentContains))
                                                                 .toList();
                                                         if (!list1.isEmpty()) {
                                                             throw new IllegalArgumentException(
@@ -94,23 +89,13 @@ public abstract class ExtendedTagsProvider<T> extends TagsProvider<T> {
                                                                             list1.stream().map(Objects::toString).collect(Collectors.joining(","))));
                                                         } else {
                                                             Path path = pathGetter.apply(resourcelocation);
-                                                            if (path == null)
-                                                                return CompletableFuture.completedFuture(null); // Neo: Allow running this data provider without writing it. Recipe provider needs valid tags.
+                                                            if (path == null) return CompletableFuture.completedFuture(null); // Neo: Allow running this data provider without writing it. Recipe provider needs valid tags.
                                                             var removed = tagbuilder.getRemoveEntries().toList();
-                                                            return DataProvider.saveStable(output, p_323140_.contents, TagFile.CODEC, new TagFile(list, tagbuilder.isReplace(), removed), path);
+                                                            return DataProvider.saveStable(output, combinedData.contents, TagFile.CODEC, new TagFile(list, tagbuilder.isReplace(), removed), path);
                                                         }
                                                     })
                                             .toArray(CompletableFuture[]::new));
                             return jsonarray.isEmpty() ? tags : CompletableFuture.allOf(tags, DataProvider.saveStable(output, jsonarray, packOutput.getOutputFolder(PackOutput.Target.REPORTS).resolve("tags/" + registryKey.location().getNamespace() + "/" + registryKey.location().getPath() + ".json")));
                         });
-    }
-
-    private static boolean missing(TagEntry reference, ExistingFileHelper existingFileHelper, ExistingFileHelper.ResourceType resourceType, ExistingFileHelper.ResourceType elementResourceType) {
-        // Optional tags should not be validated
-
-        if (reference.isRequired()) {
-            return existingFileHelper == null || !existingFileHelper.exists(reference.getId(), reference.isTag() ? resourceType : elementResourceType);
-        }
-        return false;
     }
 }

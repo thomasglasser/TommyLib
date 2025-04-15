@@ -10,8 +10,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Extension of {@link BlockTagsProvider} that provides functionality for mod holders
@@ -20,14 +18,14 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ExtendedBlockTagsProvider extends BlockTagsProvider {
     protected final PackOutput output;
 
-    public ExtendedBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, modId, existingFileHelper);
+    public ExtendedBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId) {
+        super(output, lookupProvider, modId);
         this.output = output;
     }
 
     @Override
     public CompletableFuture<?> run(CachedOutput output) {
-        return ExtendedTagsProvider.runAndDump(output, createContentsProvider(), contentsDone, CompletableFuture.completedFuture(TagsProvider.TagLookup.empty()), registryKey, builders, existingFileHelper, this::getPath, this.output);
+        return ExtendedTagsProvider.runAndDump(output, createContentsProvider(), contentsDone, CompletableFuture.completedFuture(TagsProvider.TagLookup.empty()), registryKey, builders, this::getPath, this.output, modId);
     }
 
     /**
@@ -37,7 +35,7 @@ public abstract class ExtendedBlockTagsProvider extends BlockTagsProvider {
      */
     protected void woodSet(WoodSet set) {
         tag(set.logsBlockTag())
-                .add(set.log().get(), set.strippedLog().get(), set.wood().get(), set.strippedWood().get());
+                .add(set.log().get(), set.wood().get(), set.strippedLog().get(), set.strippedWood().get());
 
         tag(BlockTags.LOGS_THAT_BURN)
                 .addTag(set.logsBlockTag());

@@ -11,54 +11,39 @@ import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.AdvancementType;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.common.data.AdvancementProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Implementation of {@link AdvancementProvider.AdvancementGenerator} that provides helpers.
+ * Implementation of {@link AdvancementSubProvider} that provides helpers.
  */
-public abstract class ExtendedAdvancementGenerator implements AdvancementProvider.AdvancementGenerator {
+public abstract class ExtendedAdvancementSubProvider implements AdvancementSubProvider {
     private final String modId;
     private final String category;
     private final LanguageProvider enUs;
 
-    private Consumer<AdvancementHolder> saver;
-    private ExistingFileHelper existingFileHelper;
+    private Consumer<AdvancementHolder> writer;
 
-    public ExtendedAdvancementGenerator(String modId, String category, LanguageProvider enUs) {
+    public ExtendedAdvancementSubProvider(String modId, String category, LanguageProvider enUs) {
         this.modId = modId;
         this.category = category;
         this.enUs = enUs;
     }
 
-    /**
-     * Generates advancements, storing the saver and existing file helper for later use.
-     * 
-     * @param provider           The {@link HolderLookup.Provider} to use for registries
-     * @param consumer           The consumer to save advancements to
-     * @param existingFileHelper The existing file helper to use for saving advancements
-     */
     @Override
-    public final void generate(HolderLookup.Provider provider, Consumer<AdvancementHolder> consumer, ExistingFileHelper existingFileHelper) {
-        this.saver = consumer;
-        this.existingFileHelper = existingFileHelper;
+    public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> writer) {
+        this.writer = writer;
 
-        generate(provider);
+        generate(registries);
     }
 
-    /**
-     * Generates advancements.
-     * 
-     * @param provider The {@link HolderLookup.Provider} to use for registries
-     */
-    public abstract void generate(HolderLookup.Provider provider);
+    public abstract void generate(HolderLookup.Provider registries);
 
     /**
      * Creates a translation key for the title of an advancement.
@@ -460,7 +445,7 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
         SortedMap<String, Criterion<?>> sm = new TreeMap<>(triggers);
         sm.forEach(builder::addCriterion);
 
-        return builder.requirements(strategy).save(saver, modLoc(category + "/" + id), existingFileHelper);
+        return builder.requirements(strategy).save(writer, modLoc(category + "/" + id));
     }
 
     /**

@@ -1,11 +1,11 @@
 package dev.thomasglasser.tommylib.api.data.lang;
 
 import dev.thomasglasser.tommylib.api.packs.PackInfo;
-import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import java.util.List;
+import java.util.function.Supplier;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,13 +19,13 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.block.entity.BannerPattern;
@@ -119,7 +119,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param name The name of the tab.
      */
     public void add(CreativeModeTab tab, String name) {
-        add(tab.getDisplayName().getString(), name);
+        add(tab.getDisplayName(), name);
     }
 
     /**
@@ -129,7 +129,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param name  The name of the sound.
      */
     public void add(SoundEvent sound, String name) {
-        add("subtitles." + sound.getLocation().getPath(), name);
+        add("subtitles." + sound.location().getPath(), name);
     }
 
     /**
@@ -139,9 +139,9 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param name The name of the entity.
      * @param egg  The spawn egg of the entity.
      */
-    public void add(EntityType<?> key, String name, Item egg) {
+    public void add(EntityType<?> key, String name, Supplier<SpawnEggItem> egg) {
         add(key.getDescriptionId(), name);
-        add(egg, name + " Spawn Egg");
+        add(egg.get(), name + " Spawn Egg");
     }
 
     /**
@@ -233,7 +233,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param profession The profession to add the translation for.
      * @param name       The name of the profession.
      */
-    protected void addProfession(DeferredHolder<VillagerProfession, ?> profession, String name) {
+    protected void addProfession(Holder<VillagerProfession> profession, String name) {
         add(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.VILLAGER).toLanguageKey("entity") + "." + profession.getKey().location().toShortLanguageKey(), name);
     }
 
@@ -326,26 +326,15 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
     }
 
     /**
-     * Adds a translation for a banner pattern item.
-     * 
-     * @param item The item to add the translation for.
-     * @param name The name of the pattern item.
-     */
-    protected void addPatternItem(DeferredItem<BannerPatternItem> item, String name) {
-        add(item.get(), "Banner Pattern");
-        add(item.get().getDescriptionId() + ".desc", name);
-    }
-
-    /**
      * Adds a translation for a banner pattern and item.
      * 
      * @param pattern The pattern
      * @param item    The item for the pattern
      * @param name    The name of the pattern
      */
-    protected void addPatternAndItem(ResourceKey<BannerPattern> pattern, DeferredItem<BannerPatternItem> item, String name) {
+    protected void addPatternAndItem(ResourceKey<BannerPattern> pattern, DeferredItem<?> item, String name) {
         addPattern(pattern, name);
-        addPatternItem(item, name);
+        add(item.get(), name + " Banner Pattern");
     }
 
     /**

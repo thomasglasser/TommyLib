@@ -111,7 +111,7 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
      */
     public Reference<R> asReferenceFrom(HolderLookup.Provider registries) {
         if (getRegistry() != null)
-            return registries.lookupOrThrow(getRegistry().key()).getOrThrow(key);
+            return registries.lookupOrThrow(key.registryKey()).getOrThrow(key);
         return null;
     }
 
@@ -143,7 +143,7 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     @Nullable
     @SuppressWarnings("unchecked")
     protected Registry<R> getRegistry() {
-        return (Registry<R>) BuiltInRegistries.REGISTRY.get(this.key.registry());
+        return (Registry<R>) BuiltInRegistries.REGISTRY.getValue(this.key.registry());
     }
 
     /**
@@ -159,7 +159,7 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
 
         Registry<R> registry = getRegistry();
         if (registry != null) {
-            this.holder = registry.getHolder(this.key).orElse(null);
+            this.holder = registry.get(this.key).orElse(null);
         } else if (throwOnMissingRegistry) {
             throw new IllegalStateException("Registry not present for " + this + ": " + this.key.registry());
         }
@@ -265,7 +265,7 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
 
     /**
      * Returns an {@link Either#left()} containing {@linkplain #getKey() the resource key of this holder}.
-     * 
+     *
      * @apiNote This method is implemented for {@link Holder} compatibility, but {@link #getKey()} should be preferred.
      */
     @Override
@@ -276,10 +276,9 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
 
     /**
      * Returns the resource key of this holder.
-     * 
-     * @apiNote This method is implemented for {@link Holder} compatibility, but {@link #getKey()} should be preferred.
-     * 
+     *
      * @return a present optional containing {@linkplain #getKey() the resource key of this holder}
+     * @apiNote This method is implemented for {@link Holder} compatibility, but {@link #getKey()} should be preferred.
      */
     @Override
     public Optional<ResourceKey<R>> unwrapKey() {

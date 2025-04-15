@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
@@ -91,8 +90,7 @@ public class NbtFeature extends Feature<NbtFeatureConfig> {
         BlockPos halfLengths = new BlockPos(template.get().getSize().getX() / 2, 0, template.get().getSize().getZ() / 2);
         placementSettings.setRotation(Rotation.getRandom(context.random())).setRotationPivot(halfLengths).setIgnoreEntities(false);
         if (context.config().processor() != null) {
-            context.level().registryAccess().registryOrThrow(Registries.PROCESSOR_LIST)
-                    .getOptional(context.config().processor()).ifPresent(processor -> processor.list().forEach(placementSettings::addProcessor));
+            context.level().registryAccess().get(context.config().processor()).ifPresent(processor -> processor.value().list().forEach(placementSettings::addProcessor));
         }
         blockpos$Mutable.set(context.origin());
         BlockPos offset = new BlockPos(-template.get().getSize().getX() / 2, context.config().heightOffset(), -template.get().getSize().getZ() / 2);

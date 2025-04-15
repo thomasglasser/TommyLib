@@ -2,8 +2,8 @@ package dev.thomasglasser.tommylib.api.world.item.armor;
 
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import java.util.List;
+import java.util.function.UnaryOperator;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -11,17 +11,17 @@ import net.minecraft.world.item.ItemStack;
  * Holder for a set of armor, with a helmet, chestplate, leggings, and boots.
  */
 public class ArmorSet {
-    public static final Item.Properties DEFAULT_PROPERTIES = new Item.Properties().stacksTo(1);
+    public static final UnaryOperator<Item.Properties> DEFAULT_PROPERTIES = properties -> properties.stacksTo(1);
 
-    public final DeferredItem<ArmorItem> HEAD;
-    public final DeferredItem<ArmorItem> CHEST;
-    public final DeferredItem<ArmorItem> LEGS;
-    public final DeferredItem<ArmorItem> FEET;
+    public final DeferredItem<?> HEAD;
+    public final DeferredItem<?> CHEST;
+    public final DeferredItem<?> LEGS;
+    public final DeferredItem<?> FEET;
 
     private final String name;
     private final String displayName;
 
-    public ArmorSet(String name, String displayName, DeferredItem<ArmorItem> head, DeferredItem<ArmorItem> chest, DeferredItem<ArmorItem> legs, DeferredItem<ArmorItem> feet) {
+    public ArmorSet(String name, String displayName, DeferredItem<?> head, DeferredItem<?> chest, DeferredItem<?> legs, DeferredItem<?> feet) {
         this.name = name;
         this.displayName = displayName;
 
@@ -31,10 +31,9 @@ public class ArmorSet {
         FEET = feet;
     }
 
-    public DeferredItem<ArmorItem> getForSlot(EquipmentSlot slot) {
+    public DeferredItem<?> getForSlot(EquipmentSlot slot) {
         return switch (slot) {
-
-            case MAINHAND, OFFHAND, BODY -> null;
+            case MAINHAND, OFFHAND, BODY, SADDLE -> null;
             case FEET -> FEET;
             case LEGS -> LEGS;
             case CHEST -> CHEST;
@@ -42,7 +41,7 @@ public class ArmorSet {
         };
     }
 
-    public EquipmentSlot getForItem(ArmorItem item) {
+    public EquipmentSlot getForItem(Item item) {
         if (item == HEAD.get()) {
             return EquipmentSlot.HEAD;
         } else if (item == CHEST.get()) {
@@ -56,11 +55,11 @@ public class ArmorSet {
         return null;
     }
 
-    public List<DeferredItem<ArmorItem>> getAll() {
+    public List<DeferredItem<?>> getAll() {
         return List.of(HEAD, CHEST, LEGS, FEET);
     }
 
-    public List<ArmorItem> getAllAsItems() {
+    public List<Item> getAllAsItems() {
         return List.of(HEAD.get(), CHEST.get(), LEGS.get(), FEET.get());
     }
 

@@ -40,49 +40,6 @@ repositories {
     exclusiveContent {
         forRepository {
             maven {
-                name = 'Cloth Config'
-                url = 'https://maven.shedaniel.me/'
-            }
-        }
-        filter {
-            includeGroupAndSubgroups "me.shedaniel"
-            includeGroupAndSubgroups "dev.architectury"
-        }
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = 'Mod Menu'
-                url = 'https://maven.terraformersmc.com/releases'
-            }
-        }
-        filter {
-            includeGroupAndSubgroups "me.shedaniel"
-            includeGroupAndSubgroups "dev.architectury"
-            includeGroupAndSubgroups "com.terraformersmc"
-        }
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = 'Modrinth'
-                url = 'https://api.modrinth.com/maven'
-            }
-        }
-        filter { includeGroupAndSubgroups "maven.modrinth" }
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = 'JEI'
-                url = 'https://maven.blamejared.com/'
-            }
-        }
-        filter { includeGroupAndSubgroups "mezz.jei" }
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
                 name = 'Sponge'
                 url = 'https://repo.spongepowered.org/repository/maven-public'
             }
@@ -106,15 +63,6 @@ repositories {
             }
         }
         filter { includeGroupAndSubgroups("net.tslat.smartbrainlib") }
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = 'Cardinal Components API'
-                url = 'https://maven.ladysnake.org/releases'
-            }
-        }
-        filter { includeGroupAndSubgroups("dev.onyxstudios.cardinal-components-api") }
     }
     exclusiveContent {
         forRepository {

@@ -12,7 +12,6 @@ import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 /**
  * Extension of {@link ItemTagsProvider} that provides functionality for mod holders
@@ -21,14 +20,14 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 public abstract class ExtendedItemTagsProvider extends ItemTagsProvider {
     protected final PackOutput output;
 
-    public ExtendedItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> blockTagsProvider, String modId, ExistingFileHelper existingFileHelper) {
-        super(output, future, blockTagsProvider, modId, existingFileHelper);
+    public ExtendedItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> blockTagsProvider, String modId) {
+        super(output, future, blockTagsProvider, modId);
         this.output = output;
     }
 
     @Override
     public CompletableFuture<?> run(CachedOutput output) {
-        return ExtendedTagsProvider.runAndDump(output, createContentsProvider(), contentsDone, CompletableFuture.completedFuture(TagsProvider.TagLookup.empty()), registryKey, builders, existingFileHelper, this::getPath, this.output);
+        return ExtendedTagsProvider.runAndDump(output, createContentsProvider(), contentsDone, CompletableFuture.completedFuture(TagsProvider.TagLookup.empty()), registryKey, builders, this::getPath, this.output, modId);
     }
 
     /**

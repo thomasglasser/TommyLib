@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -82,8 +81,7 @@ public class ExtendedTreeGrower {
         ResourceKey<ConfiguredFeature<?, ?>> superFeature = this.getConfiguredSuperFeature(random);
         if (superFeature != null) {
             Holder<ConfiguredFeature<?, ?>> holder = level.registryAccess()
-                    .registryOrThrow(Registries.CONFIGURED_FEATURE)
-                    .getHolder(superFeature)
+                    .get(superFeature)
                     .orElse(null);
             if (holder != null) {
                 for (int i = 0; i >= -1; i--) {
@@ -113,8 +111,7 @@ public class ExtendedTreeGrower {
         ResourceKey<ConfiguredFeature<?, ?>> megaFeature = this.getConfiguredMegaFeature(random);
         if (megaFeature != null) {
             Holder<ConfiguredFeature<?, ?>> holder = level.registryAccess()
-                    .registryOrThrow(Registries.CONFIGURED_FEATURE)
-                    .getHolder(megaFeature)
+                    .get(megaFeature)
                     .orElse(null);
             if (holder != null) {
                 for (int i = 0; i >= -1; i--) {
@@ -146,8 +143,7 @@ public class ExtendedTreeGrower {
             return false;
         } else {
             Holder<ConfiguredFeature<?, ?>> holder1 = level.registryAccess()
-                    .registryOrThrow(Registries.CONFIGURED_FEATURE)
-                    .getHolder(feature)
+                    .get(feature)
                     .orElse(null);
             if (holder1 == null) {
                 return false;

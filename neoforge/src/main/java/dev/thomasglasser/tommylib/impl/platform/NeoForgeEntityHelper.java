@@ -1,14 +1,11 @@
 package dev.thomasglasser.tommylib.impl.platform;
 
 import dev.thomasglasser.tommylib.TommyLib;
-import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
-import dev.thomasglasser.tommylib.impl.network.ClientboundSyncDataPacketPayload;
 import dev.thomasglasser.tommylib.impl.platform.services.EntityHelper;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.world.entity.Entity;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -29,16 +26,5 @@ public class NeoForgeEntityHelper implements EntityHelper {
             return reg;
         });
         serializers.forEach((name, serializer) -> register.register(name, () -> serializer));
-    }
-
-    @Override
-    public CompoundTag getPersistentData(Entity entity) {
-        return entity.getData(DATA);
-    }
-
-    @Override
-    public void setPersistentData(Entity entity, CompoundTag data, boolean syncToClient) {
-        entity.setData(DATA, data);
-        if (syncToClient) TommyLibServices.NETWORK.sendToAllClients(new ClientboundSyncDataPacketPayload(data, entity.getId()), entity.level().getServer());
     }
 }

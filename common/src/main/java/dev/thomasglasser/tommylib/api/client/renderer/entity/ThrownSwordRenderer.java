@@ -10,16 +10,16 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.state.ThrownTridentRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 
 /**
- * Renders a {@link ThrownSword} entity.
+ * Renders a {@link ThrownSword} entity using a {@link ThrownTridentRenderState}.
  * 
  * @param <T> The type of {@link ThrownSword} entity to render.
  */
-public class ThrownSwordRenderer<T extends ThrownSword> extends EntityRenderer<T> {
+public class ThrownSwordRenderer<T extends ThrownSword> extends EntityRenderer<T, ThrownTridentRenderState> {
     public static final Function<ResourceLocation, ResourceLocation> TEXTURE = (loc) -> loc.withPrefix("textures/entity/item/").withSuffix(".png");
 
     private final Model model;
@@ -32,18 +32,26 @@ public class ThrownSwordRenderer<T extends ThrownSword> extends EntityRenderer<T
     }
 
     @Override
-    public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(ThrownTridentRenderState renderState, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, entity.yRotO, entity.getYRot()) - 90.0F));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, entity.xRotO, entity.getXRot()) + 90.0F));
-        VertexConsumer vertexconsumer = ItemRenderer.getFoilBufferDirect(bufferSource, this.model.renderType(this.getTextureLocation(entity)), false, entity.isFoil());
+        poseStack.mulPose(Axis.YP.rotationDegrees(renderState.yRot - 90.0F));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(renderState.xRot + 90.0F));
+        VertexConsumer vertexconsumer = ItemRenderer.getFoilBuffer(bufferSource, this.model.renderType(texture), false, renderState.isFoil);
         this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        super.render(renderState, poseStack, bufferSource, packedLight);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(T entity) {
-        return texture;
+    public ThrownTridentRenderState createRenderState() {
+        return new ThrownTridentRenderState();
+    }
+
+    @Override
+    public void extractRenderState(T entity, ThrownTridentRenderState reusedState, float partialTick) {
+        super.extractRenderState(entity, reusedState, partialTick);
+        reusedState.yRot = entity.getYRot(partialTick);
+        reusedState.xRot = entity.getXRot(partialTick);
+        reusedState.isFoil = entity.isFoil();
     }
 }

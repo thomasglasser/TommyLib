@@ -20,4 +20,19 @@ public class TommyLib {
     public static ResourceLocation modLoc(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
+
+    public enum Dependencies {
+        GECKOLIB("geckolib"),
+        PLAYERANIMATOR("playeranimator");
+
+        private final String modId;
+
+        Dependencies(String modId) {
+            this.modId = modId;
+        }
+
+        public boolean isLoaded() {
+            return TommyLibServices.PLATFORM.isModLoaded(modId);
+        }
+    }
 }

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.SoundDefinition;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 
@@ -19,10 +18,9 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
      *
      * @param output The {@linkplain PackOutput} instance provided by the data generator.
      * @param modId  The mod ID of the current mod.
-     * @param helper The existing file helper provided by the event you are initializing this provider in.
      */
-    protected ExtendedSoundDefinitionsProvider(PackOutput output, String modId, ExistingFileHelper helper) {
-        super(output, modId, helper);
+    protected ExtendedSoundDefinitionsProvider(PackOutput output, String modId) {
+        super(output, modId);
     }
 
     /**
@@ -42,7 +40,7 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
      * @param sound The sound to add.
      */
     protected void add(DeferredHolder<SoundEvent, ?> sound) {
-        add(sound.get(), define(sound.get().getLocation().getPath(), sound(sound.get().getLocation())));
+        add(sound.get(), define(sound.get().location().getPath(), sound(sound.get().location())));
     }
 
     /**
@@ -52,7 +50,7 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
      * @param variants The number of variants to add.
      */
     protected void add(DeferredHolder<SoundEvent, ?> sound, int variants) {
-        add(sound.get(), defineVariants(sound.get().getLocation().getPath(), sound.get().getLocation(), variants));
+        add(sound.get(), defineVariants(sound.get().location().getPath(), sound.get().location(), variants));
     }
 
     /**
@@ -61,7 +59,7 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
      * @param sound The sound to add.
      */
     protected void addMusic(DeferredHolder<SoundEvent, ?> sound) {
-        add(sound.get(), SoundDefinition.definition().with(sound(sound.get().getLocation()).stream()));
+        add(sound.get(), SoundDefinition.definition().with(sound(sound.get().location()).stream()));
     }
 
     /**

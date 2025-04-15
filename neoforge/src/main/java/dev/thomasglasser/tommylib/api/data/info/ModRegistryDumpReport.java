@@ -28,7 +28,7 @@ public class ModRegistryDumpReport implements DataProvider {
     public CompletableFuture<?> run(CachedOutput output) {
         return this.lookupProvider.thenCompose((registries) -> {
             JsonObject jsonobject = new JsonObject();
-            registries.listRegistries().map(registries::lookup).forEach((registry) -> registry.ifPresent(reference -> jsonobject.add(reference.key().location().toString(), dumpRegistry(reference, modId))));
+            registries.listRegistries().forEach((registry) -> jsonobject.add(registry.key().location().toString(), dumpRegistry(registry, modId)));
             return DataProvider.saveStable(output, jsonobject, this.output.getOutputFolder(PackOutput.Target.REPORTS).resolve("registries.json"));
         });
     }

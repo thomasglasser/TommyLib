@@ -15,10 +15,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.advancements.AdvancementProvider;
 import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.data.AdvancementProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 /**
  * An {@link AdvancementProvider} that dumps a list of all generated advancements.
@@ -29,33 +28,36 @@ public class ExtendedAdvancementProvider extends AdvancementProvider {
     protected final List<AdvancementSubProvider> subProviders;
     protected final PackOutput output;
 
-    public ExtendedAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper, List<AdvancementGenerator> subProviders) {
-        super(output, registries, existingFileHelper, subProviders);
+    public ExtendedAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, List<AdvancementSubProvider> subProviders) {
+        super(output, registries, subProviders);
         this.registries = registries;
         this.pathProvider = output.createRegistryElementsPathProvider(Registries.ADVANCEMENT);
-        this.subProviders = subProviders.stream().map((generator) -> generator.toSubProvider(existingFileHelper)).toList();
+        this.subProviders = subProviders;
         this.output = output;
     }
 
+    @Override
     public CompletableFuture<?> run(CachedOutput output) {
-        return this.registries.thenCompose((provider) -> {
-            Set<ResourceLocation> set = new HashSet();
-            List<CompletableFuture<?>> list = new ArrayList();
-            Consumer<AdvancementHolder> consumer = (advancementHolder) -> {
-                if (!set.add(advancementHolder.id())) {
-                    throw new IllegalStateException("Duplicate advancement " + advancementHolder.id());
+        return this.registries.thenCompose(provider -> {
+            Set<ResourceLocation> set = new HashSet<>();
+            List<CompletableFuture<?>> list = new ArrayList<>();
+            Consumer<AdvancementHolder> consumer = holder -> {
+                if (!set.add(holder.id())) {
+                    throw new IllegalStateException("Duplicate advancement " + holder.id());
                 } else {
-                    Path path = this.pathProvider.json(advancementHolder.id());
-                    list.add(DataProvider.saveStable(output, provider, Advancement.CODEC, advancementHolder.value(), path));
+                    Path path = this.pathProvider.json(holder.id());
+                    list.add(DataProvider.saveStable(output, provider, Advancement.CODEC, holder.value(), path));
                 }
             };
 
-            for (AdvancementSubProvider advancementSubProvider : this.subProviders) {
-                advancementSubProvider.generate(provider, consumer);
+            for (AdvancementSubProvider advancementsubprovider : this.subProviders) {
+                advancementsubprovider.generate(provider, consumer);
             }
+
             JsonArray jsonarray = new JsonArray();
             set.stream().sorted().forEach(rl -> jsonarray.add(rl.toString()));
             list.add(DataProvider.saveStable(output, jsonarray, this.output.getOutputFolder(PackOutput.Target.REPORTS).resolve("advancements.json")));
+
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
         });
     }

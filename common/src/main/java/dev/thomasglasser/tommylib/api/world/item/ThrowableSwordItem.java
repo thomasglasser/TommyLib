@@ -9,44 +9,43 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.ProjectileItem;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 /**
- * A {@link SwordItem} that can be thrown.
+ * An {@link Item} that can be thrown as a {@link ThrownSword}.
  */
-public class ThrowableSwordItem extends SwordItem implements ProjectileItem {
+public class ThrowableSwordItem extends Item implements ProjectileItem {
     private final Supplier<EntityType<? extends ThrownSword>> projectile;
     private final Holder<SoundEvent> throwSound;
     private final Holder<SoundEvent> hitGroundSound;
 
-    public ThrowableSwordItem(Supplier<EntityType<? extends ThrownSword>> projectile, Holder<SoundEvent> throwSound, Holder<SoundEvent> hitGroundSound, Tier pTier, Properties pProperties) {
-        super(pTier, pProperties);
+    public ThrowableSwordItem(Supplier<EntityType<? extends ThrownSword>> projectile, Holder<SoundEvent> throwSound, Holder<SoundEvent> hitGroundSound, Properties pProperties) {
+        super(pProperties);
         this.projectile = projectile;
         this.throwSound = throwSound;
         this.hitGroundSound = hitGroundSound;
     }
 
-    public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.SPEAR;
+    @Override
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return ItemUseAnimation.SPEAR;
     }
 
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return 72000;
     }
 
-    public void releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
+    public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
         if (entityLiving instanceof Player player) {
             int i = this.getUseDuration(stack, entityLiving) - timeLeft;
             if (i >= 10) {
@@ -67,31 +66,26 @@ public class ThrowableSwordItem extends SwordItem implements ProjectileItem {
                     }
 
                     player.awardStat(Stats.ITEM_USED.get(this));
+                    return true;
                 }
             }
         }
+        return false;
     }
 
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    @Override
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         if (isTooDamagedToUse(itemstack)) {
-            return InteractionResultHolder.fail(itemstack);
+            return InteractionResult.FAIL;
         } else {
             player.startUsingItem(hand);
-            return InteractionResultHolder.consume(itemstack);
+            return InteractionResult.CONSUME;
         }
     }
 
     private static boolean isTooDamagedToUse(ItemStack stack) {
         return stack.getDamageValue() >= stack.getMaxDamage() - 1;
-    }
-
-    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        return true;
-    }
-
-    public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
     }
 
     @Override

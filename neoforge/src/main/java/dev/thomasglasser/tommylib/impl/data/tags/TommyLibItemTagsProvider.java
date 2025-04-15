@@ -8,11 +8,10 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class TommyLibItemTagsProvider extends ExtendedItemTagsProvider {
-    public TommyLibItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> blockTagsProvider, ExistingFileHelper existingFileHelper) {
-        super(output, future, blockTagsProvider, TommyLib.MOD_ID, existingFileHelper);
+    public TommyLibItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> blockTagsProvider) {
+        super(output, future, blockTagsProvider, TommyLib.MOD_ID);
     }
 
     @Override

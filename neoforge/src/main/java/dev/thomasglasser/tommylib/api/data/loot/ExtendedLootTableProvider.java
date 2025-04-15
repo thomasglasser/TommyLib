@@ -38,13 +38,15 @@ public abstract class ExtendedLootTableProvider extends LootTableProvider {
 
     @Override
     protected void validate(WritableRegistry<LootTable> writableregistry, ValidationContext validationcontext, ProblemReporter.Collector problemreporter$collector) {
-        writableregistry.holders().forEach(p_335195_ -> {
-            p_335195_.value().validate(validationcontext.setParams(p_335195_.value().getParamSet()).enterElement("{" + p_335195_.key().location() + "}", p_335195_.key()));
-        });
-        registry = writableregistry;
+        writableregistry.listElements()
+                .forEach(
+                        p_380823_ -> p_380823_.value()
+                                .validate(
+                                        validationcontext.setContextKeySet(p_380823_.value().getParamSet())
+                                                .enterElement("{" + p_380823_.key().location() + "}", p_380823_.key())));
     }
 
     protected CompletableFuture<?> dumpRegistry(CachedOutput output) {
-        return this.lookupProvider.thenCompose((registries) -> DataProvider.saveStable(output, ModRegistryDumpReport.dumpRegistry(registry.asLookup(), ""), this.output.getOutputFolder(PackOutput.Target.REPORTS).resolve("loot_tables.json")));
+        return this.lookupProvider.thenCompose((registries) -> DataProvider.saveStable(output, ModRegistryDumpReport.dumpRegistry(registry, ""), this.output.getOutputFolder(PackOutput.Target.REPORTS).resolve("loot_tables.json")));
     }
 }
