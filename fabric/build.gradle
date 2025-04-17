@@ -44,5 +44,8 @@ loom {
 
 	mixin {
 		add sourceSets.main, "${mod_id}.refmap.json"
+		useLegacyMixinAp = false
 	}
 }
+
+build.dependsOn validateAccessWidener
