@@ -139,7 +139,6 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_author: mod_author,
             mod_id: mod_id,
             license: license,
-            license_url: license_url,
             description: project.description,
             neoforge_version: neoforge_version,
             major_fml_version: major_fml_version,
