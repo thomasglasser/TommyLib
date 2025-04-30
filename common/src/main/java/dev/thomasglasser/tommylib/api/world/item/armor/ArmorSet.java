@@ -1,17 +1,22 @@
 package dev.thomasglasser.tommylib.api.world.item.armor;
 
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
+import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Holder for a set of armor, with a helmet, chestplate, leggings, and boots.
+ * Holder for a set of armor with helpers.
  */
 public class ArmorSet {
-    public static final Item.Properties DEFAULT_PROPERTIES = new Item.Properties().stacksTo(1);
+    /**
+     * The default {@link Item.Properties} for armor items, creates a new object every time for use.
+     */
+    public static final Supplier<Item.Properties> DEFAULT_PROPERTIES = () -> new Item.Properties().stacksTo(1);
 
     public final DeferredItem<ArmorItem> HEAD;
     public final DeferredItem<ArmorItem> CHEST;
@@ -33,12 +38,11 @@ public class ArmorSet {
 
     public DeferredItem<ArmorItem> getForSlot(EquipmentSlot slot) {
         return switch (slot) {
-
-            case MAINHAND, OFFHAND, BODY -> null;
             case FEET -> FEET;
             case LEGS -> LEGS;
             case CHEST -> CHEST;
             case HEAD -> HEAD;
+            default -> throw new IllegalArgumentException("Invalid slot: " + slot);
         };
     }
 
@@ -52,20 +56,19 @@ public class ArmorSet {
         } else if (item == FEET.get()) {
             return EquipmentSlot.FEET;
         }
-
-        return null;
+        throw new IllegalArgumentException("Item is not part of this set: " + item);
     }
 
     public List<DeferredItem<ArmorItem>> getAll() {
-        return List.of(HEAD, CHEST, LEGS, FEET);
+        return ReferenceArrayList.of(HEAD, CHEST, LEGS, FEET);
     }
 
     public List<ArmorItem> getAllAsItems() {
-        return List.of(HEAD.get(), CHEST.get(), LEGS.get(), FEET.get());
+        return ReferenceArrayList.of(HEAD.get(), CHEST.get(), LEGS.get(), FEET.get());
     }
 
     public List<ItemStack> getAllAsStacks() {
-        return List.of(HEAD.toStack(), CHEST.toStack(), LEGS.toStack(), FEET.toStack());
+        return ReferenceArrayList.of(HEAD.toStack(), CHEST.toStack(), LEGS.toStack(), FEET.toStack());
     }
 
     public String getDisplayName() {

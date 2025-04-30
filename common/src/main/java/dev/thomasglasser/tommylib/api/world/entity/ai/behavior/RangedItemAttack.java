@@ -8,10 +8,13 @@ import net.minecraft.world.item.Item;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.BowAttack;
 
 /**
- * Extends {@link BowAttack} to allow for ranged attacks with any item.
- * 
- * @param <E> The entity type that will be performing the attack.
+ * An extension of {@link BowAttack} to allow for ranged attacks with any item.
+ *
+ * @deprecated Coming to SBL soon
+ *
+ * @param <E> The entity that will be performing the attack.
  */
+@Deprecated(forRemoval = true, since = "31.0.0")
 public class RangedItemAttack<E extends LivingEntity & RangedAttackMob> extends BowAttack<E> {
     private Item item;
 
@@ -22,8 +25,10 @@ public class RangedItemAttack<E extends LivingEntity & RangedAttackMob> extends 
 
     @Override
     protected void start(E entity) {
-        BehaviorUtils.lookAtEntity(entity, this.target);
-        entity.startUsingItem(ProjectileUtil.getWeaponHoldingHand(entity, item));
+        if (this.target != null) {
+            BehaviorUtils.lookAtEntity(entity, this.target);
+            entity.startUsingItem(ProjectileUtil.getWeaponHoldingHand(entity, item));
+        }
     }
 
     public Item getItem() {

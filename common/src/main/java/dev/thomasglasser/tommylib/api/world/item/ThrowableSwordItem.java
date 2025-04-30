@@ -24,7 +24,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 /**
- * A {@link SwordItem} that can be thrown.
+ * A {@link SwordItem} that can be thrown as a {@link ThrownSword}.
  */
 public class ThrowableSwordItem extends SwordItem implements ProjectileItem {
     private final Supplier<EntityType<? extends ThrownSword>> projectile;

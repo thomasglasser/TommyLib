@@ -2,15 +2,17 @@ package dev.thomasglasser.tommylib.api.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.thomasglasser.tommylib.TommyLib;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -19,73 +21,98 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.Nullable;
 
+/**
+ * Side safe utils for working with the client.
+ */
 public class ClientUtils {
     /**
-     * Gets the client player by their UUID.
-     * 
-     * @param uuid The UUID of the player.
-     * @return The client player.
+     * Contains all the {@link ExtendedKeyMapping}s to check on client tick.
      */
-    public static Player getPlayerByUUID(UUID uuid) {
-        return Minecraft.getInstance().level.getPlayerByUUID(uuid);
+    private static final ReferenceOpenHashSet<ExtendedKeyMapping> KEY_MAPPINGS = new ReferenceOpenHashSet<>();
+
+    /**
+     * Adds the provided {@link ExtendedKeyMapping} to be checked
+     * 
+     * @param mapping the key mapping to check
+     * @return the provided key mapping
+     */
+    public static ExtendedKeyMapping registerKeyMapping(ExtendedKeyMapping mapping) {
+        KEY_MAPPINGS.add(mapping);
+        return mapping;
     }
 
     /**
-     * Sets the current screen to the provided screen.
+     * Adds a new {@link ExtendedKeyMapping} with the specified name, key,
+     * and category that calls the provided {@link Runnable} on click.
      * 
-     * @param screen The screen to set.
+     * @param id       The id of the key mapping
+     * @param key      The key of the key mapping
+     * @param category The category of the key mapping, see {@link net.minecraft.client.KeyMapping} for examples.
+     * @param onClick  The {@link Runnable} to call on click.
+     * @return The newly created {@link ExtendedKeyMapping}
      */
-    public static void setScreen(Screen screen) {
-        Minecraft.getInstance().setScreen(screen);
+    public static ExtendedKeyMapping registerKeyMapping(ResourceLocation id, int key, String category, Runnable onClick) {
+        return registerKeyMapping(new ExtendedKeyMapping(id.toLanguageKey("key"), key, category) {
+            @Override
+            public void onClick() {
+                onClick.run();
+            }
+        });
+    }
+
+    public static Set<ExtendedKeyMapping> getKeyMappings() {
+        return KEY_MAPPINGS;
     }
 
     /**
-     * Gets the entity by their ID.
+     * Gets a client player by their UUID.
      * 
-     * @param id The ID of the entity.
-     * @return The entity.
+     * @param uuid The UUID of the player
+     * @return The client player
      */
-    public static Entity getEntityById(int id) {
+    public static @Nullable Player getPlayerByUUID(UUID uuid) {
+        return Minecraft.getInstance().level == null ? null : Minecraft.getInstance().level.getPlayerByUUID(uuid);
+    }
+
+    /**
+     * Gets an entity by their ID.
+     * 
+     * @param id The ID of the entity
+     * @return The entity
+     */
+    public static @Nullable Entity getEntityById(int id) {
         return Minecraft.getInstance().level == null ? null : Minecraft.getInstance().level.getEntity(id);
     }
 
     /**
-     * Gets the main client player.
+     * Gets the local client player.
      * 
-     * @return The main client player.
+     * @return The local client player
      */
-    public static Player getMainClientPlayer() {
+    public static @Nullable Player getLocalPlayer() {
         return Minecraft.getInstance().player;
     }
 
     /**
-     * Gets the current level.
+     * Gets the client level.
      * 
-     * @return The current level.
+     * @return The client level
      */
-    public static Level getLevel() {
+    public static @Nullable Level getLevel() {
         return Minecraft.getInstance().level;
     }
 
     /**
-     * Gets the Minecraft instance.
-     * 
-     * @return The Minecraft instance.
-     */
-    public static Minecraft getMinecraft() {
-        return Minecraft.getInstance();
-    }
-
-    /**
-     * Checks if the player is a VIP of the specified type in the specified gist.
+     * Checks if the player is the specified type of special in the specified gist.
      *
-     * @param gist The ID of the gist.
-     * @param uuid The UUID of the player.
-     * @param type The VIP type.
-     * @return Whether the player is a VIP of the specified type.
+     * @param gist The ID of the gist
+     * @param uuid The UUID of the player
+     * @param type The special type
+     * @return Whether the player is the specified type of special
      */
-    public static boolean isVip(String gist, UUID uuid, String type) {
+    public static boolean isSpecial(String gist, UUID uuid, String type) {
         BufferedReader fileReader = null;
 
         try {
@@ -135,38 +162,40 @@ public class ClientUtils {
     /**
      * Checks if the player is a snapshot tester in the specified gist.
      *
-     * @param gist The ID of the gist.
-     * @param uuid The UUID of the player.
-     * @return Whether the player is a snapshot tester.
+     * @param gist The ID of the gist
+     * @param uuid The UUID of the player
+     * @return Whether the player is a snapshot tester
      */
-    public static boolean checkSnapshotTester(String gist, UUID uuid) {
-        return isVip(gist, uuid, "snapshot");
+    public static boolean checkSnapshot(String gist, UUID uuid) {
+        return isSpecial(gist, uuid, "snapshot");
     }
 
     /**
      * Checks if the player is a dev team member in the specified gist.
      *
-     * @param gist The ID of the gist.
-     * @param uuid The UUID of the player.
-     * @return Whether the player is a dev team member.
+     * @param gist The ID of the gist
+     * @param uuid The UUID of the player
+     * @return Whether the player is a dev team member
      */
-    public static boolean checkDevTeam(String gist, UUID uuid) {
-        return isVip(gist, uuid, "dev");
+    public static boolean checkDev(String gist, UUID uuid) {
+        return isSpecial(gist, uuid, "dev");
     }
 
     /**
      * Checks if the player is a legacy dev team member in the specified gist.
      *
-     * @param gist The ID of the gist.
-     * @param uuid The UUID of the player.
-     * @return Whether the player is a legacy dev team member.
+     * @param gist The ID of the gist
+     * @param uuid The UUID of the player
+     * @return Whether the player is a legacy dev team member
      */
-    public static boolean checkLegacyDevTeam(String gist, UUID uuid) {
-        return isVip(gist, uuid, "legacy_dev");
+    public static boolean checkLegacyDev(String gist, UUID uuid) {
+        return isSpecial(gist, uuid, "legacy_dev");
     }
 
     /**
      * Renders an item inventory model.
+     * 
+     * @deprecated Changed in 1.21.5
      * 
      * @param itemStack       The item stack to render.
      * @param displayContext  The display context of the item.
@@ -178,13 +207,16 @@ public class ClientUtils {
      * @param modid           The mod ID of the item.
      * @param model           The model of the item.
      */
+    @Deprecated(forRemoval = true, since = "31.0.0")
     public static void renderItem(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, String modid, String model) {
         ModelResourceLocation location = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(modid, "item/" + model), "standalone");
-        ClientUtils.getMinecraft().getItemRenderer().render(itemStack, displayContext, leftHand, poseStack, buffer, combinedLight, combinedOverlay, ClientUtils.getMinecraft().getModelManager().getModel(location));
+        Minecraft.getInstance().getItemRenderer().render(itemStack, displayContext, leftHand, poseStack, buffer, combinedLight, combinedOverlay, Minecraft.getInstance().getModelManager().getModel(location));
     }
 
     /**
      * Renders an item inventory model with a fallback model.
+     *
+     * @deprecated Changed in 1.21.5
      * 
      * @param itemStack       The item stack to render.
      * @param displayContext  The display context of the item.
@@ -197,12 +229,14 @@ public class ClientUtils {
      * @param model           The model of the item.
      * @param fallbackModel   The fallback model of the item.
      */
+    @Deprecated(forRemoval = true, since = "31.0.0")
     public static void renderItem(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, String modid, String model, String fallbackModel) {
         ModelResourceLocation location = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(modid, "item/" + model), "standalone");
         ModelResourceLocation fallbackLocation = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(modid, "item/" + fallbackModel), "standalone");
-        BakedModel m = ClientUtils.getMinecraft().getModelManager().getModel(location);
-        if (m == ClientUtils.getMinecraft().getModelManager().getMissingModel())
-            m = ClientUtils.getMinecraft().getModelManager().getModel(fallbackLocation);
-        ClientUtils.getMinecraft().getItemRenderer().render(itemStack, displayContext, leftHand, poseStack, buffer, combinedLight, combinedOverlay, m);
+        ModelManager modelManager = Minecraft.getInstance().getModelManager();
+        BakedModel m = modelManager.getModel(location);
+        if (m == modelManager.getMissingModel())
+            m = modelManager.getModel(fallbackLocation);
+        Minecraft.getInstance().getItemRenderer().render(itemStack, displayContext, leftHand, poseStack, buffer, combinedLight, combinedOverlay, m);
     }
 }

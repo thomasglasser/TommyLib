@@ -30,14 +30,14 @@ public class TagUtils {
     }
 
     /**
-     * Creates a tag key for logs of the given {@link WoodSet}.
+     * Creates a tag key for logs of a {@link WoodSet}.
      * 
      * @param registry the registry to create the tag key for
-     * @param set      the wood set to create the tag key for
+     * @param id       the id of the wood set to create the tag key for
      * @return the tag key
      * @param <T> the type of the registry
      */
-    public static <T> TagKey<T> logs(ResourceKey<Registry<T>> registry, WoodSet set) {
-        return TagKey.create(registry, ResourceLocation.fromNamespaceAndPath(set.id().getNamespace(), set.id().getPath() + "_logs"));
+    public static <T> TagKey<T> createLogs(ResourceKey<Registry<T>> registry, ResourceLocation id) {
+        return TagKey.create(registry, id.withPath(path -> path + "_logs"));
     }
 }

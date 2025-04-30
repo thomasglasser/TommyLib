@@ -14,7 +14,7 @@ public class FabricNetworkUtils {
      */
     public static <T extends ExtendedPacketPayload> void register(PayloadInfo<T> info) {
         registerCommon(info);
-        if (TommyLibServices.PLATFORM.isClientSide())
+        if (info.direction() != ExtendedPacketPayload.Direction.CLIENT_TO_SERVER && TommyLibServices.PLATFORM.isClientSide())
             InternalFabricClientUtils.registerClientReceiver(info);
     }
 
@@ -24,11 +24,12 @@ public class FabricNetworkUtils {
      * @param info The payload info.
      * @param <T>  The payload type.
      */
-    protected static <T extends ExtendedPacketPayload> void registerCommon(PayloadInfo<T> info) {
-        if (info.direction() == ExtendedPacketPayload.Direction.CLIENT_TO_SERVER) {
+    private static <T extends ExtendedPacketPayload> void registerCommon(PayloadInfo<T> info) {
+        if (info.direction() != ExtendedPacketPayload.Direction.SERVER_TO_CLIENT) {
             PayloadTypeRegistry.playC2S().register(info.type(), info.codec());
             ServerPlayNetworking.registerGlobalReceiver(info.type(), (payload, context) -> payload.handle(context.player()));
-        } else {
+        }
+        if (info.direction() != ExtendedPacketPayload.Direction.CLIENT_TO_SERVER) {
             PayloadTypeRegistry.playS2C().register(info.type(), info.codec());
         }
     }

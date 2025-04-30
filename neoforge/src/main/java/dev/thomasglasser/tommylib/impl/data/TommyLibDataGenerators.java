@@ -1,7 +1,5 @@
 package dev.thomasglasser.tommylib.impl.data;
 
-import dev.thomasglasser.tommylib.TommyLib;
-import dev.thomasglasser.tommylib.api.data.info.ModRegistryDumpReport;
 import dev.thomasglasser.tommylib.api.data.tags.ExtendedBlockTagsProvider;
 import dev.thomasglasser.tommylib.impl.data.lang.TommyLibEnUsLanguageProvider;
 import dev.thomasglasser.tommylib.impl.data.tags.TommyLibBlockTagsProvider;
@@ -23,7 +21,6 @@ public class TommyLibDataGenerators {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         // Server
-        generator.addProvider(server, new ModRegistryDumpReport(packOutput, TommyLib.MOD_ID, lookupProvider));
         ExtendedBlockTagsProvider blockTagsProvider = new TommyLibBlockTagsProvider(packOutput, lookupProvider, existingFileHelper);
         generator.addProvider(server, blockTagsProvider);
         generator.addProvider(server, new TommyLibItemTagsProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));

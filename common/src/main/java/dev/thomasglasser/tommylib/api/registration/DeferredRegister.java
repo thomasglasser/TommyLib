@@ -10,13 +10,18 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -73,6 +78,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @see Blocks
  * @see Items
+ * @see DataComponents
  */
 public abstract class DeferredRegister<T> {
     /**
@@ -147,6 +153,32 @@ public abstract class DeferredRegister<T> {
      */
     public static Blocks createBlocks(String modid) {
         return Factory.INSTANCE.createBlocks(modid);
+    }
+
+    /**
+     * Factory for a specialized DeferredRegister for {@link DataComponentType DataComponentTypes}.
+     *
+     * @param registryKey The key for the data component type registry, like {@link Registries#DATA_COMPONENT_TYPE} for item data components
+     * @param modid       The namespace for all objects registered to this DeferredRegister
+     * @see #create(Registry, String)
+     * @see #create(ResourceKey, String)
+     * @see #create(ResourceLocation, String)
+     * @see #createItems(String)
+     */
+    public static DataComponents createDataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String modid) {
+        return Factory.INSTANCE.createDataComponents(registryKey, modid);
+    }
+
+    /**
+     * Factory for a specialized DeferredRegister for {@link EntityType EntityTypes}.
+     *
+     * @param namespace The namespace for all objects registered to this DeferredRegister
+     * @see #create(Registry, String)
+     * @see #create(ResourceKey, String)
+     * @see #create(ResourceLocation, String)
+     */
+    public static Entities createEntities(String namespace) {
+        return Factory.INSTANCE.createEntities(namespace);
     }
 
     private final ResourceKey<? extends Registry<T>> registryKey;
@@ -421,6 +453,62 @@ public abstract class DeferredRegister<T> {
         }
     }
 
+    /**
+     * Specialized DeferredRegister for {@link DataComponentType DataComponentTypes}.
+     */
+    public abstract static class DataComponents extends DeferredRegister<DataComponentType<?>> {
+        protected DataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace) {
+            super(registryKey, namespace);
+        }
+
+        /**
+         * Convenience method that constructs a builder for use in the operator. Use this to avoid inference issues.
+         *
+         * @param name    The name for this data component type. It will automatically have the {@linkplain #getNamespace() namespace} prefixed.
+         * @param builder The unary operator, which is passed a new builder for user operations, then builds it upon registration.
+         * @return A {@link DeferredHolder} which reflects the data that will be registered.
+         */
+        public <D> DeferredHolder<DataComponentType<?>, DataComponentType<D>> registerComponentType(String name, UnaryOperator<DataComponentType.Builder<D>> builder) {
+            return this.register(name, () -> builder.apply(DataComponentType.builder()).build());
+        }
+    }
+
+    /**
+     * Specialized DeferredRegister for {@link EntityType EntityTypes}.
+     */
+    public abstract static class Entities extends DeferredRegister<EntityType<?>> {
+        protected Entities(String namespace) {
+            super(Registries.ENTITY_TYPE, namespace);
+        }
+
+        /**
+         * Convenience method that constructs a builder. Use this to avoid inference issues.
+         *
+         * @param name     The name for this entity type. It will automatically have the {@linkplain #getNamespace() namespace} prefixed.
+         * @param factory  The factory used to typically construct the entity when using an existing helper from the type.
+         * @param category The category of the entity, typically {@link MobCategory#MISC} for non-living entities, or one of the others for living entities.
+         * @return A {@link DeferredHolder} which reflects the data that will be registered.
+         * @param <E> the type of the entity
+         */
+        public <E extends Entity> DeferredHolder<EntityType<?>, EntityType<E>> registerEntityType(String name, EntityType.EntityFactory<E> factory, MobCategory category) {
+            return this.registerEntityType(name, factory, category, UnaryOperator.identity());
+        }
+
+        /**
+         * Convenience method that constructs a builder for use in the operator. Use this to avoid inference issues.
+         *
+         * @param name     The name for this entity type. It will automatically have the {@linkplain #getNamespace() namespace} prefixed.
+         * @param factory  The factory used to typically construct the entity when using an existing helper from the type.
+         * @param category The category of the entity, typically {@link MobCategory#MISC} for non-living entities, or one of the others for living entities.
+         * @param builder  The unary operator, which is passed a new builder for user operators, then builds it upon registration.
+         * @return A {@link DeferredHolder} which reflects the data that will be registered.
+         * @param <E> the type of the entity
+         */
+        public <E extends Entity> DeferredHolder<EntityType<?>, EntityType<E>> registerEntityType(String name, EntityType.EntityFactory<E> factory, MobCategory category, UnaryOperator<EntityType.Builder<E>> builder) {
+            return this.register(name, () -> builder.apply(EntityType.Builder.of(factory, category)).build(name));
+        }
+    }
+
     private static class RegistryHolder<V> implements Supplier<Registry<V>> {
         private final ResourceKey<? extends Registry<V>> registryKey;
         private Registry<V> registry = null;
@@ -455,38 +543,54 @@ public abstract class DeferredRegister<T> {
          * Creates a {@link DeferredRegister}.
          *
          * @param resourceKey the {@link ResourceKey} of the registry to create this provider for
-         * @param modId       the mod id for which the provider will register objects
+         * @param namespace   the mod id for which the provider will register objects
          * @param <T>         the type of the provider
          * @return the provider
          */
-        <T> DeferredRegister<T> create(ResourceKey<? extends Registry<T>> resourceKey, String modId);
+        <T> DeferredRegister<T> create(ResourceKey<? extends Registry<T>> resourceKey, String namespace);
 
         /**
          * Creates a {@link DeferredRegister}.
          *
-         * @param registry the {@link Registry} to create this provider for
-         * @param modId    the mod id for which the provider will register objects
-         * @param <T>      the type of the provider
+         * @param registry  the {@link Registry} to create this provider for
+         * @param namespace the mod id for which the provider will register objects
+         * @param <T>       the type of the provider
          * @return the provider
          */
-        default <T> DeferredRegister<T> create(Registry<T> registry, String modId) {
-            return this.create(registry.key(), modId);
+        default <T> DeferredRegister<T> create(Registry<T> registry, String namespace) {
+            return this.create(registry.key(), namespace);
         }
 
         /**
          * Creates a {@link DeferredRegister.Items}.
          *
-         * @param modId the mod id for which the provider will register objects
+         * @param namespace the mod id for which the provider will register objects
          * @return the provider
          */
-        Items createItems(String modId);
+        Items createItems(String namespace);
 
         /**
          * Creates a {@link DeferredRegister.Blocks}.
          *
-         * @param modId the mod id for which the provider will register objects
+         * @param namespace the mod id for which the provider will register objects
          * @return the provider
          */
-        Blocks createBlocks(String modId);
+        Blocks createBlocks(String namespace);
+
+        /**
+         * Creates a {@link DeferredRegister.DataComponents}.
+         *
+         * @param namespace the mod id for which the provider will register objects
+         * @return the provider
+         */
+        DataComponents createDataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace);
+
+        /**
+         * Creates a {@link Entities}
+         *
+         * @param namespace the mod id for which the provider will register entity types
+         * @return the provider
+         */
+        Entities createEntities(String namespace);
     }
 }

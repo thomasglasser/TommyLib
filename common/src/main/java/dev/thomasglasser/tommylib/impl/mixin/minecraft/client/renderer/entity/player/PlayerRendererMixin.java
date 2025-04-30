@@ -1,8 +1,7 @@
 package dev.thomasglasser.tommylib.impl.mixin.minecraft.client.renderer.entity.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
-import dev.thomasglasser.tommylib.api.world.item.ItemUtils;
+import dev.thomasglasser.tommylib.TommyLib;
 import dev.thomasglasser.tommylib.impl.GeckoLibUtils;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -13,7 +12,6 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -25,63 +23,37 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
     }
 
     @Inject(method = "setModelProperties", at = @At("TAIL"))
-    private void tommylib_setModelProperties(AbstractClientPlayer clientPlayer, CallbackInfo ci) {
-        if (ItemUtils.isGeckoLoaded()) {
+    private void setModelProperties(AbstractClientPlayer clientPlayer, CallbackInfo ci) {
+        if (TommyLib.Dependencies.GECKOLIB.isLoaded()) {
             PlayerModel<AbstractClientPlayer> playerModel = getModel();
             Item chest = clientPlayer.getItemBySlot(EquipmentSlot.CHEST).getItem();
             if (GeckoLibUtils.isSkintight(chest)) {
                 playerModel.leftSleeve.visible = false;
                 playerModel.rightSleeve.visible = false;
                 playerModel.jacket.visible = false;
-            } else {
-                tommyLib$reset(playerModel, EquipmentSlot.CHEST);
             }
             Item head = clientPlayer.getItemBySlot(EquipmentSlot.HEAD).getItem();
             if (GeckoLibUtils.isSkintight(head)) {
                 playerModel.hat.visible = false;
-            } else {
-                tommyLib$reset(playerModel, EquipmentSlot.HEAD);
             }
             Item feet = clientPlayer.getItemBySlot(EquipmentSlot.FEET).getItem();
             Item legs = clientPlayer.getItemBySlot(EquipmentSlot.LEGS).getItem();
             if (GeckoLibUtils.isSkintight(feet) || GeckoLibUtils.isSkintight(legs)) {
                 playerModel.rightPants.visible = false;
                 playerModel.leftPants.visible = false;
-            } else {
-                tommyLib$reset(playerModel, EquipmentSlot.LEGS);
             }
         }
     }
 
     @Inject(method = "render(Lnet/minecraft/client/player/AbstractClientPlayer;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"), order = 1001)
     private void render(AbstractClientPlayer entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
-        if (TommyLibServices.PLATFORM.isModLoaded("playeranimator")) {
+        if (TommyLib.Dependencies.PLAYERANIMATOR.isLoaded() && TommyLib.Dependencies.GECKOLIB.isLoaded()) {
             PlayerModel<AbstractClientPlayer> playerModel = getModel();
             Item chest = entity.getItemBySlot(EquipmentSlot.CHEST).getItem();
             if (GeckoLibUtils.isSkintight(chest)) {
                 playerModel.leftSleeve.visible = false;
                 playerModel.rightSleeve.visible = false;
             }
-        }
-    }
-
-    @Unique
-    private void tommyLib$reset(PlayerModel<?> model, EquipmentSlot slot) {
-        switch (slot) {
-            case HEAD:
-                model.hat.visible = true;
-                break;
-            case CHEST:
-                model.leftSleeve.visible = true;
-                model.rightSleeve.visible = true;
-                model.jacket.visible = true;
-                break;
-            case LEGS:
-                model.rightPants.visible = true;
-                model.leftPants.visible = true;
-                break;
-            default:
-                break;
         }
     }
 }

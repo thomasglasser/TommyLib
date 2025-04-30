@@ -4,11 +4,11 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animation.AnimatableManager;
 
 /**
- * An interface for GeckoLib armor items
+ * An interface for GeckoLib armor items.
  */
 public interface GeoArmorItem extends GeoItem {
     /**
-     * Armor has no animation by default
+     * Armor has no animation by default.
      * 
      * @param controllers The object to register your controller instances to
      */
@@ -16,9 +16,9 @@ public interface GeoArmorItem extends GeoItem {
     default void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
 
     /**
-     * Checks if the armor is skintight for rendering purposes
+     * Checks if the armor is skintight for rendering purposes.
      * 
-     * @return True if the armor is skintight and should hide the player's model when covering
+     * @return Whether the armor is skintight and should hide the player's outer model when covering
      */
     boolean isSkintight();
 }

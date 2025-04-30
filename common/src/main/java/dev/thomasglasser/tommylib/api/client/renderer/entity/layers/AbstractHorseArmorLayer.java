@@ -14,15 +14,18 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.item.AnimalArmorItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 
+// TODO: Check
 /**
  * A layer that renders horse armor on an abstract horse entity.
- * 
+ *
+ * @deprecated No longer needed in 1.21.5+
+ *
  * @param <T> The type of horse entity.
  */
+@Deprecated(forRemoval = true, since = "31.0.0")
 public class AbstractHorseArmorLayer<T extends AbstractHorse> extends RenderLayer<T, HorseModel<T>> {
     private final HorseModel<T> model;
 
@@ -31,22 +34,20 @@ public class AbstractHorseArmorLayer<T extends AbstractHorse> extends RenderLaye
         this.model = new HorseModel<>(entityModelSet.bakeLayer(ModelLayers.HORSE_ARMOR));
     }
 
-    public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount,
-            float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        ItemStack itemStack = livingEntity.getBodyArmorItem();
-        Item var13 = itemStack.getItem();
-        if (var13 instanceof AnimalArmorItem animalArmorItem) {
+    @Override
+    public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+        ItemStack bodyStack = livingEntity.getBodyArmorItem();
+        if (bodyStack.getItem() instanceof AnimalArmorItem animalArmorItem) {
             if (animalArmorItem.getBodyType() == AnimalArmorItem.BodyType.EQUESTRIAN) {
                 this.getParentModel().copyPropertiesTo(this.model);
                 this.model.prepareMobModel(livingEntity, limbSwing, limbSwingAmount, partialTicks);
                 this.model.setupAnim(livingEntity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
                 int i;
-                if (itemStack.is(ItemTags.DYEABLE)) {
-                    i = FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(itemStack, -6265536));
+                if (bodyStack.is(ItemTags.DYEABLE)) {
+                    i = FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(bodyStack, -6265536));
                 } else {
                     i = -1;
                 }
-
                 VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(animalArmorItem.getTexture()));
                 this.model.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, i);
             }
