@@ -5,12 +5,11 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import java.util.Map;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class NeoForgeNetworkUtils {
-    private static final Map<ResourceKey<AttachmentType<?>>, StreamCodec<? super RegistryFriendlyByteBuf, ?>> SYNCED_TYPE_CODECS = new Reference2ObjectOpenHashMap<>();
+    private static final Map<AttachmentType<?>, StreamCodec<? super RegistryFriendlyByteBuf, ?>> SYNCED_TYPE_CODECS = new Reference2ObjectOpenHashMap<>();
 
     /**
      * Registers a packet payload with the given registrar.
@@ -27,7 +26,7 @@ public class NeoForgeNetworkUtils {
         }
     }
 
-    public static <T> void registerSyncedAttachment(ResourceKey<AttachmentType<?>> key, StreamCodec<RegistryFriendlyByteBuf, T> codec) {
+    public static <T> void registerSyncedAttachment(AttachmentType<T> key, StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
         if (SYNCED_TYPE_CODECS.containsKey(key)) {
             throw new IllegalArgumentException("Synced attachment type " + key + " already registered!");
         }
@@ -35,10 +34,10 @@ public class NeoForgeNetworkUtils {
         SYNCED_TYPE_CODECS.put(key, codec);
     }
 
-    public static <T> StreamCodec<RegistryFriendlyByteBuf, T> getSyncedAttachmentCodec(ResourceKey<AttachmentType<?>> key) {
-        StreamCodec<RegistryFriendlyByteBuf, T> codec = (StreamCodec<RegistryFriendlyByteBuf, T>) SYNCED_TYPE_CODECS.get(key);
+    public static <T> StreamCodec<? super RegistryFriendlyByteBuf, T> getSyncedAttachmentCodec(AttachmentType<T> key) {
+        StreamCodec<? super RegistryFriendlyByteBuf, T> codec = (StreamCodec<? super RegistryFriendlyByteBuf, T>) SYNCED_TYPE_CODECS.get(key);
         if (codec == null) {
-            throw new IllegalArgumentException("Synced attachment type " + key.location() + " is not registered on the " + (TommyLibServices.PLATFORM.isClientSide() ? "client" : "server") + " side! Did you register it on both sides with NeoForgeNetworkUtils.registerSyncedAttachment()?");
+            throw new IllegalArgumentException("Synced attachment type " + key + " is not registered on the " + (TommyLibServices.PLATFORM.isClientSide() ? "client" : "server") + " side! Did you register it on both sides with NeoForgeNetworkUtils.registerSyncedAttachment()?");
         }
         return codec;
     }

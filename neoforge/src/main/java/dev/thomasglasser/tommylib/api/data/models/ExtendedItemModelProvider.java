@@ -136,7 +136,7 @@ public abstract class ExtendedItemModelProvider extends ItemModelProvider {
      */
     protected void leavesSet(LeavesSet set) {
         basicBlockItem(set.leaves());
-        basicItem(set.sapling().asItem());
+        withExistingParent(set.sapling().getId().getPath(), "item/generated").texture("layer0", blockLoc(set.sapling()));
     }
 
     /**

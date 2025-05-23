@@ -4,6 +4,7 @@ import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
@@ -61,6 +62,10 @@ public class ArmorSet {
 
     public List<DeferredItem<ArmorItem>> getAll() {
         return ReferenceArrayList.of(HEAD, CHEST, LEGS, FEET);
+    }
+
+    public List<ResourceKey<Item>> getAllKeys() {
+        return ReferenceArrayList.of(HEAD.getKey(), CHEST.getKey(), LEGS.getKey(), FEET.getKey());
     }
 
     public List<ArmorItem> getAllAsItems() {

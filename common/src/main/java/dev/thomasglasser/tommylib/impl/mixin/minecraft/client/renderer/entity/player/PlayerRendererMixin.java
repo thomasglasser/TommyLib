@@ -23,7 +23,7 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
     }
 
     @Inject(method = "setModelProperties", at = @At("TAIL"))
-    private void setModelProperties(AbstractClientPlayer clientPlayer, CallbackInfo ci) {
+    private void handleSkintightBoneVisibility(AbstractClientPlayer clientPlayer, CallbackInfo ci) {
         if (TommyLib.Dependencies.GECKOLIB.isLoaded()) {
             PlayerModel<AbstractClientPlayer> playerModel = getModel();
             Item chest = clientPlayer.getItemBySlot(EquipmentSlot.CHEST).getItem();
@@ -46,7 +46,7 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
     }
 
     @Inject(method = "render(Lnet/minecraft/client/player/AbstractClientPlayer;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"), order = 1001)
-    private void render(AbstractClientPlayer entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
+    private void handlePlayerAnimatorSkintightBoneVisibility(AbstractClientPlayer entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
         if (TommyLib.Dependencies.PLAYERANIMATOR.isLoaded() && TommyLib.Dependencies.GECKOLIB.isLoaded()) {
             PlayerModel<AbstractClientPlayer> playerModel = getModel();
             Item chest = entity.getItemBySlot(EquipmentSlot.CHEST).getItem();

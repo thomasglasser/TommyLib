@@ -1,8 +1,16 @@
 package dev.thomasglasser.tommylib.api.world.entity;
 
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import java.util.Set;
+import java.util.function.Predicate;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.npc.InventoryCarrier;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -36,5 +44,44 @@ public class EntityUtils {
                 }
             }
         }
+    }
+
+    /**
+     * Collects every item an entity has in a {@link Set}.
+     * 
+     * @param entity The entity to check for items
+     * @return The {@link Set} of any items the entity has
+     */
+    public static Set<ItemStack> getInventory(Entity entity) {
+        if (entity instanceof LivingEntity livingEntity) {
+            Set<ItemStack> inventory = new ReferenceOpenHashSet<>();
+            for (ItemStack stack : livingEntity.getAllSlots()) {
+                inventory.add(stack);
+            }
+            if (livingEntity instanceof Player player) {
+                inventory.addAll(player.getInventory().items);
+            } else if (livingEntity instanceof InventoryCarrier carrier) {
+                inventory.addAll(carrier.getInventory().getItems());
+            }
+            return inventory;
+        } else if (entity instanceof ItemEntity itemEntity) {
+            return ReferenceOpenHashSet.of(itemEntity.getItem());
+        }
+        return ReferenceOpenHashSet.of();
+    }
+
+    /**
+     * Checks if the entity has any items matching the predicate in its inventory.
+     * 
+     * @param entity    The entity to check
+     * @param predicate The predicate to test
+     * @return Whether the entity has any matching items in its inventory
+     */
+    public static boolean hasAnyInInventory(Entity entity, Predicate<ItemStack> predicate) {
+        for (ItemStack stack : getInventory(entity)) {
+            if (predicate.test(stack))
+                return true;
+        }
+        return false;
     }
 }

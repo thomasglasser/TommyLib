@@ -11,9 +11,12 @@ import com.mojang.datafixers.util.Function7;
 import com.mojang.datafixers.util.Function8;
 import com.mojang.datafixers.util.Function9;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import java.util.function.Function;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 /**
@@ -21,22 +24,9 @@ import net.minecraft.network.codec.StreamCodec;
  */
 public class NetworkUtils {
     /**
-     * Creates an empty {@link FriendlyByteBuf}.
-     * 
-     * @return An empty {@link FriendlyByteBuf}
+     * A {@link StreamCodec} for a {@link DataComponentType}.
      */
-    public static FriendlyByteBuf empty() {
-        return new FriendlyByteBuf(Unpooled.EMPTY_BUFFER);
-    }
-
-    /**
-     * Creates a new {@link FriendlyByteBuf}.
-     * 
-     * @return A new {@link FriendlyByteBuf}
-     */
-    public static FriendlyByteBuf create() {
-        return new FriendlyByteBuf(Unpooled.buffer());
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, DataComponentType<?>> DATA_COMPONENT_TYPE_STREAM_CODEC = ByteBufCodecs.registry(Registries.DATA_COMPONENT_TYPE);
 
     /**
      * Creates a {@link StreamCodec} for an enum.

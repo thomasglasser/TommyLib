@@ -13,4 +13,6 @@ public abstract class ExtendedKeyMapping extends KeyMapping {
     }
 
     public abstract void onClick();
+
+    public void onNoClick() {}
 }

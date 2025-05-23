@@ -1,7 +1,7 @@
 package dev.thomasglasser.tommylib.impl.network;
 
 import dev.thomasglasser.tommylib.TommyLib;
-import dev.thomasglasser.tommylib.api.network.BidirectionalSyncDataAttachmentPayload;
+import dev.thomasglasser.tommylib.api.network.ClientboundSyncDataAttachmentPayload;
 import dev.thomasglasser.tommylib.api.network.ExtendedPacketPayload;
 import dev.thomasglasser.tommylib.api.network.NeoForgeNetworkUtils;
 import dev.thomasglasser.tommylib.api.network.PayloadInfo;
@@ -12,12 +12,11 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class TommyLibNeoForgePayloads {
     public static Set<PayloadInfo<?>> PAYLOADS = ReferenceOpenHashSet.of(
-            // Common
-            new PayloadInfo<>(BidirectionalSyncDataAttachmentPayload.TYPE, ExtendedPacketPayload.Direction.BIDIRECTIONAL, BidirectionalSyncDataAttachmentPayload.CODEC));
+            // Clientbound
+            new PayloadInfo<>(ClientboundSyncDataAttachmentPayload.TYPE, ExtendedPacketPayload.Direction.SERVER_TO_CLIENT, ClientboundSyncDataAttachmentPayload.CODEC));
 
     public static void onRegisterPayloadHandlers(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(TommyLib.MOD_ID);
-        TommyLibPayloads.PAYLOADS.forEach((info) -> NeoForgeNetworkUtils.register(registrar, info));
         PAYLOADS.forEach((info) -> NeoForgeNetworkUtils.register(registrar, info));
     }
 }

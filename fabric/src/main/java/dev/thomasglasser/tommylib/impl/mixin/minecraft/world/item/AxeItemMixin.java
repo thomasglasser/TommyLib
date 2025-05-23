@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(AxeItem.class)
 public class AxeItemMixin {
     @ModifyExpressionValue(method = "getStripped", at = @At(value = "INVOKE", target = "Ljava/util/Map;get(Ljava/lang/Object;)Ljava/lang/Object;"))
-    private Object getStripped(Object original, BlockState originalState) {
+    private Object injectStripped(Object original, BlockState originalState) {
         if (original == null) {
             return BlockUtils.getStripped(originalState);
         }
