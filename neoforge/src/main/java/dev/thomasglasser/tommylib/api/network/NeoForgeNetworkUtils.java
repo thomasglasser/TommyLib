@@ -7,6 +7,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class NeoForgeNetworkUtils {
     private static final Map<AttachmentType<?>, StreamCodec<? super RegistryFriendlyByteBuf, ?>> SYNCED_TYPE_CODECS = new Reference2ObjectOpenHashMap<>();
@@ -37,7 +38,7 @@ public class NeoForgeNetworkUtils {
     public static <T> StreamCodec<? super RegistryFriendlyByteBuf, T> getSyncedAttachmentCodec(AttachmentType<T> key) {
         StreamCodec<? super RegistryFriendlyByteBuf, T> codec = (StreamCodec<? super RegistryFriendlyByteBuf, T>) SYNCED_TYPE_CODECS.get(key);
         if (codec == null) {
-            throw new IllegalArgumentException("Synced attachment type " + key + " is not registered on the " + (TommyLibServices.PLATFORM.isClientSide() ? "client" : "server") + " side! Did you register it on both sides with NeoForgeNetworkUtils.registerSyncedAttachment()?");
+            throw new IllegalArgumentException("Synced attachment type " + NeoForgeRegistries.ATTACHMENT_TYPES.getKey(key) + " is not registered for syncing on the " + (TommyLibServices.PLATFORM.isClientSide() ? "client" : "server") + " side! Did you register it on both sides with NeoForgeNetworkUtils.registerSyncedAttachment()?");
         }
         return codec;
     }
