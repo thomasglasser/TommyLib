@@ -1,4 +1,4 @@
-package dev.thomasglasser.tommylib.api.network;
+package dev.thomasglasser.tommylib.api.network.codec;
 
 import com.mojang.datafixers.util.Function10;
 import com.mojang.datafixers.util.Function11;
@@ -18,15 +18,14 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.Unit;
 
 /**
- * Provides utils for creating {@link ByteBuf}s and {@link StreamCodec}s
+ * Provides more codecs and overloads for making more.
  */
-public class NetworkUtils {
-    /**
-     * A {@link StreamCodec} for a {@link DataComponentType}.
-     */
-    public static final StreamCodec<RegistryFriendlyByteBuf, DataComponentType<?>> DATA_COMPONENT_TYPE_STREAM_CODEC = ByteBufCodecs.registry(Registries.DATA_COMPONENT_TYPE);
+public class ExtraStreamCodecs {
+    public static final StreamCodec<ByteBuf, Unit> UNIT = StreamCodec.unit(Unit.INSTANCE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, DataComponentType<?>> DATA_COMPONENT_TYPE = ByteBufCodecs.registry(Registries.DATA_COMPONENT_TYPE);
 
     /**
      * Creates a {@link StreamCodec} for an enum.
@@ -36,7 +35,7 @@ public class NetworkUtils {
      * @param <B> The type of the {@link FriendlyByteBuf}
      * @param <V> The type of the enum
      */
-    public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> enumCodec(Class<V> enumClass) {
+    public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> forEnum(Class<V> enumClass) {
         return new StreamCodec<>() {
             @Override
             public V decode(B buf) {

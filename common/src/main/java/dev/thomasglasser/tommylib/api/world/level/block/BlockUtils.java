@@ -76,7 +76,7 @@ public class BlockUtils {
             Supplier<T> blockFactory,
             DeferredRegister.Items itemProvider) {
         DeferredBlock<T> block = register(provider, name, blockFactory);
-        itemProvider.registerSimpleBlockItem(block);
+        itemProvider.registerSimpleBlock(block);
         return block;
     }
 
@@ -120,7 +120,7 @@ public class BlockUtils {
             DeferredRegister.Items itemProvider,
             Item.Properties properties) {
         DeferredBlock<T> block = register(provider, name, blockFactory);
-        itemProvider.registerSimpleBlockItem(block, properties);
+        itemProvider.registerSimpleBlock(block, properties);
         return block;
     }
 

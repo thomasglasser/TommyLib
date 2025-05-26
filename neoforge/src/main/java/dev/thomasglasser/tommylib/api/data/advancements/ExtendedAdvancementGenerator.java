@@ -11,8 +11,10 @@ import net.minecraft.advancements.AdvancementType;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -104,8 +106,7 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
         private boolean toast = true;
         private boolean announce = true;
         private boolean hidden = false;
-        @Nullable
-        private AdvancementRewards rewards;
+        private final AdvancementRewards.Builder rewards;
         private AdvancementRequirements.Strategy strategy = AdvancementRequirements.Strategy.AND;
 
         public Builder(String id, ItemStack displayItem, String title, String desc) {
@@ -113,6 +114,7 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
             this.displayItem = displayItem;
             this.title = title;
             this.desc = desc;
+            this.rewards = new AdvancementRewards.Builder();
             this.triggers = new Reference2ReferenceLinkedOpenHashMap<>();
         }
 
@@ -155,8 +157,13 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
             return this;
         }
 
-        public Builder rewards(AdvancementRewards rewards) {
-            this.rewards = rewards;
+        public Builder experience(int experience) {
+            rewards.addExperience(experience);
+            return this;
+        }
+
+        public Builder loot(ResourceKey<LootTable> lootTable) {
+            rewards.addLootTable(lootTable);
             return this;
         }
 
@@ -170,14 +177,14 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
             String desc = "advancement." + modId + "." + category + "." + id + ".desc";
             lang.add(title, this.title);
             lang.add(desc, this.desc);
-            Advancement.Builder builder = Advancement.Builder.advancement();
+            Advancement.Builder builder = Advancement.Builder.advancement()
+                    .display(displayItem, Component.translatable(title), Component.translatable(desc), background, frameType, toast, announce, hidden)
+                    .rewards(rewards)
+                    .requirements(strategy);
             if (parent != null)
                 builder.parent(parent);
-            builder.display(displayItem, Component.translatable(title), Component.translatable(desc), background, frameType, toast, announce, hidden);
-            if (rewards != null)
-                builder.rewards(rewards);
             triggers.forEach(builder::addCriterion);
-            return builder.requirements(strategy).save(saver, modLoc(category + "/" + id), existingFileHelper);
+            return builder.save(saver, modLoc(category + "/" + id), existingFileHelper);
         }
     }
 }

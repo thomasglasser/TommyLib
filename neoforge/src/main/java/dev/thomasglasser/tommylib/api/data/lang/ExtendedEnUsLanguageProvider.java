@@ -15,6 +15,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.PaintingVariant;
@@ -28,6 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -354,6 +356,11 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      */
     public void addCuriosSlot(String name) {
         add("curios.identifier." + name, capitalize(name));
+    }
+
+    public void add(TagKey<Block> blockTag, TagKey<Item> itemTag, String name) {
+        add(blockTag, name);
+        add(itemTag, name);
     }
 
     /**
