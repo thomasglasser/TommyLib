@@ -16,7 +16,7 @@ public class SpecialPlayerUtils {
     /**
      * Common types of special player
      */
-    public static final String SNAPSHOT_TESTER_KEY = "snapshot_tester";
+    public static final String BETA_TESTER_KEY = "beta";
     public static final String DEV_KEY = "dev";
     public static final String LEGACY_DEV_KEY = "legacy_dev";
 

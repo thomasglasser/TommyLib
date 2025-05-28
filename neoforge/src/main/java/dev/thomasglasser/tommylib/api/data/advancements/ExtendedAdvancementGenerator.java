@@ -2,6 +2,7 @@ package dev.thomasglasser.tommylib.api.data.advancements;
 
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceLinkedOpenHashMap;
 import java.util.SortedMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
@@ -26,12 +27,12 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ExtendedAdvancementGenerator implements AdvancementProvider.AdvancementGenerator {
     private final String modId;
     private final String category;
-    private final LanguageProvider lang;
+    private final BiConsumer<String, String> lang;
 
     private Consumer<AdvancementHolder> saver;
     private ExistingFileHelper existingFileHelper;
 
-    protected ExtendedAdvancementGenerator(String modId, String category, LanguageProvider lang) {
+    protected ExtendedAdvancementGenerator(String modId, String category, BiConsumer<String, String> lang) {
         this.modId = modId;
         this.category = category;
         this.lang = lang;
@@ -175,8 +176,8 @@ public abstract class ExtendedAdvancementGenerator implements AdvancementProvide
         public AdvancementHolder build() {
             String title = "advancement." + modId + "." + category + "." + id + ".title";
             String desc = "advancement." + modId + "." + category + "." + id + ".desc";
-            lang.add(title, this.title);
-            lang.add(desc, this.desc);
+            lang.accept(title, this.title);
+            lang.accept(desc, this.desc);
             Advancement.Builder builder = Advancement.Builder.advancement()
                     .display(displayItem, Component.translatable(title), Component.translatable(desc), background, frameType, toast, announce, hidden)
                     .rewards(rewards)

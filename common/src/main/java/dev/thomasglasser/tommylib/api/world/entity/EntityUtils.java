@@ -2,11 +2,13 @@ package dev.thomasglasser.tommylib.api.world.entity;
 
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.player.Player;
@@ -18,6 +20,9 @@ import net.minecraft.world.phys.Vec3;
  * Helpers for entities and entity interactions
  */
 public class EntityUtils {
+    public static final BiPredicate<LivingEntity, LivingEntity> TARGET_TOO_FAR_PREDICATE = (entity, target) ->
+            entity.getAttributes().hasAttribute(Attributes.FOLLOW_RANGE) && entity.distanceToSqr(target) >= Math.pow(entity.getAttributeValue(Attributes.FOLLOW_RANGE), 2);
+
     /**
      * Spawn particles in a beam from the entity's eyes.
      *

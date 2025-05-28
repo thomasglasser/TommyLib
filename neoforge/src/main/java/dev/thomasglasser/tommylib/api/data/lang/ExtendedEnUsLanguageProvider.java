@@ -138,10 +138,10 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * Adds a translation for a given {@link EntityType} and spawn egg.
      * 
      * @param key  The key of the entity
-     * @param name The name of the entity
      * @param egg  The spawn egg of the entity
+     * @param name The name of the entity
      */
-    public void add(EntityType<?> key, String name, Item egg) {
+    public void add(EntityType<?> key, Item egg, String name) {
         add(key.getDescriptionId(), name);
         add(egg, name + " Spawn Egg");
     }

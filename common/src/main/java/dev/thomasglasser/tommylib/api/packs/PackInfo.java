@@ -1,10 +1,14 @@
 package dev.thomasglasser.tommylib.api.packs;
 
+import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.KnownPack;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
+
+import java.util.Objects;
 
 /**
  * Represents a pack shown in the pack selection screen.
@@ -29,6 +33,30 @@ public record PackInfo(KnownPack knownPack, PackType type, PackSource source) {
      * The default pack selection config for built-in packs.
      */
     public static final PackSelectionConfig BUILT_IN_SELECTION_CONFIG = new PackSelectionConfig(false, Pack.Position.TOP, false);
+
+    /**
+     * Creates a new {@link PackInfo} instance based on the provided parameters.
+     *
+     * @param namespace The namespace of the pack
+     * @param id        The identifier of the pack
+     * @param type      The type of the pack (data or resource)
+     * @param source    The source of the pack (e.g., built-in, feature)
+     * @return A new {@link PackInfo} instance containing the specified parameters
+     * @throws NullPointerException If the mod version for the specified namespace is null
+     */
+    public static PackInfo create(String namespace, String id, PackType type, PackSource source) {
+        return new PackInfo(new KnownPack(namespace, id, Objects.requireNonNull(TommyLibServices.PLATFORM.getModVersion(namespace))), type, source);
+    }
+
+    /**
+     * Gets the pack's default file path in the project.
+     *
+     * @return The default file path for the pack
+     */
+    public String path() {
+        return "packs/" + this.knownPack.namespace() + "/" + this.knownPack.id();
+    }
+
     /**
      * Gets the translation key for the pack's title.
      * 
