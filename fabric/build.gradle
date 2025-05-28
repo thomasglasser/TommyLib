@@ -18,7 +18,9 @@ dependencies {
 	modCompileOnly("dev.kosmx.player-anim:player-animation-lib-fabric:${playeranimator_version}")
 	modCompileOnly "net.tslat.smartbrainlib:SmartBrainLib-fabric-${minecraft_version}:${smartbrainlib_version}"
 	modCompileOnly "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
-	modCompileOnly "dev.thomasglasser.sherdsapi:sherdsapi-fabric-${minecraft_version}:${sherdsapi_version}"
+	modCompileOnly("dev.thomasglasser.sherdsapi:sherdsapi-fabric-${minecraft_version}:${sherdsapi_version}") {
+		transitive = false
+	}
 }
 
 loom {
