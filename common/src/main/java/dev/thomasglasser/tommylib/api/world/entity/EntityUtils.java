@@ -20,8 +20,7 @@ import net.minecraft.world.phys.Vec3;
  * Helpers for entities and entity interactions
  */
 public class EntityUtils {
-    public static final BiPredicate<LivingEntity, LivingEntity> TARGET_TOO_FAR_PREDICATE = (entity, target) ->
-            entity.getAttributes().hasAttribute(Attributes.FOLLOW_RANGE) && entity.distanceToSqr(target) >= Math.pow(entity.getAttributeValue(Attributes.FOLLOW_RANGE), 2);
+    public static final BiPredicate<LivingEntity, LivingEntity> TARGET_TOO_FAR_PREDICATE = (entity, target) -> entity.getAttributes().hasAttribute(Attributes.FOLLOW_RANGE) && entity.distanceToSqr(target) >= Math.pow(entity.getAttributeValue(Attributes.FOLLOW_RANGE), 2);
 
     /**
      * Spawn particles in a beam from the entity's eyes.

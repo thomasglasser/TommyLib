@@ -11,6 +11,7 @@ import com.mojang.datafixers.util.Function7;
 import com.mojang.datafixers.util.Function8;
 import com.mojang.datafixers.util.Function9;
 import io.netty.buffer.ByteBuf;
+import java.util.Optional;
 import java.util.function.Function;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -18,6 +19,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Unit;
 
 /**
@@ -26,6 +28,7 @@ import net.minecraft.util.Unit;
 public class ExtraStreamCodecs {
     public static final StreamCodec<ByteBuf, Unit> UNIT = StreamCodec.unit(Unit.INSTANCE);
     public static final StreamCodec<RegistryFriendlyByteBuf, DataComponentType<?>> DATA_COMPONENT_TYPE = ByteBufCodecs.registry(Registries.DATA_COMPONENT_TYPE);
+    public static final StreamCodec<ByteBuf, Optional<ResourceLocation>> OPTIONAL_RESOURCE_LOCATION = ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC);
 
     /**
      * Creates a {@link StreamCodec} for an enum.
