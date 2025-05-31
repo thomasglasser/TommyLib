@@ -16,13 +16,13 @@ import net.minecraft.data.PackOutput;
  */
 public class ModRegistryDumpReport implements DataProvider {
     protected final PackOutput output;
-    protected final String modId;
     protected final CompletableFuture<HolderLookup.Provider> lookupProvider;
+    protected final String modId;
 
-    public ModRegistryDumpReport(PackOutput output, String modId, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+    public ModRegistryDumpReport(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId) {
         this.output = output;
-        this.modId = modId;
         this.lookupProvider = lookupProvider;
+        this.modId = modId;
     }
 
     public CompletableFuture<?> run(CachedOutput output) {

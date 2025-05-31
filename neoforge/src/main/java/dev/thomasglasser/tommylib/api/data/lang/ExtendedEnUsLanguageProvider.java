@@ -29,6 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.armortrim.TrimPattern;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -239,12 +240,15 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
     }
 
     /**
-     * Adds a translation for a given armor trim {@link Item}.
+     * Adds a translation for a given armor trim and template {@link Item}.
      *
-     * @param item The item to add the translation for
+     * @param pattern  The pattern to add the translation for
+     * @param template The template item
+     * @param name     The name of the pattern
      */
-    public void addArmorTrim(Item item) {
-        add(item, "Smithing Template");
+    public void addArmorTrim(ResourceKey<TrimPattern> pattern, Item template, String name) {
+        add(pattern, name + " Armor Trim");
+        add(template, "Smithing Template");
     }
 
     /**

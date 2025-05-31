@@ -56,13 +56,13 @@ public abstract class ExtendedIntrinsicHolderTagsProvider<T> extends IntrinsicHo
             super(builder, keyExtractor, modId);
         }
 
-        public final IntrinsicHolderTagsProvider.IntrinsicTagAppender<T> add(Holder<T> value) {
+        public final ExtendedIntrinsicTagAppender<T> add(Holder<T> value) {
             value.unwrap().ifLeft(this::add).ifRight(this::add);
             return this;
         }
 
         @SafeVarargs
-        public final IntrinsicHolderTagsProvider.IntrinsicTagAppender<T> add(Holder<T>... values) {
+        public final ExtendedIntrinsicTagAppender<T> add(Holder<T>... values) {
             for (Holder<T> value : values) {
                 value.unwrap().ifLeft(this::add).ifRight(this::add);
             }

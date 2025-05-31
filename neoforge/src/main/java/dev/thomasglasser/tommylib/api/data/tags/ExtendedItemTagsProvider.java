@@ -11,7 +11,6 @@ import java.util.function.Function;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
@@ -140,12 +139,12 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider {
             super(builder, keyExtractor, modId);
         }
 
-        public IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item> add(ItemLike value) {
+        public ItemLikeTagAppender add(ItemLike value) {
             this.add(value.asItem());
             return this;
         }
 
-        public IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item> add(ItemLike... values) {
+        public ItemLikeTagAppender add(ItemLike... values) {
             for (ItemLike value : values) {
                 add(value.asItem());
             }
