@@ -3,7 +3,6 @@ package dev.thomasglasser.tommylib.api.world.item;
 import dev.thomasglasser.tommylib.api.world.entity.projectile.ThrownSword;
 import java.util.function.Supplier;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Position;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -22,20 +21,25 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link SwordItem} that can be thrown as a {@link ThrownSword}.
  */
 public class ThrowableSwordItem extends SwordItem implements ProjectileItem {
     private final Supplier<EntityType<? extends ThrownSword>> projectile;
-    private final Holder<SoundEvent> throwSound;
-    private final Holder<SoundEvent> hitGroundSound;
+    private final float baseProjectileDamage;
+    private final @Nullable SoundEvent throwSound;
+    private final @Nullable SoundEvent hitGroundSound;
+    private final @Nullable SoundEvent returnSound;
 
-    public ThrowableSwordItem(Supplier<EntityType<? extends ThrownSword>> projectile, Holder<SoundEvent> throwSound, Holder<SoundEvent> hitGroundSound, Tier pTier, Properties pProperties) {
+    public ThrowableSwordItem(Supplier<EntityType<? extends ThrownSword>> projectile, float baseProjectileDamage, @Nullable SoundEvent throwSound, @Nullable SoundEvent hitGroundSound, @Nullable SoundEvent returnSound, Tier pTier, Properties pProperties) {
         super(pTier, pProperties);
         this.projectile = projectile;
+        this.baseProjectileDamage = baseProjectileDamage;
         this.throwSound = throwSound;
         this.hitGroundSound = hitGroundSound;
+        this.returnSound = returnSound;
     }
 
     public UseAnim getUseAnimation(ItemStack stack) {
@@ -53,14 +57,16 @@ public class ThrowableSwordItem extends SwordItem implements ProjectileItem {
                 if (!isTooDamagedToUse(stack)) {
                     if (!level.isClientSide) {
                         stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(entityLiving.getUsedItemHand()));
-                        ThrownSword thrown = getThrown(level, stack, player);
+                        ThrownSword thrown = getThrown(player, level, stack);
                         thrown.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
                         if (player.hasInfiniteMaterials()) {
                             thrown.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
                         }
 
                         level.addFreshEntity(thrown);
-                        level.playSound(null, thrown, throwSound.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
+                        if (throwSound != null) {
+                            level.playSound(null, thrown, throwSound, SoundSource.PLAYERS, 1.0F, 1.0F);
+                        }
                         if (!player.hasInfiniteMaterials()) {
                             player.getInventory().removeItem(stack);
                         }
@@ -102,15 +108,25 @@ public class ThrowableSwordItem extends SwordItem implements ProjectileItem {
     }
 
     @Override
-    public Projectile asProjectile(Level level, Position position, ItemStack itemStack, Direction direction) {
-        return getThrown(level, position, itemStack);
+    public Projectile asProjectile(Level level, Position position, ItemStack stack, Direction direction) {
+        return getThrown(position, level, stack);
     }
 
-    public ThrownSword getThrown(Level level, ItemStack stack, LivingEntity owner) {
-        return new ThrownSword(projectile.get(), level, owner, stack, hitGroundSound);
+    public ThrownSword getThrown(LivingEntity owner, Level level, ItemStack stack) {
+        return new ThrownSword(projectile.get(), owner, level, stack, baseProjectileDamage, hitGroundSound, returnSound) {
+            @Override
+            protected ItemStack getDefaultPickupItem() {
+                return ThrowableSwordItem.this.getDefaultInstance();
+            }
+        };
     }
 
-    public ThrownSword getThrown(Level level, Position pos, ItemStack stack) {
-        return new ThrownSword(projectile.get(), level, pos.x(), pos.y(), pos.z(), stack, hitGroundSound);
+    public ThrownSword getThrown(Position pos, Level level, ItemStack stack) {
+        return new ThrownSword(projectile.get(), pos.x(), pos.y(), pos.z(), level, stack, baseProjectileDamage, hitGroundSound, returnSound) {
+            @Override
+            protected ItemStack getDefaultPickupItem() {
+                return ThrowableSwordItem.this.getDefaultInstance();
+            }
+        };
     }
 }

@@ -6,8 +6,8 @@
 package dev.thomasglasser.tommylib.api.registration;
 
 import com.mojang.serialization.Codec;
-import dev.thomasglasser.tommylib.api.network.codec.ExtraStreamCodecs;
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
+import dev.thomasglasser.tommylib.api.util.TommyLibExtraStreamCodecs;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
@@ -496,7 +496,7 @@ public abstract class DeferredRegister<T> {
         }
 
         public DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> registerUnit(String name, boolean persistent, boolean cache) {
-            return register(name, ExtraStreamCodecs.UNIT, persistent ? Unit.CODEC : null, cache);
+            return register(name, TommyLibExtraStreamCodecs.UNIT, persistent ? Unit.CODEC : null, cache);
         }
 
         public <T> DeferredHolder<DataComponentType<?>, DataComponentType<ResourceKey<T>>> registerResourceKey(String name, ResourceKey<Registry<T>> registryKey, boolean persistent, boolean cache) {

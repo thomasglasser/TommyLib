@@ -6,8 +6,11 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.InventoryCarrier;
@@ -87,5 +90,39 @@ public class EntityUtils {
                 return true;
         }
         return false;
+    }
+
+    public static boolean addToInventory(Entity entity, ItemStack stack) {
+        if (!stack.isEmpty()) {
+            if (entity instanceof Player player) {
+                return player.addItem(stack);
+            } else if (entity instanceof InventoryCarrier carrier) {
+                return carrier.getInventory().canAddItem(stack) && carrier.getInventory().addItem(stack) == ItemStack.EMPTY;
+            } else if (entity instanceof Mob mob) {
+                return mob.equipItemIfPossible(stack) == ItemStack.EMPTY;
+            } else if (entity instanceof LivingEntity livingEntity) {
+                EquipmentSlot slot = livingEntity.getEquipmentSlotForItem(stack);
+                ItemStack current = livingEntity.getItemBySlot(slot);
+                int total = stack.getCount() + current.getCount();
+                if (current.isEmpty() || (ItemStack.isSameItemSameComponents(stack, current) && total <= current.getMaxStackSize())) {
+                    livingEntity.setItemSlot(slot, stack.copyWithCount(total));
+                    return true;
+                }
+            } else if (entity instanceof ItemEntity itemEntity) {
+                ItemStack current = itemEntity.getItem();
+                int total = stack.getCount() + current.getCount();
+                if (current.isEmpty() || (ItemStack.isSameItemSameComponents(stack, current) && total <= current.getMaxStackSize())) {
+                    itemEntity.setItem(stack.copyWithCount(total));
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static void addToInventoryOrDrop(Entity entity, ItemStack stack) {
+        if (!addToInventory(entity, stack)) {
+            Containers.dropItemStack(entity.level(), entity.getX(), entity.getY(), entity.getZ(), stack);
+        }
     }
 }

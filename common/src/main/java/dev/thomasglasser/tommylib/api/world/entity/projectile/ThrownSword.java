@@ -1,8 +1,6 @@
 package dev.thomasglasser.tommylib.api.world.entity.projectile;
 
 import dev.thomasglasser.tommylib.api.world.item.ItemUtils;
-import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -10,17 +8,14 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -30,39 +25,61 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A projectile that moves and behaves like a Trident.
  */
-public class ThrownSword extends AbstractArrow {
-    private static final EntityDataAccessor<Byte> ID_LOYALTY = SynchedEntityData.defineId(ThrownSword.class, EntityDataSerializers.BYTE);
-    private static final EntityDataAccessor<Boolean> ID_FOIL = SynchedEntityData.defineId(ThrownSword.class, EntityDataSerializers.BOOLEAN);
+public abstract class ThrownSword extends AbstractArrow {
+    private static final EntityDataAccessor<Byte> DATA_LOYALTY = SynchedEntityData.defineId(ThrownSword.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Boolean> DATA_FOIL = SynchedEntityData.defineId(ThrownSword.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> DATA_BASE_DAMAGE = SynchedEntityData.defineId(ThrownSword.class, EntityDataSerializers.FLOAT);
 
-    @Nullable
-    private final Holder<SoundEvent> hitGroundSound;
+    private final SoundEvent returnSound;
 
     private boolean dealtDamage;
+    private boolean playedReturnSound;
 
     public ThrownSword(EntityType<? extends ThrownSword> entity, Level level) {
         super(entity, level);
-        this.hitGroundSound = null;
+        this.pickup = Pickup.ALLOWED;
+        this.returnSound = null;
     }
 
-    public ThrownSword(EntityType<? extends ThrownSword> entityType, Level level, LivingEntity shooter, ItemStack pickupItemStack, Holder<SoundEvent> hitGroundSound) {
-        super(entityType, shooter, level, pickupItemStack, null);
-        this.hitGroundSound = hitGroundSound;
-        this.entityData.set(ID_LOYALTY, ItemUtils.getLoyaltyFromItem(pickupItemStack, level, this));
-        this.entityData.set(ID_FOIL, pickupItemStack.hasFoil());
-    }
-
-    public ThrownSword(EntityType<? extends ThrownSword> entityType, Level level, double x, double y, double z, ItemStack pickupItemStack, Holder<SoundEvent> hitGroundSound) {
+    public ThrownSword(EntityType<? extends ThrownSword> entityType, double x, double y, double z, Level level, ItemStack pickupItemStack, float baseDamage, @Nullable SoundEvent hitGroundSound, @Nullable SoundEvent returnSound) {
         super(entityType, x, y, z, level, pickupItemStack, pickupItemStack);
-        this.hitGroundSound = hitGroundSound;
-        this.entityData.set(ID_LOYALTY, ItemUtils.getLoyaltyFromItem(pickupItemStack, level, this));
-        this.entityData.set(ID_FOIL, pickupItemStack.hasFoil());
+        this.pickup = Pickup.ALLOWED;
+        setSoundEvent(hitGroundSound != null ? hitGroundSound : getDefaultHitGroundSoundEvent());
+        this.returnSound = returnSound != null ? returnSound : getDefaultReturnSoundEvent();
+        this.entityData.set(DATA_BASE_DAMAGE, baseDamage);
+        this.entityData.set(DATA_LOYALTY, ItemUtils.getLoyaltyFromItem(pickupItemStack, level, this));
+        this.entityData.set(DATA_FOIL, pickupItemStack.hasFoil());
+    }
+
+    public ThrownSword(EntityType<? extends ThrownSword> entityType, LivingEntity shooter, Level level, ItemStack pickupItemStack, float baseDamage, @Nullable SoundEvent hitGroundSound, @Nullable SoundEvent returnSound) {
+        this(entityType, shooter.getX(), shooter.getEyeY() - 0.1F, shooter.getZ(), level, pickupItemStack, baseDamage, hitGroundSound, returnSound);
+        setOwner(shooter);
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(ID_LOYALTY, (byte) 0);
-        builder.define(ID_FOIL, false);
+        builder.define(DATA_LOYALTY, (byte) 0);
+        builder.define(DATA_FOIL, false);
+        builder.define(DATA_BASE_DAMAGE, 1f);
+    }
+
+    public byte getLoyalty() {
+        return this.entityData.get(DATA_LOYALTY);
+    }
+
+    public boolean isFoil() {
+        return this.entityData.get(DATA_FOIL);
+    }
+
+    @Override
+    public double getBaseDamage() {
+        return this.entityData.get(DATA_BASE_DAMAGE);
+    }
+
+    @Override
+    public void setBaseDamage(double baseDamage) {
+        this.entityData.set(DATA_BASE_DAMAGE, (float) baseDamage);
     }
 
     @Override
@@ -71,10 +88,10 @@ public class ThrownSword extends AbstractArrow {
             this.dealtDamage = true;
         }
 
-        Entity entity = this.getOwner();
-        int loyalty = this.entityData.get(ID_LOYALTY);
-        if (loyalty > 0 && (this.dealtDamage || this.isNoPhysics()) && entity != null) {
-            if (!this.isAcceptibleReturnOwner()) {
+        Entity owner = this.getOwner();
+        int loyalty = this.getLoyalty();
+        if (loyalty > 0 && (this.dealtDamage || this.isNoPhysics()) && owner != null) {
+            if (!this.isAcceptableReturnOwner()) {
                 if (!this.level().isClientSide && this.pickup == Pickup.ALLOWED) {
                     this.spawnAtLocation(this.getPickupItem(), 0.1F);
                 }
@@ -82,27 +99,27 @@ public class ThrownSword extends AbstractArrow {
                 this.discard();
             } else {
                 this.setNoPhysics(true);
-                Vec3 vec3 = entity.getEyePosition().subtract(this.position());
-                this.setPosRaw(this.getX(), this.getY() + vec3.y * 0.015 * (double) loyalty, this.getZ());
+                Vec3 ownerDirection = owner.getEyePosition().subtract(this.position());
+                this.setPosRaw(this.getX(), this.getY() + ownerDirection.y * 0.015 * (double) loyalty, this.getZ());
                 if (this.level().isClientSide) {
                     this.yOld = this.getY();
                 }
 
-                double d0 = 0.05D * (double) loyalty;
-                this.setDeltaMovement(this.getDeltaMovement().scale(0.95D).add(vec3.normalize().scale(d0)));
+                double speed = 0.05D * (double) loyalty;
+                this.setDeltaMovement(this.getDeltaMovement().scale(0.95D).add(ownerDirection.normalize().scale(speed)));
+                if (!playedReturnSound) {
+                    this.playSound(getReturnSoundEvent(), 10.0F, 1.0F);
+                    playedReturnSound = true;
+                }
             }
         }
 
         super.tick();
     }
 
-    private boolean isAcceptibleReturnOwner() {
+    private boolean isAcceptableReturnOwner() {
         Entity entity = this.getOwner();
         return entity != null && entity.isAlive() && (!(entity instanceof ServerPlayer) || !entity.isSpectator());
-    }
-
-    public boolean isFoil() {
-        return this.entityData.get(ID_FOIL);
     }
 
     @Nullable
@@ -112,17 +129,11 @@ public class ThrownSword extends AbstractArrow {
 
     protected void onHitEntity(EntityHitResult pResult) {
         Entity entity = pResult.getEntity();
-        float damage = 1;
-        for (ItemAttributeModifiers.Entry entry : getPickupItem().getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY).modifiers()) {
-            if (entry.matches(Attributes.ATTACK_DAMAGE, Item.BASE_ATTACK_DAMAGE_ID)) {
-                damage = (float) entry.modifier().amount();
-                break;
-            }
-        }
+        float damage = (float) getBaseDamage();
         Entity entity1 = this.getOwner();
-        DamageSource damagesource = this.damageSources().arrow(this, entity1 == null ? this : entity1);
-        if (this.level() instanceof ServerLevel serverlevel) {
-            damage = EnchantmentHelper.modifyDamage(serverlevel, getPickupItem(), entity, damagesource, damage);
+        DamageSource damagesource = this.damageSources().trident(this, entity1 == null ? this : entity1);
+        if (this.level() instanceof ServerLevel serverLevel) {
+            damage = EnchantmentHelper.modifyDamage(serverLevel, getPickupItem(), entity, damagesource, damage);
         }
 
         this.dealtDamage = true;
@@ -131,8 +142,8 @@ public class ThrownSword extends AbstractArrow {
                 return;
             }
 
-            if (this.level() instanceof ServerLevel serverlevel1) {
-                EnchantmentHelper.doPostAttackEffectsWithItemSource(serverlevel1, entity, damagesource, this.getWeaponItem());
+            if (this.level() instanceof ServerLevel serverLevel) {
+                EnchantmentHelper.doPostAttackEffectsWithItemSource(serverLevel, entity, damagesource, this.getWeaponItem());
             }
 
             if (entity instanceof LivingEntity livingentity) {
@@ -142,7 +153,7 @@ public class ThrownSword extends AbstractArrow {
         }
 
         this.setDeltaMovement(this.getDeltaMovement().multiply(-0.01, -0.1, -0.01));
-        this.playSound(getDefaultHitGroundSoundEvent());
+        this.playSound(getHitGroundSoundEvent());
     }
 
     protected boolean tryPickup(Player p_150196_) {
@@ -150,8 +161,8 @@ public class ThrownSword extends AbstractArrow {
     }
 
     @Override
-    protected ItemStack getDefaultPickupItem() {
-        return Items.AIR.getDefaultInstance();
+    public ItemStack getWeaponItem() {
+        return getPickupItemStackOrigin();
     }
 
     public void playerTouch(Player pEntity) {
@@ -160,19 +171,25 @@ public class ThrownSword extends AbstractArrow {
         }
     }
 
-    public void readAdditionalSaveData(CompoundTag pCompound) {
-        super.readAdditionalSaveData(pCompound);
-        this.dealtDamage = pCompound.getBoolean("DealtDamage");
-        this.entityData.set(ID_LOYALTY, ItemUtils.getLoyaltyFromItem(getDefaultPickupItem(), level(), this));
+    public void readAdditionalSaveData(CompoundTag compoundTag) {
+        super.readAdditionalSaveData(compoundTag);
+        this.dealtDamage = compoundTag.getBoolean("DealtDamage");
+        this.playedReturnSound = compoundTag.getBoolean("PlayedReturnSound");
+        setBaseDamage(compoundTag.getFloat("BaseDamage"));
+        this.entityData.set(DATA_LOYALTY, ItemUtils.getLoyaltyFromItem(getPickupItemStackOrigin(), level(), this));
+        this.entityData.set(DATA_FOIL, getPickupItemStackOrigin().hasFoil());
     }
 
-    public void addAdditionalSaveData(CompoundTag pCompound) {
-        super.addAdditionalSaveData(pCompound);
-        pCompound.putBoolean("DealtDamage", this.dealtDamage);
+    public void addAdditionalSaveData(CompoundTag compoundTag) {
+        super.addAdditionalSaveData(compoundTag);
+
+        compoundTag.putBoolean("DealtDamage", this.dealtDamage);
+        compoundTag.putBoolean("PlayedReturnSound", this.playedReturnSound);
+        compoundTag.putFloat("BaseDamage", (float) this.getBaseDamage());
     }
 
     public void tickDespawn() {
-        int i = this.entityData.get(ID_LOYALTY);
+        int i = this.getLoyalty();
         if (this.pickup != Pickup.ALLOWED || i <= 0) {
             super.tickDespawn();
         }
@@ -184,8 +201,14 @@ public class ThrownSword extends AbstractArrow {
 
     @Override
     protected SoundEvent getDefaultHitGroundSoundEvent() {
-        if (hitGroundSound != null)
-            return hitGroundSound.value();
-        return super.getDefaultHitGroundSoundEvent();
+        return SoundEvents.TRIDENT_HIT_GROUND;
+    }
+
+    protected SoundEvent getDefaultReturnSoundEvent() {
+        return SoundEvents.TRIDENT_RETURN;
+    }
+
+    protected final SoundEvent getReturnSoundEvent() {
+        return returnSound;
     }
 }

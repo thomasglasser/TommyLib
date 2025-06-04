@@ -1,4 +1,4 @@
-package dev.thomasglasser.tommylib.api.network.codec;
+package dev.thomasglasser.tommylib.api.util;
 
 import com.mojang.datafixers.util.Function10;
 import com.mojang.datafixers.util.Function11;
@@ -25,7 +25,7 @@ import net.minecraft.util.Unit;
 /**
  * Provides more codecs and overloads for making more.
  */
-public class ExtraStreamCodecs {
+public class TommyLibExtraStreamCodecs {
     public static final StreamCodec<ByteBuf, Unit> UNIT = StreamCodec.unit(Unit.INSTANCE);
     public static final StreamCodec<RegistryFriendlyByteBuf, DataComponentType<?>> DATA_COMPONENT_TYPE = ByteBufCodecs.registry(Registries.DATA_COMPONENT_TYPE);
     public static final StreamCodec<ByteBuf, Optional<ResourceLocation>> OPTIONAL_RESOURCE_LOCATION = ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC);
