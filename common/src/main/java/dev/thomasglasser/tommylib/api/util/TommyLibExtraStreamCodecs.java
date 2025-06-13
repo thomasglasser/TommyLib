@@ -21,6 +21,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Unit;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Provides more codecs and overloads for making more.
@@ -29,6 +30,12 @@ public class TommyLibExtraStreamCodecs {
     public static final StreamCodec<ByteBuf, Unit> UNIT = StreamCodec.unit(Unit.INSTANCE);
     public static final StreamCodec<RegistryFriendlyByteBuf, DataComponentType<?>> DATA_COMPONENT_TYPE = ByteBufCodecs.registry(Registries.DATA_COMPONENT_TYPE);
     public static final StreamCodec<ByteBuf, Optional<ResourceLocation>> OPTIONAL_RESOURCE_LOCATION = ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC);
+    public static final StreamCodec<ByteBuf, Vec3> VEC_3 = StreamCodec.composite(
+            ByteBufCodecs.DOUBLE, Vec3::x,
+            ByteBufCodecs.DOUBLE, Vec3::y,
+            ByteBufCodecs.DOUBLE, Vec3::z,
+            Vec3::new);
+    public static final StreamCodec<ByteBuf, Optional<Vec3>> OPTIONAL_VEC_3 = ByteBufCodecs.optional(VEC_3);
 
     /**
      * Creates a {@link StreamCodec} for an enum.
