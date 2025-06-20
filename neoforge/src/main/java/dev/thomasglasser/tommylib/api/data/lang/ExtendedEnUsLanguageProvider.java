@@ -3,6 +3,7 @@ package dev.thomasglasser.tommylib.api.data.lang;
 import dev.thomasglasser.tommylib.api.packs.PackInfo;
 import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
+import dev.thomasglasser.tommylib.api.world.item.armor.ArmorSet;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import java.util.List;
@@ -65,6 +66,33 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      */
     public void add(ResourceKey<?> key, String name) {
         add(key.location().toLanguageKey(key.registry().getPath()), name);
+    }
+
+    /**
+     * Adds translations for an {@link ArmorSet}.
+     *
+     * @param set         The armor set to add translations for
+     * @param displayName The base display name for the armor set
+     * @param headSuffix  The suffix for the head piece of the armor
+     * @param chestSuffix The suffix for the chest piece of the armor
+     * @param legsSuffix  The suffix for the legs piece of the armor
+     * @param feetSuffix  The suffix for the feet piece of the armor
+     */
+    public void add(ArmorSet set, String displayName, String headSuffix, String chestSuffix, String legsSuffix, String feetSuffix) {
+        add(set.head().get(), displayName + " " + headSuffix);
+        add(set.chest().get(), displayName + " " + chestSuffix);
+        add(set.legs().get(), displayName + " " + legsSuffix);
+        add(set.feet().get(), displayName + " " + feetSuffix);
+    }
+
+    /**
+     * Adds translations for an {@link ArmorSet} with default suffixes.
+     *
+     * @param set         The armor set to add translations for
+     * @param displayName The base display name for the armor set
+     */
+    public void add(ArmorSet set, String displayName) {
+        add(set, displayName, "Helmet", "Chestplate", "Leggings", "Boots");
     }
 
     /**

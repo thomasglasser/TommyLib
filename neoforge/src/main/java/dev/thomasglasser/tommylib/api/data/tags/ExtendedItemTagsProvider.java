@@ -120,10 +120,10 @@ public abstract class ExtendedItemTagsProvider extends ItemTagsProvider {
      * @param armorSet The {@link ArmorSet} to generate tags for.
      */
     protected void armorSet(ArmorSet armorSet) {
-        tag(ItemTags.HEAD_ARMOR).add(armorSet.HEAD);
-        tag(ItemTags.CHEST_ARMOR).add(armorSet.CHEST);
-        tag(ItemTags.LEG_ARMOR).add(armorSet.LEGS);
-        tag(ItemTags.FOOT_ARMOR).add(armorSet.FEET);
+        tag(ItemTags.HEAD_ARMOR).add(armorSet.head());
+        tag(ItemTags.CHEST_ARMOR).add(armorSet.chest());
+        tag(ItemTags.LEG_ARMOR).add(armorSet.legs());
+        tag(ItemTags.FOOT_ARMOR).add(armorSet.feet());
     }
 
     @Override
