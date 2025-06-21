@@ -1,4 +1,4 @@
-package dev.thomasglasser.tommylib;
+package dev.thomasglasser.tommylib.impl;
 
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
 import net.minecraft.resources.ResourceLocation;

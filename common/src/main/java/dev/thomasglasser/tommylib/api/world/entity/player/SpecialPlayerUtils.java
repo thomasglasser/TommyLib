@@ -1,6 +1,6 @@
 package dev.thomasglasser.tommylib.api.world.entity.player;
 
-import dev.thomasglasser.tommylib.TommyLib;
+import dev.thomasglasser.tommylib.impl.TommyLib;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

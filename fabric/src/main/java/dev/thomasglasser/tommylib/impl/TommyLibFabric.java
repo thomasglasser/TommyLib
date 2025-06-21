@@ -1,4 +1,4 @@
-package dev.thomasglasser.tommylib;
+package dev.thomasglasser.tommylib.impl;
 
 import net.fabricmc.api.ModInitializer;
 

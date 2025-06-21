@@ -1,6 +1,6 @@
 package dev.thomasglasser.tommylib.impl.client;
 
-import dev.thomasglasser.tommylib.TommyLib;
+import dev.thomasglasser.tommylib.impl.TommyLib;
 import dev.thomasglasser.tommylib.api.client.ClientUtils;
 import dev.thomasglasser.tommylib.api.client.animation.PlayerAnimationHandler;
 import dev.thomasglasser.tommylib.api.client.renderer.BewlrProvider;

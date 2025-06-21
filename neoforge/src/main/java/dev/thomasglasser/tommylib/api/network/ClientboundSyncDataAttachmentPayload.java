@@ -1,6 +1,6 @@
 package dev.thomasglasser.tommylib.api.network;
 
-import dev.thomasglasser.tommylib.TommyLib;
+import dev.thomasglasser.tommylib.impl.TommyLib;
 import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
 import io.netty.buffer.ByteBuf;
 import java.util.Optional;

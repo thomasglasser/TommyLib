@@ -1,6 +1,6 @@
 package dev.thomasglasser.tommylib.impl.data.tags;
 
-import dev.thomasglasser.tommylib.TommyLib;
+import dev.thomasglasser.tommylib.impl.TommyLib;
 import dev.thomasglasser.tommylib.api.data.tags.ExtendedBlockTagsProvider;
 import dev.thomasglasser.tommylib.api.tags.ConventionalBlockTags;
 import java.util.concurrent.CompletableFuture;

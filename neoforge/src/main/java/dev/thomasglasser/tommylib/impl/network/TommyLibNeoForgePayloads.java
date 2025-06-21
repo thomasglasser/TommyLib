@@ -1,6 +1,6 @@
 package dev.thomasglasser.tommylib.impl.network;
 
-import dev.thomasglasser.tommylib.TommyLib;
+import dev.thomasglasser.tommylib.impl.TommyLib;
 import dev.thomasglasser.tommylib.api.network.ClientboundSyncDataAttachmentPayload;
 import dev.thomasglasser.tommylib.api.network.ExtendedPacketPayload;
 import dev.thomasglasser.tommylib.api.network.NeoForgeNetworkUtils;

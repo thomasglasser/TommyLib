@@ -1,6 +1,6 @@
 package dev.thomasglasser.tommylib.api.platform;
 
-import dev.thomasglasser.tommylib.TommyLib;
+import dev.thomasglasser.tommylib.impl.TommyLib;
 import dev.thomasglasser.tommylib.impl.platform.services.ClientHelper;
 import dev.thomasglasser.tommylib.impl.platform.services.NetworkHelper;
 import dev.thomasglasser.tommylib.impl.platform.services.PlatformHelper;

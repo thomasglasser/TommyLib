@@ -1,11 +1,11 @@
-package dev.thomasglasser.tommylib;
+package dev.thomasglasser.tommylib.impl;
 
 import dev.thomasglasser.tommylib.impl.data.TommyLibDataGenerators;
 import dev.thomasglasser.tommylib.impl.network.TommyLibNeoForgePayloads;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
-@Mod(TommyLib.MOD_ID)
+@Mod(dev.thomasglasser.tommylib.impl.TommyLib.MOD_ID)
 public class TommyLibNeoForge {
     public TommyLibNeoForge(IEventBus modBus) {
         TommyLib.init();
