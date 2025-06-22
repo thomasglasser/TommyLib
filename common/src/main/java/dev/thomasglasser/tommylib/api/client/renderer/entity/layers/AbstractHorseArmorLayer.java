@@ -44,7 +44,7 @@ public class AbstractHorseArmorLayer<T extends AbstractHorse> extends RenderLaye
                 this.model.setupAnim(livingEntity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
                 int i;
                 if (bodyStack.is(ItemTags.DYEABLE)) {
-                    i = FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(bodyStack, -6265536));
+                    i = FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(bodyStack, DyedItemColor.LEATHER_COLOR));
                 } else {
                     i = -1;
                 }
