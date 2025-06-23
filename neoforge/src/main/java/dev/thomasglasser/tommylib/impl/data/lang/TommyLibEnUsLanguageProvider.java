@@ -1,9 +1,9 @@
 package dev.thomasglasser.tommylib.impl.data.lang;
 
-import dev.thomasglasser.tommylib.impl.TommyLib;
 import dev.thomasglasser.tommylib.api.data.lang.ExtendedEnUsLanguageProvider;
 import dev.thomasglasser.tommylib.api.tags.ConventionalBlockTags;
 import dev.thomasglasser.tommylib.api.tags.ConventionalItemTags;
+import dev.thomasglasser.tommylib.impl.TommyLib;
 import net.minecraft.data.PackOutput;
 
 public class TommyLibEnUsLanguageProvider extends ExtendedEnUsLanguageProvider {

@@ -1,8 +1,8 @@
 package dev.thomasglasser.tommylib.impl.data.tags;
 
-import dev.thomasglasser.tommylib.impl.TommyLib;
 import dev.thomasglasser.tommylib.api.data.tags.ExtendedItemTagsProvider;
 import dev.thomasglasser.tommylib.api.tags.ConventionalItemTags;
+import dev.thomasglasser.tommylib.impl.TommyLib;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;

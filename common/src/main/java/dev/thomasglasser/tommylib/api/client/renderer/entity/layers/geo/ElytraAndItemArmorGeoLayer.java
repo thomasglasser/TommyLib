@@ -18,7 +18,6 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.ItemArmorGeoLayer;
 
-// TODO: Check
 /**
  * Extension of {@link ItemArmorGeoLayer} that adds support for rendering elytra.
  *

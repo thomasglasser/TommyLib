@@ -1,10 +1,10 @@
 package dev.thomasglasser.tommylib.impl.client;
 
-import dev.thomasglasser.tommylib.impl.TommyLib;
 import dev.thomasglasser.tommylib.api.client.ClientUtils;
 import dev.thomasglasser.tommylib.api.client.animation.PlayerAnimationHandler;
 import dev.thomasglasser.tommylib.api.client.renderer.BewlrProvider;
 import dev.thomasglasser.tommylib.api.world.item.ModeledItem;
+import dev.thomasglasser.tommylib.impl.TommyLib;
 import java.util.concurrent.atomic.AtomicReference;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;

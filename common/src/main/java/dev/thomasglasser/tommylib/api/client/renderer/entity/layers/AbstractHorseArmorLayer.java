@@ -17,7 +17,6 @@ import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 
-// TODO: Check
 /**
  * A layer that renders horse armor on an abstract horse entity.
  *
