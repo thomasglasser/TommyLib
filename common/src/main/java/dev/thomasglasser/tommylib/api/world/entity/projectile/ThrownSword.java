@@ -82,6 +82,10 @@ public abstract class ThrownSword extends AbstractArrow {
         this.entityData.set(DATA_BASE_DAMAGE, (float) baseDamage);
     }
 
+    public boolean isInGround() {
+        return inGround;
+    }
+
     @Override
     public void tick() {
         if (this.inGroundTime > 4) {

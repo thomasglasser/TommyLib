@@ -2,10 +2,13 @@ package dev.thomasglasser.tommylib.api.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+
+import java.util.Calendar;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.ChestRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -170,5 +173,16 @@ public class ClientUtils {
         if (m == modelManager.getMissingModel())
             m = modelManager.getModel(fallbackLocation);
         Minecraft.getInstance().getItemRenderer().render(itemStack, displayContext, leftHand, poseStack, buffer, combinedLight, combinedOverlay, m);
+    }
+
+    /**
+     * Determines whether the current computer date is in Minecraft's holiday period,
+     * December 24-26, based on {@link ChestRenderer}.
+     *
+     * @return Whether the current computer date is in Minecraft's holiday period
+     */
+    public static boolean isHoliday() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.get(Calendar.MONTH) + 1 == 12 && calendar.get(Calendar.DATE) >= 24 && calendar.get(Calendar.DATE) <= 26;
     }
 }
