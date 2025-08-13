@@ -1,7 +1,5 @@
 pluginManagement {
 	repositories {
-		gradlePluginPortal()
-		mavenCentral()
 		exclusiveContent {
 			forRepository {
 				maven {
@@ -10,8 +8,8 @@ pluginManagement {
 				}
 			}
 			filter {
-				includeGroup("net.fabricmc")
-				includeGroup("fabric-loom")
+				includeGroupAndSubgroups("net.fabricmc")
+                includeGroupAndSubgroups("fabric-loom")
 			}
 		}
 		exclusiveContent {
@@ -25,7 +23,9 @@ pluginManagement {
 				includeGroupAndSubgroups("org.parchmentmc")
 			}
 		}
-	}
+        gradlePluginPortal()
+        mavenCentral()
+    }
 }
 
 plugins {
