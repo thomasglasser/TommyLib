@@ -2,7 +2,6 @@ package dev.thomasglasser.tommylib.api.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
-
 import java.util.Calendar;
 import java.util.Set;
 import java.util.UUID;

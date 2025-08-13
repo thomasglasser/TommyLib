@@ -254,7 +254,7 @@ immaculate {
     }
 }
 
-build.dependsOn immaculateCheck
+compileJava.dependsOn immaculateCheck
 
 javadoc {
     failOnError = false
