@@ -9,22 +9,27 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public class NeoForgeNetworkHelper implements NetworkHelper {
     @Override
-    public void sendToServer(ExtendedPacketPayload extendedPacketPayload) {
-        PacketDistributor.sendToServer(extendedPacketPayload);
+    public void sendToServer(ExtendedPacketPayload payload) {
+        PacketDistributor.sendToServer(payload);
     }
 
     @Override
-    public void sendToClient(ExtendedPacketPayload extendedPacketPayload, ServerPlayer player) {
-        PacketDistributor.sendToPlayer(player, extendedPacketPayload);
+    public void sendToClient(ExtendedPacketPayload payload, ServerPlayer player) {
+        PacketDistributor.sendToPlayer(player, payload);
     }
 
     @Override
-    public void sendToAllClients(ExtendedPacketPayload extendedPacketPayload, MinecraftServer server) {
-        PacketDistributor.sendToAllPlayers(extendedPacketPayload);
+    public void sendToAllClients(ExtendedPacketPayload payload, MinecraftServer server) {
+        PacketDistributor.sendToAllPlayers(payload);
     }
 
     @Override
-    public void sendToTrackingClients(ExtendedPacketPayload extendedPacketPayload, MinecraftServer server, Entity tracked) {
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(tracked, extendedPacketPayload);
+    public void sendToTrackingClients(ExtendedPacketPayload payload, Entity tracked) {
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(tracked, payload);
+    }
+
+    @Override
+    public void sendToTrackingClientsAndSelf(ExtendedPacketPayload payload, Entity tracked) {
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(tracked, payload);
     }
 }

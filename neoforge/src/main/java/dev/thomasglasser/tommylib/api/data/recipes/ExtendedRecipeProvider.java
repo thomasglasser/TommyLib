@@ -25,13 +25,13 @@ import net.neoforged.neoforge.common.conditions.WithConditions;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Extension of {@link RecipeProvider} that provides functionality for mod holders
+ * Extension of {@link RecipeProvider} that provides helpers
  * and dumps a list of all generated recipes.
  */
 public abstract class ExtendedRecipeProvider extends RecipeProvider {
     protected final PackOutput output;
 
-    public ExtendedRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+    protected ExtendedRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output, lookupProvider);
         this.output = output;
     }
@@ -71,8 +71,8 @@ public abstract class ExtendedRecipeProvider extends RecipeProvider {
     /**
      * Adds recipes for blocks in a {@link WoodSet}.
      * 
-     * @param writer The {@link RecipeOutput} instance to write the recipes to.
-     * @param set    The {@link WoodSet} to add recipes for.
+     * @param writer The {@link RecipeOutput} instance to write the recipes to
+     * @param set    The {@link WoodSet} to add recipes for
      */
     protected void woodSet(RecipeOutput writer, WoodSet set) {
         planksFromLogs(writer, set.planks(), set.logsItemTag(), 4);

@@ -11,16 +11,9 @@ import net.neoforged.neoforge.common.data.SoundDefinition;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 
 /**
- * Extension of {@link SoundDefinitionsProvider} that provides functionality for mod holders.
+ * Extension of {@link SoundDefinitionsProvider} that provides helpers.
  */
 public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsProvider {
-    /**
-     * Creates a new instance of this data provider.
-     *
-     * @param output The {@linkplain PackOutput} instance provided by the data generator.
-     * @param modId  The mod ID of the current mod.
-     * @param helper The existing file helper provided by the event you are initializing this provider in.
-     */
     protected ExtendedSoundDefinitionsProvider(PackOutput output, String modId, ExistingFileHelper helper) {
         super(output, modId, helper);
     }
@@ -28,18 +21,18 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
     /**
      * Defines a {@link SoundDefinition} with a subtitle.
      * 
-     * @param subtitle The subtitle to use.
-     * @param sounds   The sounds to use.
-     * @return The defined {@link SoundDefinition}.
+     * @param subtitle The subtitle to use
+     * @param sounds   The sounds to use
+     * @return The defined {@link SoundDefinition}
      */
-    private SoundDefinition define(String subtitle, SoundDefinition.Sound... sounds) {
+    protected SoundDefinition define(String subtitle, SoundDefinition.Sound... sounds) {
         return SoundDefinition.definition().with(sounds).subtitle("subtitles." + subtitle);
     }
 
     /**
      * Adds a sound to the provider.
      * 
-     * @param sound The sound to add.
+     * @param sound The sound to add
      */
     protected void add(DeferredHolder<SoundEvent, ?> sound) {
         add(sound.get(), define(sound.get().getLocation().getPath(), sound(sound.get().getLocation())));
@@ -48,8 +41,8 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
     /**
      * Adds a sound to the provider with multiple variants.
      * 
-     * @param sound    The sound to add.
-     * @param variants The number of variants to add.
+     * @param sound    The sound to add
+     * @param variants The number of variants to add
      */
     protected void add(DeferredHolder<SoundEvent, ?> sound, int variants) {
         add(sound.get(), defineVariants(sound.get().getLocation().getPath(), sound.get().getLocation(), variants));
@@ -58,7 +51,7 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
     /**
      * Adds a music sound to the provider.
      *
-     * @param sound The sound to add.
+     * @param sound The sound to add
      */
     protected void addMusic(DeferredHolder<SoundEvent, ?> sound) {
         add(sound.get(), SoundDefinition.definition().with(sound(sound.get().getLocation()).stream()));
@@ -67,9 +60,9 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
     /**
      * Defines a {@link SoundDefinition} with multiple variants.
      * 
-     * @param subtitle The subtitle to use.
-     * @param sound    The sound to use.
-     * @param variants The number of variants to add.
+     * @param subtitle The subtitle to use
+     * @param sound    The sound to use
+     * @param variants The number of variants to add
      * @return The defined {@link SoundDefinition}.
      */
     private SoundDefinition defineVariants(String subtitle, ResourceLocation sound, int variants) {
@@ -86,8 +79,8 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
     /**
      * Gets a sound from a {@link ResourceLocation}.
      * 
-     * @param location The location of the sound.
-     * @return The sound.
+     * @param location The location of the sound
+     * @return The sound
      */
     protected static SoundDefinition.Sound sound(ResourceLocation location) {
         if (location.getPath().contains(".")) {
@@ -99,14 +92,14 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
     /**
      * Adds sounds for a {@link WoodSet}.
      *
-     * @param set                      The set to add sounds for.
-     * @param breakVariants            The number of break variants.
-     * @param stepVariants             The number of step variants.
-     * @param doorToggleVariants       The number of door toggle variants.
-     * @param fenceGateToggleVariants  The number of fence gate toggle variants.
-     * @param hangingSignBreakVariants The number of hanging sign break variants.
-     * @param hangingSignStepVariants  The number of hanging sign step variants.
-     * @param trapdoorToggleVariants   The number of trapdoor toggle variants.
+     * @param set                      The set to add sounds for
+     * @param breakVariants            The number of break variants
+     * @param stepVariants             The number of step variants
+     * @param doorToggleVariants       The number of door toggle variants
+     * @param fenceGateToggleVariants  The number of fence gate toggle variants
+     * @param hangingSignBreakVariants The number of hanging sign break variants
+     * @param hangingSignStepVariants  The number of hanging sign step variants
+     * @param trapdoorToggleVariants   The number of trapdoor toggle variants
      */
     protected void add(WoodSet set, int breakVariants, int stepVariants, int doorToggleVariants, int fenceGateToggleVariants, int hangingSignBreakVariants, int hangingSignStepVariants, int trapdoorToggleVariants) {
         ResourceLocation woodId = set.id().withPrefix("block.").withSuffix("_wood");

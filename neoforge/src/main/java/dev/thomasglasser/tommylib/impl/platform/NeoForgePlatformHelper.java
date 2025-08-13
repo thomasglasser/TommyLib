@@ -4,6 +4,7 @@ import dev.thomasglasser.tommylib.impl.platform.services.PlatformHelper;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
+import org.jetbrains.annotations.Nullable;
 
 public class NeoForgePlatformHelper implements PlatformHelper {
     @Override
@@ -27,7 +28,7 @@ public class NeoForgePlatformHelper implements PlatformHelper {
     }
 
     @Override
-    public String getModVersion(String modId) {
-        return ModList.get().getModContainerById(modId).orElseThrow().getModInfo().getVersion().toString();
+    public @Nullable String getModVersion(String modId) {
+        return ModList.get().getModContainerById(modId).map(container -> container.getModInfo().getVersion().toString()).orElse(null);
     }
 }

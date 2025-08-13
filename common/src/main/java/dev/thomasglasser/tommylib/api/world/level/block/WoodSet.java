@@ -2,7 +2,7 @@ package dev.thomasglasser.tommylib.api.world.level.block;
 
 import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
-import java.util.ArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
 import net.minecraft.data.BlockFamily;
 import net.minecraft.resources.ResourceLocation;
@@ -78,7 +78,7 @@ public record WoodSet(ResourceLocation id,
      * @return A list of all blocks in this set
      */
     public List<Block> getAllBlocks() {
-        return List.of(log.get(), strippedLog.get(), wood.get(), strippedWood.get(), planks.get(), slab.get(), stairs.get(), pressurePlate.get(), button.get(), fence.get(), fenceGate.get(), door.get(), trapdoor.get(), sign.get(), wallSign.get(), hangingSign.get(), wallHangingSign.get());
+        return ObjectArrayList.of(log.get(), strippedLog.get(), wood.get(), strippedWood.get(), planks.get(), slab.get(), stairs.get(), pressurePlate.get(), button.get(), fence.get(), fenceGate.get(), door.get(), trapdoor.get(), sign.get(), wallSign.get(), hangingSign.get(), wallHangingSign.get());
     }
 
     /**
@@ -87,7 +87,7 @@ public record WoodSet(ResourceLocation id,
      * @return A list of both boat items in this set
      */
     public List<Item> getBoatItems() {
-        return List.of(boatItem.get(), chestBoatItem.get());
+        return ObjectArrayList.of(boatItem.get(), chestBoatItem.get());
     }
 
     /**
@@ -96,7 +96,10 @@ public record WoodSet(ResourceLocation id,
      * @return A list of all items in this set
      */
     public List<Item> getAllItems() {
-        List<Item> items = new ArrayList<>(getAllBlocks().stream().map(Block::asItem).toList());
+        List<Item> items = new ObjectArrayList<>();
+        for (Block block : getAllBlocks()) {
+            items.add(block.asItem());
+        }
         items.addAll(getBoatItems());
         return items;
     }

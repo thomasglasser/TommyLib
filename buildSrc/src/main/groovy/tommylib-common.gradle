@@ -254,9 +254,7 @@ immaculate {
     }
 }
 
-tasks.named('compileJava') {
-    dependsOn 'immaculateApply'
-}
+compileJava.dependsOn immaculateCheck
 
 javadoc {
     failOnError = false

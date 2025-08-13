@@ -1,6 +1,7 @@
 package dev.thomasglasser.tommylib.api.data.tags;
 
 import com.google.gson.JsonArray;
+import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
@@ -12,6 +13,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.minecraft.Util;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.data.CachedOutput;
@@ -28,7 +30,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A {@link TagsProvider} that dumps a list of all generated tags without the default namespace.
+ * A {@link TagsProvider} that dumps a list of all generated tags not in the default namespace.
  *
  * @param <T> The type of tag.
  */
@@ -112,5 +114,41 @@ public abstract class ExtendedTagsProvider<T> extends TagsProvider<T> {
             return existingFileHelper == null || !existingFileHelper.exists(reference.getId(), reference.isTag() ? resourceType : elementResourceType);
         }
         return false;
+    }
+
+    @Override
+    protected ExtendedTagAppender<T> tag(TagKey<T> tag) {
+        return new ExtendedTagAppender<>(this.getOrCreateRawBuilder(tag));
+    }
+
+    /**
+     * Allows passing holders for {@link DeferredHolder} support
+     * 
+     * @param <T> the type the tag is for
+     */
+    public static class ExtendedTagAppender<T> extends TagAppender<T> {
+        public ExtendedTagAppender(TagBuilder builder) {
+            super(builder);
+        }
+
+        public final ExtendedTagAppender<T> add(Holder<T> holder) {
+            add(holder.unwrapKey().orElseThrow(() -> new IllegalArgumentException("Cannot add direct holder to tag")));
+            return this;
+        }
+
+        @SafeVarargs
+        public final ExtendedTagAppender<T> add(Holder<T>... holders) {
+            for (Holder<T> holder : holders) {
+                add(holder);
+            }
+            return this;
+        }
+
+        public final ExtendedTagAppender<T> addAllHolders(List<Holder<T>> holders) {
+            for (Holder<T> holder : holders) {
+                add(holder);
+            }
+            return this;
+        }
     }
 }

@@ -1,21 +1,20 @@
 package dev.thomasglasser.tommylib.api.data.blockstates;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.world.level.block.LeavesSet;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.minecraft.client.renderer.RenderType;
@@ -27,66 +26,70 @@ import net.minecraft.data.models.BlockModelGenerators;
 import net.minecraft.data.models.blockstates.BlockStateGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.apache.commons.lang3.function.TriFunction;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Extension of {@link BlockStateProvider} that provides functionality for mod holders.
+ * Extension of {@link BlockStateProvider} that provides helpers and {@link BlockModelGenerators} support.
+ *
+ * @deprecated Model generation is completely rewritten in 1.21.5+
  */
+@Deprecated(forRemoval = true, since = "31.0.0")
 public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
-    protected static final ExistingFileHelper.ResourceType TEXTURE = new ExistingFileHelper.ResourceType(PackType.CLIENT_RESOURCES, ".png", "textures");
+    protected static final ExistingFileHelper.ResourceType TEXTURE_RESOURCE = new ExistingFileHelper.ResourceType(PackType.CLIENT_RESOURCES, ".png", "textures");
 
-    protected final Map<Block, BlockStateGenerator> STATE_MAP = Maps.newHashMap();
-    protected final Map<ResourceLocation, Supplier<JsonElement>> MODEL_MAP = Maps.newHashMap();
-    protected final ExtendedBlockModelGenerators blockModelGenerators;
+    protected final Map<Block, BlockStateGenerator> stateMap = new Reference2ReferenceOpenHashMap<>();
+    protected final Map<ResourceLocation, Supplier<JsonElement>> modelMap = new Reference2ReferenceOpenHashMap<>();
     protected final String modId;
     protected final PackOutput output;
     protected final ExistingFileHelper existingFileHelper;
+    @Nullable
+    protected final ExtendedBlockModelGenerators blockModelGenerators;
 
-    public ExtendedBlockStateProvider(PackOutput output, String modId, ExistingFileHelper exFileHelper) {
-        super(output, modId, exFileHelper);
-        this.blockModelGenerators = getBlockModelGenerators() != null ? makeBlockModelGenerators(getBlockModelGenerators()) : null;
+    protected ExtendedBlockStateProvider(PackOutput output, String modId, ExistingFileHelper existingFileHelper) {
+        super(output, modId, existingFileHelper);
         this.modId = modId;
         this.output = output;
-        existingFileHelper = exFileHelper;
+        this.existingFileHelper = existingFileHelper;
+        this.blockModelGenerators = makeBlockModelGenerators(getBlockModelGeneratorsProvider());
     }
 
     /**
-     * Creates a new instance of {@link ExtendedBlockModelGenerators} using the provided generator.
+     * Creates a new instance of {@link ExtendedBlockModelGenerators} using the provided generator provider.
      * 
-     * @param generator The function to create the {@link ExtendedBlockModelGenerators} instance.
+     * @param provider The function to create the {@link ExtendedBlockModelGenerators} instance.
      * @return The new instance of {@link ExtendedBlockModelGenerators}.
      */
-    private ExtendedBlockModelGenerators makeBlockModelGenerators(TriFunction<Consumer<BlockStateGenerator>, BiConsumer<ResourceLocation, Supplier<JsonElement>>, Consumer<Item>, ? extends ExtendedBlockModelGenerators> generator) {
-        Consumer<BlockStateGenerator> consumer = (p_125120_) -> {
-            Block block = p_125120_.getBlock();
-            BlockStateGenerator blockstategenerator = STATE_MAP.put(block, p_125120_);
+    protected @Nullable ExtendedBlockModelGenerators makeBlockModelGenerators(BiFunction<Consumer<BlockStateGenerator>, BiConsumer<ResourceLocation, Supplier<JsonElement>>, ? extends ExtendedBlockModelGenerators> provider) {
+        if (provider == null) {
+            return null;
+        }
+        Consumer<BlockStateGenerator> stateConsumer = generator -> {
+            Block block = generator.getBlock();
+            BlockStateGenerator blockstategenerator = stateMap.put(block, generator);
             if (blockstategenerator != null) {
                 throw new IllegalStateException("Duplicate blockstate definition for " + block);
             }
         };
-        Set<Item> set = Sets.newHashSet();
-        BiConsumer<ResourceLocation, Supplier<JsonElement>> biconsumer = (p_125123_, p_125124_) -> {
-            Supplier<JsonElement> supplier = MODEL_MAP.put(p_125123_, p_125124_);
+        BiConsumer<ResourceLocation, Supplier<JsonElement>> modelConsumer = (id, json) -> {
+            Supplier<JsonElement> supplier = modelMap.put(id, json);
             if (supplier != null) {
-                throw new IllegalStateException("Duplicate model definition for " + p_125123_);
+                throw new IllegalStateException("Duplicate model definition for " + id);
             }
         };
-        Consumer<Item> consumer1 = set::add;
-        return (generator.apply(consumer, biconsumer, consumer1));
+        return provider.apply(stateConsumer, modelConsumer);
     }
 
     /**
-     * Gets the block model generators for this provider, which is null by default.
+     * Gets the {@link BlockModelGenerators} provider, which is null by default.
      * 
-     * @return The block model generators for this provider.
+     * @return The {@link BlockModelGenerators} provider
      */
-    protected TriFunction<Consumer<BlockStateGenerator>, BiConsumer<ResourceLocation, Supplier<JsonElement>>, Consumer<Item>, ? extends ExtendedBlockModelGenerators> getBlockModelGenerators() {
+    protected BiFunction<Consumer<BlockStateGenerator>, BiConsumer<ResourceLocation, Supplier<JsonElement>>, ? extends ExtendedBlockModelGenerators> getBlockModelGeneratorsProvider() {
         return null;
     }
 
@@ -105,7 +108,7 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      * @param block The block to create the {@link ResourceLocation} for.
      * @return The new {@link ResourceLocation}.
      */
-    public ResourceLocation blockLoc(DeferredBlock<?> block) {
+    protected ResourceLocation blockLoc(DeferredBlock<?> block) {
         return block.getId().withPrefix(ModelProvider.BLOCK_FOLDER + "/");
     }
 
@@ -115,7 +118,7 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      * @param item The item to create the {@link ResourceLocation} for.
      * @return The new {@link ResourceLocation}.
      */
-    public ResourceLocation itemLoc(DeferredItem<?> item) {
+    protected ResourceLocation itemLoc(DeferredItem<?> item) {
         return item.getId().withPrefix(ModelProvider.ITEM_FOLDER + "/");
     }
 
@@ -125,7 +128,7 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      * @param path The path of the new {@link ResourceLocation}.
      * @return The new {@link ResourceLocation}.
      */
-    public static ResourceLocation mcBlockLoc(String path) {
+    protected ResourceLocation mcBlockLoc(String path) {
         return ResourceLocation.withDefaultNamespace(ModelProvider.BLOCK_FOLDER + "/" + path);
     }
 
@@ -135,7 +138,7 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      * @param path The path of the new {@link ResourceLocation}.
      * @return The new {@link ResourceLocation}.
      */
-    public static ResourceLocation mcItemLoc(String path) {
+    protected ResourceLocation mcItemLoc(String path) {
         return ResourceLocation.withDefaultNamespace(ModelProvider.ITEM_FOLDER + "/" + path);
     }
 
@@ -145,7 +148,7 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      * @param path The path of the new {@link ResourceLocation}.
      * @return The new {@link ResourceLocation}.
      */
-    public ResourceLocation modBlockLoc(String path) {
+    protected ResourceLocation modBlockLoc(String path) {
         return ResourceLocation.fromNamespaceAndPath(modId, ModelProvider.BLOCK_FOLDER + "/" + path);
     }
 
@@ -155,7 +158,7 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      * @param path The path of the new {@link ResourceLocation}.
      * @return The new {@link ResourceLocation}.
      */
-    public ResourceLocation modItemLoc(String path) {
+    protected ResourceLocation modItemLoc(String path) {
         return ResourceLocation.fromNamespaceAndPath(modId, ModelProvider.ITEM_FOLDER + "/" + path);
     }
 
@@ -188,7 +191,7 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      * @param block   The slab block to generate.
      * @param texture The texture to use for the slab block.
      */
-    public void slabBlock(SlabBlock block, ResourceLocation texture) {
+    protected void slabBlock(SlabBlock block, ResourceLocation texture) {
         super.slabBlock(block, texture, texture);
     }
 
@@ -198,7 +201,7 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
      * @param set The {@link LeavesSet} to generate blockstates and models for.
      */
     protected void leavesSet(LeavesSet set) {
-        simpleBlock(set.leaves().get(), models().withExistingParent(BuiltInRegistries.BLOCK.getKey(set.leaves().get()).getPath(), mcBlockLoc("leaves")).texture("all", blockLoc(set.leaves())));
+        simpleBlock(set.leaves().get(), models().withExistingParent(set.leaves().getId().getPath(), mcBlockLoc("leaves")).texture("all", blockLoc(set.leaves())));
         simpleBlock(set.sapling().get(), models().cross(set.id().getPath() + "_sapling", blockLoc(set.sapling())).renderType("cutout"));
         simpleBlock(set.pottedSapling().get(), models().withExistingParent("potted_" + set.id().getPath() + "_sapling", mcBlockLoc("flower_pot_cross")).texture("plant", blockLoc(set.sapling())).renderType("cutout"));
     }
@@ -209,21 +212,19 @@ public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
     protected abstract class ExtendedBlockModelGenerators extends BlockModelGenerators {
         protected final Consumer<BlockStateGenerator> blockStateOutput;
         protected final BiConsumer<ResourceLocation, Supplier<JsonElement>> modelOutput;
-        protected final Consumer<Item> skippedAutoModelsOutput;
 
-        public ExtendedBlockModelGenerators(Consumer<BlockStateGenerator> pBlockStateOutput, BiConsumer<ResourceLocation, Supplier<JsonElement>> pModelOutput, Consumer<Item> pSkippedAutoModelsOutput) {
-            super(pBlockStateOutput, pModelOutput, pSkippedAutoModelsOutput);
+        public ExtendedBlockModelGenerators(Consumer<BlockStateGenerator> pBlockStateOutput, BiConsumer<ResourceLocation, Supplier<JsonElement>> pModelOutput) {
+            super(pBlockStateOutput, pModelOutput, item -> {});
             blockStateOutput = pBlockStateOutput;
             modelOutput = pModelOutput;
-            skippedAutoModelsOutput = pSkippedAutoModelsOutput;
         }
 
         public CompletableFuture<?> generateAll(CachedOutput cache) {
-            List<CompletableFuture<?>> futures = new ArrayList<>();
-            for (Map.Entry<ResourceLocation, Supplier<JsonElement>> entry : MODEL_MAP.entrySet()) {
+            Set<CompletableFuture<?>> futures = new ReferenceOpenHashSet<>();
+            for (Map.Entry<ResourceLocation, Supplier<JsonElement>> entry : modelMap.entrySet()) {
                 futures.add(DataProvider.saveStable(cache, entry.getValue().get().getAsJsonObject(), getPath(entry.getKey())));
             }
-            for (Map.Entry<Block, BlockStateGenerator> entry : STATE_MAP.entrySet()) {
+            for (Map.Entry<Block, BlockStateGenerator> entry : stateMap.entrySet()) {
                 futures.add(saveBlockState(cache, entry.getValue().get().getAsJsonObject(), entry.getKey()));
             }
             return CompletableFuture.allOf(futures.toArray(new CompletableFuture[] {}));

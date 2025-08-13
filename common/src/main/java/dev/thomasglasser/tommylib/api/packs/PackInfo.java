@@ -1,5 +1,7 @@
 package dev.thomasglasser.tommylib.api.packs;
 
+import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
+import java.util.Objects;
 import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.KnownPack;
@@ -7,7 +9,7 @@ import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 
 /**
- * Represents a pack that is shown in the pack selection screen.
+ * Represents a pack shown in the pack selection screen.
  * 
  * @param knownPack The pack information
  * @param type      The pack side (resource or data)
@@ -30,16 +32,39 @@ public record PackInfo(KnownPack knownPack, PackType type, PackSource source) {
      */
     public static final PackSelectionConfig BUILT_IN_SELECTION_CONFIG = new PackSelectionConfig(false, Pack.Position.TOP, false);
     /**
-     * Gets the pack's name.
+     * Creates a new {@link PackInfo} instance based on the provided parameters.
+     *
+     * @param namespace The namespace of the pack
+     * @param id        The identifier of the pack
+     * @param type      The type of the pack (data or resource)
+     * @param source    The source of the pack (e.g., built-in, feature)
+     * @return A new {@link PackInfo} instance containing the specified parameters
+     * @throws NullPointerException If the mod version for the specified namespace is null
+     */
+    public static PackInfo create(String namespace, String id, PackType type, PackSource source) {
+        return new PackInfo(new KnownPack(namespace, id, Objects.requireNonNull(TommyLibServices.PLATFORM.getModVersion(namespace))), type, source);
+    }
+
+    /**
+     * Gets the pack's default file path in the project.
+     *
+     * @return The default file path for the pack
+     */
+    public String path() {
+        return "packs/" + this.knownPack.namespace() + "/" + this.knownPack.id();
+    }
+
+    /**
+     * Gets the translation key for the pack's title.
      * 
-     * @return The translation key for the pack's name
+     * @return The translation key for the pack's title
      */
     public String titleKey() {
         return key() + ".name";
     }
 
     /**
-     * Gets the pack's description.
+     * Gets the translation key for the pack's description.
      * 
      * @return The translation key for the pack's description
      */
@@ -48,9 +73,9 @@ public record PackInfo(KnownPack knownPack, PackType type, PackSource source) {
     }
 
     /**
-     * Gets the pack's default key.
+     * Gets the pack's base translation key.
      * 
-     * @return The translation key for the pack
+     * @return The base translation key for the pack
      */
     private String key() {
         return "pack." + this.knownPack.namespace() + "." + this.knownPack.id();

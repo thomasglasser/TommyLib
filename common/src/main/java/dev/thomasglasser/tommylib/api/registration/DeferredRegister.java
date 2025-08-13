@@ -5,18 +5,29 @@
 
 package dev.thomasglasser.tommylib.api.registration;
 
+import com.mojang.serialization.Codec;
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
+import dev.thomasglasser.tommylib.api.util.TommyLibExtraStreamCodecs;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Unit;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -73,6 +84,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @see Blocks
  * @see Items
+ * @see DataComponents
  */
 public abstract class DeferredRegister<T> {
     /**
@@ -147,6 +159,32 @@ public abstract class DeferredRegister<T> {
      */
     public static Blocks createBlocks(String modid) {
         return Factory.INSTANCE.createBlocks(modid);
+    }
+
+    /**
+     * Factory for a specialized DeferredRegister for {@link DataComponentType DataComponentTypes}.
+     *
+     * @param registryKey The key for the data component type registry, like {@link Registries#DATA_COMPONENT_TYPE} for item data components
+     * @param modid       The namespace for all objects registered to this DeferredRegister
+     * @see #create(Registry, String)
+     * @see #create(ResourceKey, String)
+     * @see #create(ResourceLocation, String)
+     * @see #createItems(String)
+     */
+    public static DataComponents createDataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String modid) {
+        return Factory.INSTANCE.createDataComponents(registryKey, modid);
+    }
+
+    /**
+     * Factory for a specialized DeferredRegister for {@link EntityType EntityTypes}.
+     *
+     * @param namespace The namespace for all objects registered to this DeferredRegister
+     * @see #create(Registry, String)
+     * @see #create(ResourceKey, String)
+     * @see #create(ResourceLocation, String)
+     */
+    public static Entities createEntities(String namespace) {
+        return Factory.INSTANCE.createEntities(namespace);
     }
 
     private final ResourceKey<? extends Registry<T>> registryKey;
@@ -264,9 +302,9 @@ public abstract class DeferredRegister<T> {
          * @param func  A factory for the new block. The factory should not cache the created block.
          * @param props The properties for the created block.
          * @return A {@link DeferredHolder} that will track updates from the registry for this block.
-         * @see #registerSimpleBlock(String, BlockBehaviour.Properties)
+         * @see #registerSimple(String, BlockBehaviour.Properties)
          */
-        public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> func, BlockBehaviour.Properties props) {
+        public <B extends Block> DeferredBlock<B> register(String name, Function<BlockBehaviour.Properties, ? extends B> func, BlockBehaviour.Properties props) {
             return this.register(name, () -> func.apply(props));
         }
 
@@ -276,10 +314,10 @@ public abstract class DeferredRegister<T> {
          * @param name  The new block's name. It will automatically have the {@linkplain #getNamespace() namespace} prefixed.
          * @param props The properties for the created block.
          * @return A {@link DeferredHolder} that will track updates from the registry for this block.
-         * @see #registerBlock(String, Function, BlockBehaviour.Properties)
+         * @see #register(String, Function, BlockBehaviour.Properties)
          */
-        public DeferredBlock<Block> registerSimpleBlock(String name, BlockBehaviour.Properties props) {
-            return this.registerBlock(name, Block::new, props);
+        public DeferredBlock<Block> registerSimple(String name, BlockBehaviour.Properties props) {
+            return this.register(name, Block::new, props);
         }
 
         @Override
@@ -314,16 +352,16 @@ public abstract class DeferredRegister<T> {
          * @param name  The new item's name. It will automatically have the {@linkplain #getNamespace() namespace} prefixed.
          * @param block The supplier for the block to create a {@link BlockItem} for.
          * @return A {@link DeferredItem} that will track updates from the registry for this item.
-         * @see #registerSimpleBlockItem(String, Supplier, Item.Properties)
-         * @see #registerSimpleBlockItem(Holder, Item.Properties)
-         * @see #registerSimpleBlockItem(Holder)
+         * @see #registerSimpleBlock(String, Supplier, Item.Properties)
+         * @see #registerSimpleBlock(Holder, Item.Properties)
+         * @see #registerSimpleBlock(Holder)
          */
-        public DeferredItem<BlockItem> registerSimpleBlockItem(String name, Supplier<? extends Block> block, Item.Properties properties) {
+        public DeferredItem<BlockItem> registerSimpleBlock(String name, Supplier<? extends Block> block, Item.Properties properties) {
             return this.register(name, () -> new BlockItem(block.get(), properties));
         }
 
-        public DeferredItem<BlockItem> registerSimpleBlockItem(String name, Supplier<? extends Block> block) {
-            return registerSimpleBlockItem(name, block, new Item.Properties());
+        public DeferredItem<BlockItem> registerSimpleBlock(String name, Supplier<? extends Block> block) {
+            return registerSimpleBlock(name, block, new Item.Properties());
         }
 
         /**
@@ -334,11 +372,11 @@ public abstract class DeferredRegister<T> {
          * @param block      The {@link DeferredHolder} of the {@link Block} for the {@link BlockItem}.
          * @param properties The properties for the created {@link BlockItem}.
          * @return A {@link DeferredItem} that will track updates from the registry for this item.
-         * @see #registerSimpleBlockItem(String, Supplier, Item.Properties)
-         * @see #registerSimpleBlockItem(Holder)
+         * @see #registerSimpleBlock(String, Supplier, Item.Properties)
+         * @see #registerSimpleBlock(Holder)
          */
-        public DeferredItem<BlockItem> registerSimpleBlockItem(Holder<Block> block, Item.Properties properties) {
-            return this.registerSimpleBlockItem(block.unwrapKey().orElseThrow().location().getPath(), block::value, properties);
+        public DeferredItem<BlockItem> registerSimpleBlock(Holder<Block> block, Item.Properties properties) {
+            return this.registerSimpleBlock(block.unwrapKey().orElseThrow().location().getPath(), block::value, properties);
         }
 
         /**
@@ -348,12 +386,12 @@ public abstract class DeferredRegister<T> {
          *
          * @param block The {@link DeferredHolder} of the {@link Block} for the {@link BlockItem}.
          * @return A {@link DeferredItem} that will track updates from the registry for this item.
-         * @see #registerSimpleBlockItem(String, Supplier, Item.Properties)
-         * @see #registerSimpleBlockItem(String, Supplier)
-         * @see #registerSimpleBlockItem(Holder, Item.Properties)
+         * @see #registerSimpleBlock(String, Supplier, Item.Properties)
+         * @see #registerSimpleBlock(String, Supplier)
+         * @see #registerSimpleBlock(Holder, Item.Properties)
          */
-        public DeferredItem<BlockItem> registerSimpleBlockItem(Holder<Block> block) {
-            return this.registerSimpleBlockItem(block, new Item.Properties());
+        public DeferredItem<BlockItem> registerSimpleBlock(Holder<Block> block) {
+            return this.registerSimpleBlock(block, new Item.Properties());
         }
 
         /**
@@ -363,11 +401,11 @@ public abstract class DeferredRegister<T> {
          * @param func  A factory for the new item. The factory should not cache the created item.
          * @param props The properties for the created item.
          * @return A {@link DeferredItem} that will track updates from the registry for this item.
-         * @see #registerItem(String, Function)
-         * @see #registerSimpleItem(String, Item.Properties)
-         * @see #registerSimpleItem(String)
+         * @see #register(String, Function)
+         * @see #registerSimple(String, Item.Properties)
+         * @see #registerSimple(String)
          */
-        public <I extends Item> DeferredItem<I> registerItem(String name, Function<Item.Properties, ? extends I> func, Item.Properties props) {
+        public <I extends Item> DeferredItem<I> register(String name, Function<Item.Properties, ? extends I> func, Item.Properties props) {
             return this.register(name, () -> func.apply(props));
         }
 
@@ -378,12 +416,12 @@ public abstract class DeferredRegister<T> {
          * @param name The new item's name. It will automatically have the {@linkplain #getNamespace() namespace} prefixed.
          * @param func A factory for the new item. The factory should not cache the created item.
          * @return A {@link DeferredItem} that will track updates from the registry for this item.
-         * @see #registerItem(String, Function, Item.Properties)
-         * @see #registerSimpleItem(String, Item.Properties)
-         * @see #registerSimpleItem(String)
+         * @see #register(String, Function, Item.Properties)
+         * @see #registerSimple(String, Item.Properties)
+         * @see #registerSimple(String)
          */
-        public <I extends Item> DeferredItem<I> registerItem(String name, Function<Item.Properties, ? extends I> func) {
-            return this.registerItem(name, func, new Item.Properties());
+        public <I extends Item> DeferredItem<I> register(String name, Function<Item.Properties, ? extends I> func) {
+            return this.register(name, func, new Item.Properties());
         }
 
         /**
@@ -393,12 +431,12 @@ public abstract class DeferredRegister<T> {
          * @param name  The new item's name. It will automatically have the {@linkplain #getNamespace() namespace} prefixed.
          * @param props A factory for the new item. The factory should not cache the created item.
          * @return A {@link DeferredItem} that will track updates from the registry for this item.
-         * @see #registerItem(String, Function, Item.Properties)
-         * @see #registerItem(String, Function)
-         * @see #registerSimpleItem(String)
+         * @see #register(String, Function, Item.Properties)
+         * @see #register(String, Function)
+         * @see #registerSimple(String)
          */
-        public DeferredItem<Item> registerSimpleItem(String name, Item.Properties props) {
-            return this.registerItem(name, Item::new, props);
+        public DeferredItem<Item> registerSimple(String name, Item.Properties props) {
+            return this.register(name, Item::new, props);
         }
 
         /**
@@ -407,17 +445,102 @@ public abstract class DeferredRegister<T> {
          *
          * @param name The new item's name. It will automatically have the {@linkplain #getNamespace() namespace} prefixed.
          * @return A {@link DeferredItem} that will track updates from the registry for this item.
-         * @see #registerItem(String, Function, Item.Properties)
-         * @see #registerItem(String, Function)
-         * @see #registerSimpleItem(String, Item.Properties)
+         * @see #register(String, Function, Item.Properties)
+         * @see #register(String, Function)
+         * @see #registerSimple(String, Item.Properties)
          */
-        public DeferredItem<Item> registerSimpleItem(String name) {
-            return this.registerItem(name, Item::new, new Item.Properties());
+        public DeferredItem<Item> registerSimple(String name) {
+            return this.register(name, Item::new, new Item.Properties());
         }
 
         @Override
         protected <I extends Item> DeferredItem<I> createHolder(ResourceKey<? extends Registry<Item>> registryKey, ResourceLocation key) {
             return DeferredItem.createItem(ResourceKey.create(registryKey, key));
+        }
+    }
+
+    /**
+     * Specialized DeferredRegister for {@link DataComponentType DataComponentTypes}.
+     */
+    public abstract static class DataComponents extends DeferredRegister<DataComponentType<?>> {
+        protected DataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace) {
+            super(registryKey, namespace);
+        }
+
+        /**
+         * Convenience method that constructs a builder for use in the operator. Use this to avoid inference issues.
+         *
+         * @param name    The name for this data component type. It will automatically have the {@linkplain #getNamespace() namespace} prefixed.
+         * @param builder The unary operator, which is passed a new builder for user operations, then builds it upon registration.
+         * @return A {@link DeferredHolder} which reflects the data that will be registered.
+         */
+        public <D> DeferredHolder<DataComponentType<?>, DataComponentType<D>> register(String name, UnaryOperator<DataComponentType.Builder<D>> builder) {
+            return this.register(name, () -> builder.apply(DataComponentType.builder()).build());
+        }
+
+        public <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name, StreamCodec<? super RegistryFriendlyByteBuf, T> networkCodec, @Nullable Codec<T> diskCodec, boolean cache) {
+            return register(name, builder -> {
+                builder.networkSynchronized(networkCodec);
+                if (diskCodec != null) {
+                    builder.persistent(diskCodec);
+                }
+                if (cache) {
+                    builder.cacheEncoding();
+                }
+                return builder;
+            });
+        }
+
+        public <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name, StreamCodec<? super RegistryFriendlyByteBuf, T> networkCodec, boolean cache) {
+            return register(name, networkCodec, null, cache);
+        }
+
+        public DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> registerUnit(String name, boolean persistent, boolean cache) {
+            return register(name, TommyLibExtraStreamCodecs.UNIT, persistent ? Unit.CODEC : null, cache);
+        }
+
+        public DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> registerInteger(String name, boolean persistent, boolean cache) {
+            return register(name, ByteBufCodecs.INT, persistent ? Codec.INT : null, cache);
+        }
+
+        public DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> registerBoolean(String name, boolean persistent, boolean cache) {
+            return register(name, ByteBufCodecs.BOOL, persistent ? Codec.BOOL : null, cache);
+        }
+    }
+
+    /**
+     * Specialized DeferredRegister for {@link EntityType EntityTypes}.
+     */
+    public abstract static class Entities extends DeferredRegister<EntityType<?>> {
+        protected Entities(String namespace) {
+            super(Registries.ENTITY_TYPE, namespace);
+        }
+
+        /**
+         * Convenience method that constructs a builder. Use this to avoid inference issues.
+         *
+         * @param name     The name for this entity type. It will automatically have the {@linkplain #getNamespace() namespace} prefixed.
+         * @param factory  The factory used to typically construct the entity when using an existing helper from the type.
+         * @param category The category of the entity, typically {@link MobCategory#MISC} for non-living entities, or one of the others for living entities.
+         * @return A {@link DeferredHolder} which reflects the data that will be registered.
+         * @param <E> the type of the entity
+         */
+        public <E extends Entity> DeferredHolder<EntityType<?>, EntityType<E>> register(String name, EntityType.EntityFactory<E> factory, MobCategory category) {
+            return this.register(name, factory, category, UnaryOperator.identity());
+        }
+
+        /**
+         * Convenience method that constructs a builder for use in the operator. Use this to avoid inference issues.
+         *
+         * @param name     The name for this entity type. It will automatically have the {@linkplain #getNamespace() namespace} prefixed.
+         * @param factory  The factory used to typically construct the entity when using an existing helper from the type.
+         * @param category The category of the entity, typically {@link MobCategory#MISC} for non-living entities, or one of the others for living entities.
+         * @param builder  The unary operator, which is passed a new builder for user operators, then builds it upon registration.
+         * @return A {@link DeferredHolder} which reflects the data that will be registered.
+         * @param <E> the type of the entity
+         */
+        public <E extends Entity> DeferredHolder<EntityType<?>, EntityType<E>> register(String name, EntityType.EntityFactory<E> factory, MobCategory category, UnaryOperator<EntityType.Builder<E>> builder) {
+            return this.register(name, () -> builder.apply(EntityType.Builder.of(factory, category)).build(name));
         }
     }
 
@@ -455,38 +578,54 @@ public abstract class DeferredRegister<T> {
          * Creates a {@link DeferredRegister}.
          *
          * @param resourceKey the {@link ResourceKey} of the registry to create this provider for
-         * @param modId       the mod id for which the provider will register objects
+         * @param namespace   the mod id for which the provider will register objects
          * @param <T>         the type of the provider
          * @return the provider
          */
-        <T> DeferredRegister<T> create(ResourceKey<? extends Registry<T>> resourceKey, String modId);
+        <T> DeferredRegister<T> create(ResourceKey<? extends Registry<T>> resourceKey, String namespace);
 
         /**
          * Creates a {@link DeferredRegister}.
          *
-         * @param registry the {@link Registry} to create this provider for
-         * @param modId    the mod id for which the provider will register objects
-         * @param <T>      the type of the provider
+         * @param registry  the {@link Registry} to create this provider for
+         * @param namespace the mod id for which the provider will register objects
+         * @param <T>       the type of the provider
          * @return the provider
          */
-        default <T> DeferredRegister<T> create(Registry<T> registry, String modId) {
-            return this.create(registry.key(), modId);
+        default <T> DeferredRegister<T> create(Registry<T> registry, String namespace) {
+            return this.create(registry.key(), namespace);
         }
 
         /**
          * Creates a {@link DeferredRegister.Items}.
          *
-         * @param modId the mod id for which the provider will register objects
+         * @param namespace the mod id for which the provider will register objects
          * @return the provider
          */
-        Items createItems(String modId);
+        Items createItems(String namespace);
 
         /**
          * Creates a {@link DeferredRegister.Blocks}.
          *
-         * @param modId the mod id for which the provider will register objects
+         * @param namespace the mod id for which the provider will register objects
          * @return the provider
          */
-        Blocks createBlocks(String modId);
+        Blocks createBlocks(String namespace);
+
+        /**
+         * Creates a {@link DeferredRegister.DataComponents}.
+         *
+         * @param namespace the mod id for which the provider will register objects
+         * @return the provider
+         */
+        DataComponents createDataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace);
+
+        /**
+         * Creates a {@link Entities}
+         *
+         * @param namespace the mod id for which the provider will register entity types
+         * @return the provider
+         */
+        Entities createEntities(String namespace);
     }
 }

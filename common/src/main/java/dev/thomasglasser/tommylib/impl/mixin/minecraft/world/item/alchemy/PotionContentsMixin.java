@@ -22,14 +22,14 @@ public class PotionContentsMixin {
     private Optional<Holder<Potion>> potion;
 
     @ModifyReturnValue(method = "getColor()I", at = @At("RETURN"))
-    public int getColor(int original) {
+    public int getEmptyColoredPotionColor(int original) {
         if (customColor.isEmpty() && potion.isPresent() && potion.get().value() instanceof EmptyColoredPotion emptyColoredPotion)
             return emptyColoredPotion.getColor();
         return original;
     }
 
     @ModifyReturnValue(method = "getColor(Lnet/minecraft/core/Holder;)I", at = @At("RETURN"))
-    private static int getColor(int original, Holder<Potion> potion) {
+    private static int getEmptyColoredPotionColor(int original, Holder<Potion> potion) {
         if (potion.value() instanceof EmptyColoredPotion emptyColoredPotion)
             return emptyColoredPotion.getColor();
         return original;

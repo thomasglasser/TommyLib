@@ -1,38 +1,55 @@
 package dev.thomasglasser.tommylib.impl.platform.services;
 
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * Mod loader related helpers
+ */
 public interface PlatformHelper {
     /**
-     * Gets the name of the current platform
+     * Gets the name of the current platform.
      *
-     * @return The name of the current platform.
+     * @return The name of the current platform
      */
     String getPlatformName();
 
     /**
      * Checks if a mod with the given id is loaded.
      *
-     * @param modId The mod to check if it is loaded.
-     * @return True if the mod is loaded, false otherwise.
+     * @param modId The mod to check if it is loaded
+     * @return Whether the mod is loaded
      */
     boolean isModLoaded(String modId);
 
     /**
-     * Check if the game is currently in a development environment.
+     * Checks if the game is in a development environment.
      *
-     * @return True if in a development environment, false otherwise.
+     * @return Whether the game is in a development environment
      */
     boolean isDevelopmentEnvironment();
 
     /**
-     * Gets the name of the environment type as a string.
+     * Gets the name of the environment.
      *
-     * @return The name of the environment type.
+     * @return The name of the environment
      */
     default String getEnvironmentName() {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
 
+    /**
+     * Checks whether the mod is running on the client side.
+     * 
+     * @return Whether the mod is running on the client side
+     */
     boolean isClientSide();
 
+    /**
+     * Gets the version of the mod with the specified ID
+     * 
+     * @param modId The mod ID to check
+     * @return The version of the mod with the specified ID, or null if it is not loaded
+     */
+    @Nullable
     String getModVersion(String modId);
 }

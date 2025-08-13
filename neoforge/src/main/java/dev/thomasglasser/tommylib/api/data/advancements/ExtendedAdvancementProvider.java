@@ -1,13 +1,14 @@
 package dev.thomasglasser.tommylib.api.data.advancements;
 
 import com.google.gson.JsonArray;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.HolderLookup;
@@ -23,30 +24,29 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 /**
  * An {@link AdvancementProvider} that dumps a list of all generated advancements.
  */
-public class ExtendedAdvancementProvider extends AdvancementProvider {
+public class ExtendedAdvancementProvider implements DataProvider {
     protected final CompletableFuture<HolderLookup.Provider> registries;
     protected final PackOutput.PathProvider pathProvider;
-    protected final List<AdvancementSubProvider> subProviders;
+    protected final Set<AdvancementSubProvider> subProviders;
     protected final PackOutput output;
 
-    public ExtendedAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper, List<AdvancementGenerator> subProviders) {
-        super(output, registries, existingFileHelper, subProviders);
+    public ExtendedAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper, Set<AdvancementProvider.AdvancementGenerator> subProviders) {
         this.registries = registries;
         this.pathProvider = output.createRegistryElementsPathProvider(Registries.ADVANCEMENT);
-        this.subProviders = subProviders.stream().map((generator) -> generator.toSubProvider(existingFileHelper)).toList();
+        this.subProviders = subProviders.stream().map(generator -> generator.toSubProvider(existingFileHelper)).collect(Collectors.toSet());
         this.output = output;
     }
 
     public CompletableFuture<?> run(CachedOutput output) {
         return this.registries.thenCompose((provider) -> {
-            Set<ResourceLocation> set = new HashSet();
-            List<CompletableFuture<?>> list = new ArrayList();
+            SortedSet<ResourceLocation> ids = new ObjectLinkedOpenHashSet<>();
+            Set<CompletableFuture<?>> futures = new ReferenceOpenHashSet<>();
             Consumer<AdvancementHolder> consumer = (advancementHolder) -> {
-                if (!set.add(advancementHolder.id())) {
+                if (!ids.add(advancementHolder.id())) {
                     throw new IllegalStateException("Duplicate advancement " + advancementHolder.id());
                 } else {
                     Path path = this.pathProvider.json(advancementHolder.id());
-                    list.add(DataProvider.saveStable(output, provider, Advancement.CODEC, advancementHolder.value(), path));
+                    futures.add(DataProvider.saveStable(output, provider, Advancement.CODEC, advancementHolder.value(), path));
                 }
             };
 
@@ -54,9 +54,14 @@ public class ExtendedAdvancementProvider extends AdvancementProvider {
                 advancementSubProvider.generate(provider, consumer);
             }
             JsonArray jsonarray = new JsonArray();
-            set.stream().sorted().forEach(rl -> jsonarray.add(rl.toString()));
-            list.add(DataProvider.saveStable(output, jsonarray, this.output.getOutputFolder(PackOutput.Target.REPORTS).resolve("advancements.json")));
-            return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
+            ids.forEach(rl -> jsonarray.add(rl.toString()));
+            futures.add(DataProvider.saveStable(output, jsonarray, this.output.getOutputFolder(PackOutput.Target.REPORTS).resolve("advancements.json")));
+            return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
         });
+    }
+
+    @Override
+    public String getName() {
+        return "Advancements";
     }
 }

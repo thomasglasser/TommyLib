@@ -12,4 +12,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
  * @param codec     The codec used to encode and decode the payload
  * @param <T>       The type of payload
  */
-public record PayloadInfo<T extends ExtendedPacketPayload>(CustomPacketPayload.Type<T> type, ExtendedPacketPayload.Direction direction, StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {}
+public record PayloadInfo<T extends ExtendedPacketPayload>(CustomPacketPayload.Type<T> type,
+        ExtendedPacketPayload.Direction direction,
+        StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {}

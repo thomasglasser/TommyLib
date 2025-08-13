@@ -1,4 +1,4 @@
-package dev.thomasglasser.tommylib.api.network;
+package dev.thomasglasser.tommylib.api.util;
 
 import com.mojang.datafixers.util.Function10;
 import com.mojang.datafixers.util.Function11;
@@ -10,39 +10,42 @@ import com.mojang.datafixers.util.Function16;
 import com.mojang.datafixers.util.Function7;
 import com.mojang.datafixers.util.Function8;
 import com.mojang.datafixers.util.Function9;
-import io.netty.buffer.Unpooled;
+import io.netty.buffer.ByteBuf;
+import java.util.Optional;
 import java.util.function.Function;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Unit;
+import net.minecraft.world.phys.Vec3;
 
-public class NetworkUtils {
-    /**
-     * Creates an empty {@link FriendlyByteBuf}.
-     * 
-     * @return An empty {@link FriendlyByteBuf}.
-     */
-    public static FriendlyByteBuf empty() {
-        return new FriendlyByteBuf(Unpooled.EMPTY_BUFFER);
-    }
-
-    /**
-     * Creates a new {@link FriendlyByteBuf}.
-     * 
-     * @return A new {@link FriendlyByteBuf}.
-     */
-    public static FriendlyByteBuf create() {
-        return new FriendlyByteBuf(Unpooled.buffer());
-    }
+/**
+ * Provides more codecs and overloads for making more.
+ */
+public class TommyLibExtraStreamCodecs {
+    public static final StreamCodec<ByteBuf, Unit> UNIT = StreamCodec.unit(Unit.INSTANCE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, DataComponentType<?>> DATA_COMPONENT_TYPE = ByteBufCodecs.registry(Registries.DATA_COMPONENT_TYPE);
+    public static final StreamCodec<ByteBuf, Optional<ResourceLocation>> OPTIONAL_RESOURCE_LOCATION = ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC);
+    public static final StreamCodec<ByteBuf, Vec3> VEC_3 = StreamCodec.composite(
+            ByteBufCodecs.DOUBLE, Vec3::x,
+            ByteBufCodecs.DOUBLE, Vec3::y,
+            ByteBufCodecs.DOUBLE, Vec3::z,
+            Vec3::new);
+    public static final StreamCodec<ByteBuf, Optional<Vec3>> OPTIONAL_VEC_3 = ByteBufCodecs.optional(VEC_3);
 
     /**
      * Creates a {@link StreamCodec} for an enum.
      * 
-     * @param enumClass The class of the enum.
-     * @return A {@link StreamCodec} for the enum.
-     * @param <B> The type of the {@link FriendlyByteBuf}.
-     * @param <V> The type of the enum.
+     * @param enumClass The class of the enum
+     * @return A {@link StreamCodec} for the enum
+     * @param <B> The type of the {@link FriendlyByteBuf}
+     * @param <V> The type of the enum
      */
-    public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> enumCodec(Class<V> enumClass) {
+    public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> forEnum(Class<V> enumClass) {
         return new StreamCodec<>() {
             @Override
             public V decode(B buf) {
@@ -59,17 +62,17 @@ public class NetworkUtils {
     /**
      * Creates a {@link StreamCodec} for more generics than the base class provides helpers for.
      * 
-     * @param streamCodec The {@link StreamCodec} to use for the object parameter.
-     * @param function    The getter {@link Function} to use for the object parameter.
-     * @param initializer The initializer {@link Function} for the object.
-     * @return A {@link StreamCodec}.
-     * @param <B> The type of the {@link FriendlyByteBuf}.
-     * @param <C> The type of the object.
+     * @param streamCodec The {@link StreamCodec} to use for the object parameter
+     * @param function    The getter {@link Function} to use for the object parameter
+     * @param initializer The initializer {@link Function} for the object
+     * @return A {@link StreamCodec}
+     * @param <B> The type of the {@link FriendlyByteBuf}
+     * @param <C> The type of the object
      */
 
     // Overload for 7 generics
     public static <B, C, T1, T2, T3, T4, T5, T6, T7> StreamCodec<B, C> composite(final StreamCodec<? super B, T1> streamCodec, final Function<C, T1> function, final StreamCodec<? super B, T2> streamCodec2, final Function<C, T2> function2, final StreamCodec<? super B, T3> streamCodec3, final Function<C, T3> function3, final StreamCodec<? super B, T4> streamCodec4, final Function<C, T4> function4, final StreamCodec<? super B, T5> streamCodec5, final Function<C, T5> function5, final StreamCodec<? super B, T6> streamCodec6, final Function<C, T6> function6, final StreamCodec<? super B, T7> streamCodec7, final Function<C, T7> function7, final Function7<T1, T2, T3, T4, T5, T6, T7, C> initializer) {
-        return new StreamCodec<B, C>() {
+        return new StreamCodec<>() {
             public C decode(B object) {
                 T1 object2 = streamCodec.decode(object);
                 T2 object3 = streamCodec2.decode(object);
@@ -104,7 +107,7 @@ public class NetworkUtils {
             final StreamCodec<? super B, T7> streamCodec7, final Function<C, T7> function7,
             final StreamCodec<? super B, T8> streamCodec8, final Function<C, T8> function8,
             final Function8<T1, T2, T3, T4, T5, T6, T7, T8, C> initializer) {
-        return new StreamCodec<B, C>() {
+        return new StreamCodec<>() {
             public C decode(B object) {
                 T1 object2 = streamCodec1.decode(object);
                 T2 object3 = streamCodec2.decode(object);
@@ -142,7 +145,7 @@ public class NetworkUtils {
             final StreamCodec<? super B, T8> streamCodec8, final Function<C, T8> function8,
             final StreamCodec<? super B, T9> streamCodec9, final Function<C, T9> function9,
             final Function9<T1, T2, T3, T4, T5, T6, T7, T8, T9, C> initializer) {
-        return new StreamCodec<B, C>() {
+        return new StreamCodec<>() {
             public C decode(B object) {
                 T1 object2 = streamCodec1.decode(object);
                 T2 object3 = streamCodec2.decode(object);
@@ -183,7 +186,7 @@ public class NetworkUtils {
             final StreamCodec<? super B, T9> streamCodec9, final Function<C, T9> function9,
             final StreamCodec<? super B, T10> streamCodec10, final Function<C, T10> function10,
             final Function10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, C> initializer) {
-        return new StreamCodec<B, C>() {
+        return new StreamCodec<>() {
             public C decode(B object) {
                 T1 object2 = streamCodec1.decode(object);
                 T2 object3 = streamCodec2.decode(object);
@@ -227,7 +230,7 @@ public class NetworkUtils {
             final StreamCodec<? super B, T10> streamCodec10, final Function<C, T10> function10,
             final StreamCodec<? super B, T11> streamCodec11, final Function<C, T11> function11,
             final Function11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, C> initializer) {
-        return new StreamCodec<B, C>() {
+        return new StreamCodec<>() {
             public C decode(B object) {
                 T1 object2 = streamCodec1.decode(object);
                 T2 object3 = streamCodec2.decode(object);
@@ -274,7 +277,7 @@ public class NetworkUtils {
             final StreamCodec<? super B, T11> streamCodec11, final Function<C, T11> function11,
             final StreamCodec<? super B, T12> streamCodec12, final Function<C, T12> function12,
             final Function12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, C> initializer) {
-        return new StreamCodec<B, C>() {
+        return new StreamCodec<>() {
             public C decode(B object) {
                 T1 object2 = streamCodec1.decode(object);
                 T2 object3 = streamCodec2.decode(object);
@@ -324,7 +327,7 @@ public class NetworkUtils {
             final StreamCodec<? super B, T12> streamCodec12, final Function<C, T12> function12,
             final StreamCodec<? super B, T13> streamCodec13, final Function<C, T13> function13,
             final Function13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, C> initializer) {
-        return new StreamCodec<B, C>() {
+        return new StreamCodec<>() {
             public C decode(B object) {
                 T1 object2 = streamCodec1.decode(object);
                 T2 object3 = streamCodec2.decode(object);
@@ -377,7 +380,7 @@ public class NetworkUtils {
             final StreamCodec<? super B, T13> streamCodec13, final Function<C, T13> function13,
             final StreamCodec<? super B, T14> streamCodec14, final Function<C, T14> function14,
             final Function14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, C> initializer) {
-        return new StreamCodec<B, C>() {
+        return new StreamCodec<>() {
             public C decode(B object) {
                 T1 object2 = streamCodec1.decode(object);
                 T2 object3 = streamCodec2.decode(object);
@@ -433,7 +436,7 @@ public class NetworkUtils {
             final StreamCodec<? super B, T14> streamCodec14, final Function<C, T14> function14,
             final StreamCodec<? super B, T15> streamCodec15, final Function<C, T15> function15,
             final Function15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, C> initializer) {
-        return new StreamCodec<B, C>() {
+        return new StreamCodec<>() {
             public C decode(B object) {
                 T1 object2 = streamCodec1.decode(object);
                 T2 object3 = streamCodec2.decode(object);
@@ -492,7 +495,7 @@ public class NetworkUtils {
             final StreamCodec<? super B, T15> streamCodec15, final Function<C, T15> function15,
             final StreamCodec<? super B, T16> streamCodec16, final Function<C, T16> function16,
             final Function16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, C> initializer) {
-        return new StreamCodec<B, C>() {
+        return new StreamCodec<>() {
             @Override
             public C decode(B object) {
                 T1 object2 = streamCodec1.decode(object);

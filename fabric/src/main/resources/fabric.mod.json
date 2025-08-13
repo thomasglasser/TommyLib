@@ -16,7 +16,7 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "dev.thomasglasser.tommylib.TommyLibFabric"
+            "dev.thomasglasser.tommylib.impl.TommyLibFabric"
         ],
         "client": [
             "dev.thomasglasser.tommylib.impl.client.TommyLibFabricClient"

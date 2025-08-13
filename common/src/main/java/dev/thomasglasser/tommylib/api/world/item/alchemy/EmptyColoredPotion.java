@@ -1,10 +1,13 @@
 package dev.thomasglasser.tommylib.api.world.item.alchemy;
 
+import dev.thomasglasser.tommylib.impl.mixin.minecraft.world.item.alchemy.PotionContentsMixin;
 import net.minecraft.world.item.alchemy.Potion;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * An empty potion that uses a custom color.
+ *
+ * @see PotionContentsMixin
  */
 public class EmptyColoredPotion extends Potion {
     private int color;

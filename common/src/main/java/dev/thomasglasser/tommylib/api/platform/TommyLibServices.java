@@ -1,31 +1,26 @@
 package dev.thomasglasser.tommylib.api.platform;
 
-import dev.thomasglasser.tommylib.TommyLib;
-import dev.thomasglasser.tommylib.impl.platform.services.BlockEntityHelper;
+import dev.thomasglasser.tommylib.impl.TommyLib;
 import dev.thomasglasser.tommylib.impl.platform.services.ClientHelper;
-import dev.thomasglasser.tommylib.impl.platform.services.EntityHelper;
 import dev.thomasglasser.tommylib.impl.platform.services.NetworkHelper;
 import dev.thomasglasser.tommylib.impl.platform.services.PlatformHelper;
 import java.util.ServiceLoader;
 
-// Service loaders are a built-in Java feature that allow us to locate implementations of an interface that vary from one
-// environment to another. In the context of MultiLoader we use this feature to access a mock API in the common code that
-// is swapped out for the platform specific implementation at runtime.
+/**
+ * Platform-specific helpers that aid in resolving loader differences
+ */
 public class TommyLibServices {
-
-    // In this example we provide a platform helper which provides information about what platform the mod is running on.
-    // For example this can be used to check if the code is running on Forge vs Fabric, or to ask the modloader if another
-    // mod is loaded.
     public static final PlatformHelper PLATFORM = load(PlatformHelper.class);
     public static final NetworkHelper NETWORK = load(NetworkHelper.class);
-    public static final BlockEntityHelper BLOCK_ENTITY = load(BlockEntityHelper.class);
     public static final ClientHelper CLIENT = load(ClientHelper.class);
-    public static final EntityHelper ENTITY = load(EntityHelper.class);
 
-    // This code is used to load a service for the current environment. Your implementation of the service must be defined
-    // manually by including a text file in META-INF/services named with the fully qualified class name of the service.
-    // Inside the file you should write the fully qualified class name of the implementation to load for the platform. For
-    // example our file on Forge points to ForgePlatformHelper while Fabric points to FabricPlatformHelper.
+    /**
+     * Loads a service using a service file in the META-INF/services/ folder.
+     * 
+     * @param clazz The class of the service to load
+     * @return The loaded service
+     * @param <T> The type of the service.
+     */
     public static <T> T load(Class<T> clazz) {
         final T loadedService = ServiceLoader.load(clazz)
                 .findFirst()
