@@ -1,6 +1,6 @@
 package dev.thomasglasser.tommylib.api.world.entity;
 
-import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -61,7 +61,7 @@ public class EntityUtils {
      */
     public static Set<ItemStack> getInventory(Entity entity) {
         if (entity instanceof LivingEntity livingEntity) {
-            Set<ItemStack> inventory = new ReferenceOpenHashSet<>();
+            Set<ItemStack> inventory = new ObjectOpenHashSet<>();
             for (ItemStack stack : livingEntity.getAllSlots()) {
                 inventory.add(stack);
             }
@@ -72,9 +72,9 @@ public class EntityUtils {
             }
             return inventory;
         } else if (entity instanceof ItemEntity itemEntity) {
-            return ReferenceOpenHashSet.of(itemEntity.getItem());
+            return ObjectOpenHashSet.of(itemEntity.getItem());
         }
-        return ReferenceOpenHashSet.of();
+        return ObjectOpenHashSet.of();
     }
 
     /**

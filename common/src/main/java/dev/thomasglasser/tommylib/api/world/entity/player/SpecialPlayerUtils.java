@@ -1,7 +1,7 @@
 package dev.thomasglasser.tommylib.api.world.entity.player;
 
 import dev.thomasglasser.tommylib.impl.TommyLib;
-import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -50,7 +50,7 @@ public class SpecialPlayerUtils {
             if (HttpURLConnection.HTTP_OK != connection.getResponseCode()) {
                 TommyLib.LOGGER.error("Failed connection to cloud based special player list, response code {}", connection.getResponseMessage());
 
-                return ReferenceOpenHashSet.of();
+                return ObjectOpenHashSet.of();
             }
 
             fileReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -69,7 +69,7 @@ public class SpecialPlayerUtils {
                             if (givenUUID.equals(uuid)) {
                                 String[] types = lineSplit[2].split(",");
                                 TommyLib.LOGGER.debug("Found special player types for UUID {}: {}", uuid, types);
-                                return ReferenceOpenHashSet.of(types);
+                                return ObjectOpenHashSet.of(types);
                             }
                         } catch (IllegalArgumentException ex) {
                             TommyLib.LOGGER.error("Invalid UUID format from web: {}", uuidString);
@@ -85,6 +85,6 @@ public class SpecialPlayerUtils {
             IOUtils.closeQuietly(fileReader);
         }
 
-        return ReferenceOpenHashSet.of();
+        return ObjectOpenHashSet.of();
     }
 }

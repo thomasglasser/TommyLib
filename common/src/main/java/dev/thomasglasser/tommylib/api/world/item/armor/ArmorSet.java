@@ -1,6 +1,7 @@
 package dev.thomasglasser.tommylib.api.world.item.armor;
 
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -43,7 +44,7 @@ public record ArmorSet(String name, DeferredItem<ArmorItem> head, DeferredItem<A
     }
 
     public List<DeferredItem<ArmorItem>> getAll() {
-        return ReferenceArrayList.of(head, chest, legs, feet);
+        return ObjectArrayList.of(head, chest, legs, feet);
     }
 
     public List<ResourceKey<Item>> getAllKeys() {
@@ -51,10 +52,10 @@ public record ArmorSet(String name, DeferredItem<ArmorItem> head, DeferredItem<A
     }
 
     public List<ArmorItem> getAllAsItems() {
-        return ReferenceArrayList.of(head.get(), chest.get(), legs.get(), feet.get());
+        return ObjectArrayList.of(head.get(), chest.get(), legs.get(), feet.get());
     }
 
     public List<ItemStack> getAllAsStacks() {
-        return ReferenceArrayList.of(head.toStack(), chest.toStack(), legs.toStack(), feet.toStack());
+        return ObjectArrayList.of(head.toStack(), chest.toStack(), legs.toStack(), feet.toStack());
     }
 }
