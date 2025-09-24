@@ -253,8 +253,8 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param description The description of the pack
      */
     public void add(PackInfo packInfo, String title, String description) {
-        add(packInfo.titleKey(), title);
-        add(packInfo.descriptionKey(), description);
+        add(packInfo.title(), title);
+        add(packInfo.description(), description);
     }
 
     /**

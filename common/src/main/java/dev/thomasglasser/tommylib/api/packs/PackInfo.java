@@ -2,8 +2,14 @@ package dev.thomasglasser.tommylib.api.packs;
 
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
 import java.util.Objects;
+import java.util.Optional;
+import net.minecraft.DetectedVersion;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.metadata.PackMetadataGenerator;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.KnownPack;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
@@ -59,8 +65,8 @@ public record PackInfo(KnownPack knownPack, PackType type, PackSource source) {
      * 
      * @return The translation key for the pack's title
      */
-    public String titleKey() {
-        return key() + ".name";
+    public Component title() {
+        return Component.translatable(key() + ".name");
     }
 
     /**
@@ -68,8 +74,8 @@ public record PackInfo(KnownPack knownPack, PackType type, PackSource source) {
      * 
      * @return The translation key for the pack's description
      */
-    public String descriptionKey() {
-        return key() + ".description";
+    public Component description() {
+        return Component.translatable(key() + ".description");
     }
 
     /**
@@ -79,5 +85,26 @@ public record PackInfo(KnownPack knownPack, PackType type, PackSource source) {
      */
     private String key() {
         return "pack." + this.knownPack.namespace() + "." + this.knownPack.id();
+    }
+
+    /**
+     * Creates a {@link PackOutput} in a subdirectory of the provided {@link PackOutput}.
+     * 
+     * @param output The output to create the subdirectory in
+     * @return The new {@link PackOutput}.
+     */
+    public PackOutput toSubPackOutput(PackOutput output) {
+        return new PackOutput(output.getOutputFolder().resolve(path()));
+    }
+
+    /**
+     * Creates a {@link PackMetadataGenerator} for this pack.
+     *
+     * @param output The output to create the metadata file in
+     * @return The new {@link PackMetadataGenerator}.
+     */
+    public PackMetadataGenerator toGenerator(PackOutput output) {
+        return new PackMetadataGenerator(output)
+                .add(PackMetadataSection.TYPE, new PackMetadataSection(description(), DetectedVersion.BUILT_IN.getPackVersion(type()), Optional.empty()));
     }
 }
