@@ -43,7 +43,7 @@ public abstract class ExtendedLootTableProvider extends LootTableProvider {
                         p_380823_ -> p_380823_.value()
                                 .validate(
                                         validationcontext.setContextKeySet(p_380823_.value().getParamSet())
-                                                .enterElement("{" + p_380823_.key().location() + "}", p_380823_.key())));
+                                                .enterElement(new ProblemReporter.RootElementPathElement(p_380823_.key()), p_380823_.key())));
     }
 
     protected CompletableFuture<?> dumpRegistry(CachedOutput output) {

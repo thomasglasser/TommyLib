@@ -2,7 +2,6 @@ package dev.thomasglasser.tommylib.api.world.entity.projectile;
 
 import dev.thomasglasser.tommylib.api.world.item.ItemUtils;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -22,6 +21,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -83,7 +84,7 @@ public class ThrownSword extends AbstractArrow {
                 this.setNoPhysics(true);
                 Vec3 vec3 = entity.getEyePosition().subtract(this.position());
                 this.setPosRaw(this.getX(), this.getY() + vec3.y * 0.015D * (double) i, this.getZ());
-                if (this.level().isClientSide) {
+                if (this.level().isClientSide()) {
                     this.yOld = this.getY();
                 }
 
@@ -138,7 +139,7 @@ public class ThrownSword extends AbstractArrow {
             }
         }
 
-        this.deflect(ProjectileDeflection.REVERSE, entity, this.getOwner(), false);
+        this.deflect(ProjectileDeflection.REVERSE, entity, owner, false);
         this.setDeltaMovement(this.getDeltaMovement().multiply(0.02, 0.2, 0.02));
         this.playSound(getDefaultHitGroundSoundEvent());
     }
@@ -158,15 +159,16 @@ public class ThrownSword extends AbstractArrow {
         }
     }
 
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        this.dealtDamage = tag.getBooleanOr("DealtDamage", false);
+    @Override
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.dealtDamage = input.getBooleanOr("DealtDamage", false);
         this.entityData.set(ID_LOYALTY, ItemUtils.getLoyaltyFromItem(getDefaultPickupItem(), level(), this));
     }
 
-    public void addAdditionalSaveData(CompoundTag pCompound) {
-        super.addAdditionalSaveData(pCompound);
-        pCompound.putBoolean("DealtDamage", this.dealtDamage);
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putBoolean("DealtDamage", this.dealtDamage);
     }
 
     public void tickDespawn() {

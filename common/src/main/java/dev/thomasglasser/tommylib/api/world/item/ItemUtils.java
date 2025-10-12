@@ -82,7 +82,7 @@ public final class ItemUtils {
      * @return The registered spawn egg item holder.
      */
     public static DeferredItem<SpawnEggItem> registerSpawnEgg(DeferredRegister.Items provider, DeferredHolder<EntityType<?>, EntityType<? extends Mob>> entityType) {
-        return provider.registerItem(entityType.getId().getPath() + "_spawn_egg", properties -> new SpawnEggItem(entityType.get(), properties));
+        return provider.registerItem(entityType.getId().getPath() + "_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(entityType.get())));
     }
 
     /**

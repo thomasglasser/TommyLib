@@ -8,5 +8,5 @@ import net.minecraft.world.item.CreativeModeTab;
 public interface ClientHelper {
     CreativeModeTab.Builder tabBuilder();
 
-    Supplier<KeyMapping> registerKeyMapping(ResourceLocation name, int key, String category);
+    Supplier<KeyMapping> registerKeyMapping(ResourceLocation name, int key, KeyMapping.Category category);
 }

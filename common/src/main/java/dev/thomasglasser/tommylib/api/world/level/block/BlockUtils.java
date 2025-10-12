@@ -209,14 +209,14 @@ public class BlockUtils {
                 .mapColor(mapColor)
                 .forceSolidOn()
                 .instrument(NoteBlockInstrument.BASS)
-                .noCollission()
+                .noCollision()
                 .strength(1.0F)
                 .ignitedByLava());
         DeferredBlock<WallSignBlock> wallSign = register(provider, name + "_wall_sign", properties -> new WallSignBlock(woodType.get(), properties), () -> Blocks.wallVariant(sign.get(), true)
                 .mapColor(MapColor.WOOD)
                 .forceSolidOn()
                 .instrument(NoteBlockInstrument.BASS)
-                .noCollission()
+                .noCollision()
                 .strength(1.0F)
                 .ignitedByLava());
         itemProvider.registerItem(name + "_sign", properties -> new SignItem(sign.get(), wallSign.get(), properties), new Item.Properties().stacksTo(16));
@@ -224,14 +224,14 @@ public class BlockUtils {
                 .mapColor(log.get().defaultMapColor())
                 .forceSolidOn()
                 .instrument(NoteBlockInstrument.BASS)
-                .noCollission()
+                .noCollision()
                 .strength(1.0F)
                 .ignitedByLava());
         DeferredBlock<WallHangingSignBlock> wallHangingSign = register(provider, name + "_wall_hanging_sign", properties -> new WallHangingSignBlock(woodType.get(), properties), () -> Blocks.wallVariant(hangingSign.get(), true)
                 .mapColor(log.get().defaultMapColor())
                 .forceSolidOn()
                 .instrument(NoteBlockInstrument.BASS)
-                .noCollission()
+                .noCollision()
                 .strength(1.0F)
                 .ignitedByLava());
         itemProvider.registerItem(name + "_hanging_sign", properties -> new HangingSignItem(hangingSign.get(), wallHangingSign.get(), properties), new Item.Properties().stacksTo(16));
@@ -261,7 +261,7 @@ public class BlockUtils {
                         .mapColor(planks.get().defaultMapColor())
                         .forceSolidOn()
                         .instrument(NoteBlockInstrument.BASS)
-                        .noCollission()
+                        .noCollision()
                         .strength(0.5F)
                         .ignitedByLava()
                         .pushReaction(PushReaction.DESTROY), itemProvider),
@@ -309,7 +309,7 @@ public class BlockUtils {
     public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, String name, TreeGrower treeGrower, DeferredRegister.Items itemProvider) {
         DeferredBlock<SaplingBlock> sapling = registerBlockAndItemAndWrap(provider, name + "_sapling", properties -> new SaplingBlock(treeGrower, properties), () -> BlockBehaviour.Properties.of()
                 .mapColor(MapColor.PLANT)
-                .noCollission()
+                .noCollision()
                 .randomTicks()
                 .instabreak()
                 .sound(SoundType.GRASS)
@@ -332,7 +332,7 @@ public class BlockUtils {
     public static LeavesSet registerLeavesSet(DeferredRegister.Blocks provider, String name, ExtendedTreeGrower treeGrower, DeferredRegister.Items itemProvider) {
         DeferredBlock<SaplingBlock> sapling = registerBlockAndItemAndWrap(provider, name + "_sapling", properties -> new ExtendedSaplingBlock(treeGrower, properties), () -> BlockBehaviour.Properties.of()
                 .mapColor(MapColor.PLANT)
-                .noCollission()
+                .noCollision()
                 .randomTicks()
                 .instabreak()
                 .sound(SoundType.GRASS)

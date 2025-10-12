@@ -8,7 +8,7 @@
     "minecraft.world.item.alchemy.PotionContentsMixin"
   ],
   "client": [
-    "minecraft.client.renderer.entity.player.PlayerRendererMixin"
+    "minecraft.client.renderer.entity.player.AvatarRendererMixin"
   ],
   "server": [
   ],

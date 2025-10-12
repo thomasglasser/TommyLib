@@ -8,16 +8,17 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.data.BlockTagCopyingItemTagProvider;
+import net.neoforged.neoforge.common.data.ItemTagsProvider;
 
 /**
  * Extension of {@link ItemTagsProvider} that provides functionality for mod holders
  * and dumps the contents of all generated tags without the default namespace.
  */
-public abstract class ExtendedItemTagsProvider extends ItemTagsProvider {
+public abstract class ExtendedItemTagsProvider extends BlockTagCopyingItemTagProvider {
     protected final PackOutput output;
 
     public ExtendedItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> blockTagsProvider, String modId) {

@@ -21,7 +21,7 @@ public class NeoForgeClientHelper implements ClientHelper {
     }
 
     @Override
-    public Supplier<KeyMapping> registerKeyMapping(ResourceLocation name, int key, String category) {
+    public Supplier<KeyMapping> registerKeyMapping(ResourceLocation name, int key, KeyMapping.Category category) {
         Supplier<KeyMapping> mapping = Suppliers.memoize(() -> new KeyMapping(name.toLanguageKey("key"), key, category));
         keyMappings.add(mapping);
         return mapping;

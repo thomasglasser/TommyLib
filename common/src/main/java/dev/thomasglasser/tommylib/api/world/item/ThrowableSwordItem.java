@@ -45,13 +45,13 @@ public class ThrowableSwordItem extends Item implements ProjectileItem {
         return 72000;
     }
 
-    public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
-        if (entityLiving instanceof Player player) {
-            int i = this.getUseDuration(stack, entityLiving) - timeLeft;
+    public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
+        if (entity instanceof Player player) {
+            int i = this.getUseDuration(stack, entity) - timeLeft;
             if (i >= 10) {
                 if (!isTooDamagedToUse(stack)) {
-                    if (!level.isClientSide) {
-                        stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(entityLiving.getUsedItemHand()));
+                    if (!level.isClientSide()) {
+                        stack.hurtAndBreak(1, player, entity.getUsedItemHand());
                         ThrownSword thrown = getThrown(level, stack, player);
                         thrown.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
                         if (player.hasInfiniteMaterials()) {

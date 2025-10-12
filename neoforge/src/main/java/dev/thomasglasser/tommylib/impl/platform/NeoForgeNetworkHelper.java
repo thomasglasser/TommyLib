@@ -5,12 +5,13 @@ import dev.thomasglasser.tommylib.impl.platform.services.NetworkHelper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class NeoForgeNetworkHelper implements NetworkHelper {
     @Override
     public void sendToServer(ExtendedPacketPayload extendedPacketPayload) {
-        PacketDistributor.sendToServer(extendedPacketPayload);
+        ClientPacketDistributor.sendToServer(extendedPacketPayload);
     }
 
     @Override

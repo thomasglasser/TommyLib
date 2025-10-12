@@ -15,7 +15,7 @@ public class FabricClientHelper implements ClientHelper {
     }
 
     @Override
-    public Supplier<KeyMapping> registerKeyMapping(ResourceLocation name, int key, String category) {
+    public Supplier<KeyMapping> registerKeyMapping(ResourceLocation name, int key, KeyMapping.Category category) {
         KeyMapping mapping = KeyBindingHelper.registerKeyBinding(new KeyMapping(name.toLanguageKey("key"), key, category));
         return () -> mapping;
     }
