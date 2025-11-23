@@ -1,10 +1,15 @@
 package dev.thomasglasser.tommylib.api.world.level.block;
 
 import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
+import dev.thomasglasser.tommylib.api.world.item.CreativeModeTabInserter;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 /**
@@ -25,5 +30,12 @@ public record LeavesSet(ResourceLocation id,
 
     public List<Item> getAllItems() {
         return ObjectArrayList.of(leaves.asItem(), sapling.asItem());
+    }
+
+    public void addToCreativeModeTab(ResourceKey<CreativeModeTab> tab, CreativeModeTabInserter inserter, ItemStack precedingLeaves, ItemStack precedingSapling) {
+        if (tab == CreativeModeTabs.NATURAL_BLOCKS) {
+            inserter.insertAfter(precedingLeaves, leaves.toStack());
+            inserter.insertAfter(precedingSapling, sapling.toStack());
+        }
     }
 }

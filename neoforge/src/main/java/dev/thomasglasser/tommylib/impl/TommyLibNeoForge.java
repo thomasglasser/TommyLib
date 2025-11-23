@@ -1,7 +1,6 @@
 package dev.thomasglasser.tommylib.impl;
 
 import dev.thomasglasser.tommylib.impl.data.TommyLibDataGenerators;
-import dev.thomasglasser.tommylib.impl.network.TommyLibNeoForgePayloads;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
@@ -11,7 +10,5 @@ public class TommyLibNeoForge {
         TommyLib.init();
 
         modBus.addListener(TommyLibDataGenerators::onGatherData);
-
-        modBus.addListener(TommyLibNeoForgePayloads::onRegisterPayloadHandlers);
     }
 }

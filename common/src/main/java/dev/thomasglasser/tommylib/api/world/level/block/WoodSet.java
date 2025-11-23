@@ -2,13 +2,18 @@ package dev.thomasglasser.tommylib.api.world.level.block;
 
 import dev.thomasglasser.tommylib.api.registration.DeferredBlock;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
+import dev.thomasglasser.tommylib.api.world.item.CreativeModeTabInserter;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
 import net.minecraft.data.BlockFamily;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BoatItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.CeilingHangingSignBlock;
@@ -72,6 +77,14 @@ public record WoodSet(ResourceLocation id,
         DeferredItem<? extends BoatItem> chestBoatItem,
         TagKey<Block> logsBlockTag,
         TagKey<Item> logsItemTag) {
+    public Block[] signs() {
+        return new Block[] { sign.get(), wallSign.get() };
+    }
+
+    public Block[] hangingSigns() {
+        return new Block[] { hangingSign.get(), wallHangingSign.get() };
+    }
+
     /**
      * Gets all blocks in this set.
      * 
@@ -110,18 +123,48 @@ public record WoodSet(ResourceLocation id,
      * @return The block family
      */
     public BlockFamily toBlockFamily() {
-        return new BlockFamily.Builder(planks().get())
-                .button(button().get())
-                .fence(fence().get())
-                .fenceGate(fenceGate().get())
-                .pressurePlate(pressurePlate().get())
-                .sign(sign().get(), wallSign().get())
-                .slab(slab().get())
-                .stairs(stairs().get())
-                .door(door().get())
-                .trapdoor(trapdoor().get())
+        return new BlockFamily.Builder(planks.get())
+                .button(button.get())
+                .fence(fence.get())
+                .fenceGate(fenceGate.get())
+                .pressurePlate(pressurePlate.get())
+                .sign(sign.get(), wallSign.get())
+                .slab(slab.get())
+                .stairs(stairs.get())
+                .door(door.get())
+                .trapdoor(trapdoor.get())
                 .recipeGroupPrefix("wooden")
                 .recipeUnlockedBy("has_planks")
                 .getFamily();
+    }
+
+    public void addToCreativeModeTab(ResourceKey<CreativeModeTab> tab, CreativeModeTabInserter inserter, ItemStack precedingButton, ItemStack precedingLog, ItemStack precedingHangingSign, ItemStack precedingChestBoat) {
+        if (tab == CreativeModeTabs.BUILDING_BLOCKS) {
+            inserter.insertAfter(precedingButton, log.toStack());
+            inserter.insertAfter(log.toStack(), wood.toStack());
+            inserter.insertAfter(wood.toStack(), strippedLog.toStack());
+            inserter.insertAfter(strippedLog.toStack(), strippedWood.toStack());
+            inserter.insertAfter(strippedWood.toStack(), planks.toStack());
+            inserter.insertAfter(planks.toStack(), stairs.toStack());
+            inserter.insertAfter(stairs.toStack(), slab.toStack());
+            inserter.insertAfter(slab.toStack(), fence.toStack());
+            inserter.insertAfter(fence.toStack(), fenceGate.toStack());
+            inserter.insertAfter(fenceGate.toStack(), door.toStack());
+            inserter.insertAfter(door.toStack(), trapdoor.toStack());
+            inserter.insertAfter(trapdoor.toStack(), pressurePlate.toStack());
+            inserter.insertAfter(pressurePlate.toStack(), button.toStack());
+        } else if (tab == CreativeModeTabs.NATURAL_BLOCKS) {
+            inserter.insertAfter(precedingLog, log.toStack());
+        } else if (tab == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            inserter.insertAfter(precedingHangingSign, sign.toStack());
+            inserter.insertAfter(sign.toStack(), hangingSign.toStack());
+        } else if (tab == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            inserter.insertAfter(precedingChestBoat, boatItem.toStack());
+            inserter.insertAfter(boatItem.toStack(), chestBoatItem.toStack());
+        }
+    }
+
+    public void addToCreativeModeTab(ResourceKey<CreativeModeTab> tab, CreativeModeTabInserter inserter, WoodSet precedingSet) {
+        addToCreativeModeTab(tab, inserter, precedingSet.button.toStack(), precedingSet.log.toStack(), precedingSet.hangingSign.toStack(), precedingSet.chestBoatItem.toStack());
     }
 }

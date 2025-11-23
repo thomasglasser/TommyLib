@@ -11,15 +11,25 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.CampfireCookingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SmokingRecipe;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.WithConditions;
 import org.jetbrains.annotations.Nullable;
@@ -68,13 +78,25 @@ public abstract class ExtendedRecipeProvider extends RecipeProvider {
         return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
     }
 
+    protected static String getHasName(TagKey<?> tag) {
+        String[] split = tag.location().getPath().split("/");
+        StringBuilder builder = new StringBuilder();
+        builder.append("has_");
+        for (int i = split.length - 1; i >= 0; i--) {
+            builder.append(split[i]);
+            if (i > 0)
+                builder.append("_");
+        }
+        return builder.toString();
+    }
+
     /**
      * Adds recipes for blocks in a {@link WoodSet}.
      * 
      * @param writer The {@link RecipeOutput} instance to write the recipes to
      * @param set    The {@link WoodSet} to add recipes for
      */
-    protected void woodSet(RecipeOutput writer, WoodSet set) {
+    protected static void woodSet(RecipeOutput writer, WoodSet set) {
         planksFromLogs(writer, set.planks(), set.logsItemTag(), 4);
         woodFromLogs(writer, set.wood(), set.log());
         woodFromLogs(writer, set.strippedWood(), set.strippedLog());
@@ -82,5 +104,45 @@ public abstract class ExtendedRecipeProvider extends RecipeProvider {
         chestBoat(writer, set.chestBoatItem(), set.boatItem());
         hangingSign(writer, set.hangingSign(), set.strippedLog());
         generateRecipes(writer, set.toBlockFamily(), FeatureFlagSet.of());
+    }
+
+    protected static void trimWithCopy(RecipeOutput recipeOutput, ItemLike template, ItemLike copyMaterial) {
+        ResourceLocation templateLoc = BuiltInRegistries.ITEM.getKey(template.asItem());
+        trimSmithing(recipeOutput, template.asItem(), templateLoc.withSuffix("_smithing_trim"));
+        copySmithingTemplate(recipeOutput, template, copyMaterial);
+    }
+
+    protected static void simpleSmeltingRecipe(RecipeOutput recipeOutput, ItemLike ingredient, ItemLike result, float experience) {
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ingredient), RecipeCategory.FOOD, result, experience, 200)
+                .unlockedBy(getHasName(ingredient), has(ingredient))
+                .save(recipeOutput);
+    }
+
+    protected static <T extends AbstractCookingRecipe> void simpleCookingRecipe(
+            RecipeOutput recipeOutput,
+            String cookingMethod,
+            RecipeSerializer<T> cookingSerializer,
+            AbstractCookingRecipe.Factory<T> recipeFactory,
+            int cookingTime,
+            ItemLike material,
+            ItemLike result,
+            float experience) {
+        SimpleCookingRecipeBuilder.generic(Ingredient.of(material), RecipeCategory.FOOD, result, experience, cookingTime, cookingSerializer, recipeFactory)
+                .unlockedBy(getHasName(material), has(material))
+                .save(recipeOutput, BuiltInRegistries.ITEM.getKey(result.asItem()).withSuffix("_from_" + cookingMethod));
+    }
+
+    protected static void simpleSmokingRecipe(RecipeOutput recipeOutput, ItemLike ingredient, ItemLike result, float experience) {
+        simpleCookingRecipe(recipeOutput, "smoking", RecipeSerializer.SMOKING_RECIPE, SmokingRecipe::new, 100, ingredient, result, experience);
+    }
+
+    protected static void simpleCampfireCookingRecipe(RecipeOutput recipeOutput, ItemLike ingredient, ItemLike result, float experience) {
+        simpleCookingRecipe(recipeOutput, "campfire_cooking", RecipeSerializer.CAMPFIRE_COOKING_RECIPE, CampfireCookingRecipe::new, 600, ingredient, result, experience);
+    }
+
+    protected static void simpleCookingRecipes(RecipeOutput recipeOutput, ItemLike input, ItemLike output, float experience) {
+        simpleSmeltingRecipe(recipeOutput, input, output, experience);
+        simpleSmokingRecipe(recipeOutput, input, output, experience);
+        simpleCampfireCookingRecipe(recipeOutput, input, output, experience);
     }
 }

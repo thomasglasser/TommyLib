@@ -15,3 +15,10 @@ accessible method net/minecraft/world/level/block/Blocks never (Lnet/minecraft/w
 accessible method net/minecraft/world/level/block/Blocks leaves (Lnet/minecraft/world/level/block/SoundType;)Lnet/minecraft/world/level/block/Block;
 accessible method net/minecraft/world/level/block/Blocks flowerPot (Lnet/minecraft/world/level/block/Block;)Lnet/minecraft/world/level/block/Block;
 accessible method net/minecraft/world/level/block/TrapDoorBlock <init> (Lnet/minecraft/world/level/block/state/properties/BlockSetType;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V
+
+# Creative Tabs
+accessible class net/minecraft/world/item/CreativeModeTab$TabVisibility
+accessible field net/minecraft/world/item/CreativeModeTabs BUILDING_BLOCKS Lnet/minecraft/resources/ResourceKey;
+accessible field net/minecraft/world/item/CreativeModeTabs NATURAL_BLOCKS Lnet/minecraft/resources/ResourceKey;
+accessible field net/minecraft/world/item/CreativeModeTabs FUNCTIONAL_BLOCKS Lnet/minecraft/resources/ResourceKey;
+accessible field net/minecraft/world/item/CreativeModeTabs TOOLS_AND_UTILITIES Lnet/minecraft/resources/ResourceKey;

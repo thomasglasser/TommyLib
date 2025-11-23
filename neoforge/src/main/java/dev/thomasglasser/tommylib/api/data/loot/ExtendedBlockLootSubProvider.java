@@ -15,6 +15,7 @@ import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -28,6 +29,8 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
  * Extension of {@link BlockLootSubProvider} that provides functionality for mod holders.
  */
 public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider {
+    protected static final float[] NORMAL_LEAVES_FRUIT_CHANCES = new float[] { 0.005F, 0.0055555557F, 0.00625F, 0.008333334F, 0.025F };
+
     /**
      * The {@link Set} of blocks that this provider must generate loot tables for.
      */
@@ -117,14 +120,39 @@ public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider 
     /**
      * Adds default loot tables for all blocks in a {@link LeavesSet}.
      * 
-     * @param set The {@link LeavesSet} to add loot tables for.
+     * @param set            The {@link LeavesSet} to add loot tables for.
+     * @param saplingChances The sapling drop chances.
      */
-    protected void leavesSet(LeavesSet set) {
-        add(set.leaves().get(), createLeavesDrops(set.leaves().get(), set.sapling().get(), NORMAL_LEAVES_SAPLING_CHANCES));
+    protected void leavesSet(LeavesSet set, float[] saplingChances) {
+        add(set.leaves().get(), createLeavesDrops(set.leaves().get(), set.sapling().get(), saplingChances));
 
         dropSelf(set.sapling().get());
 
         dropPottedContents(set.pottedSapling().get());
+    }
+
+    protected void leavesSet(LeavesSet set) {
+        leavesSet(set, NORMAL_LEAVES_SAPLING_CHANCES);
+    }
+
+    /**
+     * Adds default loot tables for all blocks in a {@link LeavesSet} with a fruit.
+     * 
+     * @param set            The {@link LeavesSet} to add loot tables for.
+     * @param fruit          The fruit to drop.
+     * @param saplingChances The sapling drop chances.
+     * @param fruitChances   The fruit drop chances.
+     */
+    protected void fruitfulLeavesSet(LeavesSet set, ItemLike fruit, float[] saplingChances, float[] fruitChances) {
+        add(set.leaves().get(), createFruitfulLeavesDrops(set.leaves().get(), set.sapling().get(), fruit, saplingChances, fruitChances));
+
+        dropSelf(set.sapling().get());
+
+        dropPottedContents(set.pottedSapling().get());
+    }
+
+    protected void fruitfulLeavesSet(LeavesSet set, ItemLike fruit) {
+        fruitfulLeavesSet(set, fruit, NORMAL_LEAVES_SAPLING_CHANCES, NORMAL_LEAVES_FRUIT_CHANCES);
     }
 
     /**
@@ -148,17 +176,21 @@ public abstract class ExtendedBlockLootSubProvider extends BlockLootSubProvider 
      * otherwise drops the second Block param with the passed chances for fortune levels,
      * adding in sticks and the passed item.
      */
-    protected LootTable.Builder createFruitfulLeavesDrops(Block pOakLeavesBlock, Block pSaplingBlock, Item fruit, float... pChances) {
+    protected LootTable.Builder createFruitfulLeavesDrops(Block leaves, Block sapling, ItemLike fruit, float[] saplingChances, float[] fruitChances) {
         HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
-        return this.createLeavesDrops(pOakLeavesBlock, pSaplingBlock, pChances)
+        return this.createLeavesDrops(leaves, sapling, saplingChances)
                 .withPool(
                         LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .when(this.doesNotHaveShearsOrSilkTouch())
                                 .add(
-                                        (this.applyExplosionCondition(pOakLeavesBlock, LootItem.lootTableItem(fruit)))
+                                        (this.applyExplosionCondition(leaves, LootItem.lootTableItem(fruit)))
                                                 .when(
                                                         BonusLevelTableCondition.bonusLevelFlatChance(
-                                                                registrylookup.getOrThrow(Enchantments.FORTUNE), 0.005F, 0.0055555557F, 0.00625F, 0.008333334F, 0.025F))));
+                                                                registrylookup.getOrThrow(Enchantments.FORTUNE), fruitChances))));
+    }
+
+    protected LootTable.Builder createFruitfulLeavesDrops(Block leaves, Block sapling, ItemLike fruit) {
+        return this.createFruitfulLeavesDrops(leaves, sapling, fruit, NORMAL_LEAVES_SAPLING_CHANCES, NORMAL_LEAVES_FRUIT_CHANCES);
     }
 }
