@@ -499,10 +499,6 @@ public abstract class DeferredRegister<T> {
             return register(name, TommyLibExtraStreamCodecs.UNIT, persistent ? Unit.CODEC : null, cache);
         }
 
-        public DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> registerInteger(String name, boolean persistent, boolean cache) {
-            return register(name, ByteBufCodecs.INT, persistent ? Codec.INT : null, cache);
-        }
-
         public DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> registerBoolean(String name, boolean persistent, boolean cache) {
             return register(name, ByteBufCodecs.BOOL, persistent ? Codec.BOOL : null, cache);
         }
