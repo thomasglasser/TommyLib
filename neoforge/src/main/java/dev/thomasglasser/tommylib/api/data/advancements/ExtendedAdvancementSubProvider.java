@@ -14,7 +14,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -83,7 +83,7 @@ public abstract class ExtendedAdvancementSubProvider implements AdvancementSubPr
      * @param desc        The description of the advancement.
      * @return The root advancement.
      */
-    protected AdvancementHolder root(ItemLike displayItem, String id, ResourceLocation background, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, AdvancementRequirements.Strategy strategy, Map<String, Criterion<?>> triggers, String title, String desc) {
+    protected AdvancementHolder root(ItemLike displayItem, String id, Identifier background, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, AdvancementRequirements.Strategy strategy, Map<String, Criterion<?>> triggers, String title, String desc) {
         Component titleKey = title(category, id);
         Component descKey = desc(category, id);
 
@@ -113,7 +113,7 @@ public abstract class ExtendedAdvancementSubProvider implements AdvancementSubPr
      * @param desc        The description of the advancement.
      * @return The root advancement.
      */
-    protected AdvancementHolder root(ItemLike displayItem, String id, ResourceLocation background, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
+    protected AdvancementHolder root(ItemLike displayItem, String id, Identifier background, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
         Component titleKey = title(category, id);
         Component descKey = desc(category, id);
 
@@ -142,7 +142,7 @@ public abstract class ExtendedAdvancementSubProvider implements AdvancementSubPr
      * @param desc        The description of the advancement.
      * @return The root advancement.
      */
-    protected AdvancementHolder root(ItemStack displayItem, String id, ResourceLocation background, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, AdvancementRequirements.Strategy strategy, Map<String, Criterion<?>> triggers, String title, String desc) {
+    protected AdvancementHolder root(ItemStack displayItem, String id, Identifier background, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, AdvancementRequirements.Strategy strategy, Map<String, Criterion<?>> triggers, String title, String desc) {
         Component titleKey = title(category, id);
         Component descKey = desc(category, id);
 
@@ -172,7 +172,7 @@ public abstract class ExtendedAdvancementSubProvider implements AdvancementSubPr
      * @param desc        The description of the advancement.
      * @return The root advancement.
      */
-    protected AdvancementHolder root(ItemStack displayItem, String id, ResourceLocation background, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
+    protected AdvancementHolder root(ItemStack displayItem, String id, Identifier background, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
         Component titleKey = title(category, id);
         Component descKey = desc(category, id);
 
@@ -323,7 +323,7 @@ public abstract class ExtendedAdvancementSubProvider implements AdvancementSubPr
      * @param desc        The description of the advancement.
      * @return The advancement.
      */
-    protected AdvancementHolder create(ResourceLocation root, ItemLike displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, AdvancementRequirements.Strategy strategy, Map<String, Criterion<?>> triggers, String title, String desc) {
+    protected AdvancementHolder create(Identifier root, ItemLike displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, AdvancementRequirements.Strategy strategy, Map<String, Criterion<?>> triggers, String title, String desc) {
         Component titleKey = title(category, id);
         Component descKey = desc(category, id);
 
@@ -354,7 +354,7 @@ public abstract class ExtendedAdvancementSubProvider implements AdvancementSubPr
      * @param desc        The description of the advancement.
      * @return The advancement.
      */
-    protected AdvancementHolder create(ResourceLocation root, ItemLike displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
+    protected AdvancementHolder create(Identifier root, ItemLike displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
         Component titleKey = title(category, id);
         Component descKey = desc(category, id);
 
@@ -384,7 +384,7 @@ public abstract class ExtendedAdvancementSubProvider implements AdvancementSubPr
      * @param desc        The description of the advancement.
      * @return The advancement.
      */
-    protected AdvancementHolder create(ResourceLocation root, ItemStack displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, AdvancementRequirements.Strategy strategy, Map<String, Criterion<?>> triggers, String title, String desc) {
+    protected AdvancementHolder create(Identifier root, ItemStack displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, AdvancementRequirements.Strategy strategy, Map<String, Criterion<?>> triggers, String title, String desc) {
         Component titleKey = title(category, id);
         Component descKey = desc(category, id);
 
@@ -415,7 +415,7 @@ public abstract class ExtendedAdvancementSubProvider implements AdvancementSubPr
      * @param desc        The description of the advancement.
      * @return The advancement.
      */
-    protected AdvancementHolder create(ResourceLocation root, ItemStack displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
+    protected AdvancementHolder create(Identifier root, ItemStack displayItem, String id, AdvancementType frameType, boolean toast, boolean announce, boolean hidden, @Nullable AdvancementRewards rewards, String triggerKey, Criterion<?> trigger, String title, String desc) {
         Component titleKey = title(category, id);
         Component descKey = desc(category, id);
 
@@ -445,7 +445,7 @@ public abstract class ExtendedAdvancementSubProvider implements AdvancementSubPr
         SortedMap<String, Criterion<?>> sm = new TreeMap<>(triggers);
         sm.forEach(builder::addCriterion);
 
-        return builder.requirements(strategy).save(writer, modLoc(category + "/" + id));
+        return builder.requirements(strategy).save(writer, modId(category + "/" + id));
     }
 
     /**
@@ -459,12 +459,12 @@ public abstract class ExtendedAdvancementSubProvider implements AdvancementSubPr
     }
 
     /**
-     * Creates a resource location with the mod ID as the namespace.
+     * Creates an identifier with the mod namespace.
      * 
      * @param path The path of the resource location.
      * @return The resource location.
      */
-    protected ResourceLocation modLoc(String path) {
-        return ResourceLocation.fromNamespaceAndPath(modId, path);
+    protected Identifier modId(String path) {
+        return Identifier.fromNamespaceAndPath(modId, path);
     }
 }

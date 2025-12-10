@@ -5,8 +5,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 
@@ -20,12 +20,12 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
  * @param processor              The processor to be used on the feature.
  */
 public record NbtFeatureConfig(boolean allowInWater, boolean canBreakExistingBlocks, int heightOffset,
-        List<Pair<ResourceLocation, Integer>> nbts,
+        List<Pair<Identifier, Integer>> nbts,
         ResourceKey<StructureProcessorList> processor) implements FeatureConfiguration {
     public static final Codec<NbtFeatureConfig> CODEC = RecordCodecBuilder.create((configInstance) -> configInstance.group(
             Codec.BOOL.fieldOf("allow_liquid").orElse(false).forGetter(NbtFeatureConfig::allowInWater),
             Codec.BOOL.fieldOf("can_break_existing_blocks").orElse(false).forGetter(NbtFeatureConfig::canBreakExistingBlocks),
             Codec.INT.fieldOf("height_offset").orElse(0).forGetter(NbtFeatureConfig::heightOffset),
-            Codec.mapPair(ResourceLocation.CODEC.fieldOf("id"), Codec.intRange(1, Integer.MAX_VALUE).fieldOf("weight")).codec().listOf().fieldOf("nbt_entries").forGetter(NbtFeatureConfig::nbts),
+            Codec.mapPair(Identifier.CODEC.fieldOf("id"), Codec.intRange(1, Integer.MAX_VALUE).fieldOf("weight")).codec().listOf().fieldOf("nbt_entries").forGetter(NbtFeatureConfig::nbts),
             ResourceKey.codec(Registries.PROCESSOR_LIST).fieldOf("processors").orElse(null).forGetter(NbtFeatureConfig::processor)).apply(configInstance, NbtFeatureConfig::new));
 }

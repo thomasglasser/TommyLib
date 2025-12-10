@@ -12,8 +12,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,22 +32,22 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
      *
      * @param <T>         The type of the target value.
      * @param <R>         The registry type.
-     * @param registryKey The name of the registry the target value is a member of.
-     * @param valueName   The name of the target value.
+     * @param registryKey The key of the registry the target value is a member of.
+     * @param valueId     The id of the target value.
      */
-    public static <R, T extends R> DeferredHolder<R, T> create(ResourceKey<? extends Registry<R>> registryKey, ResourceLocation valueName) {
-        return create(ResourceKey.create(registryKey, valueName));
+    public static <R, T extends R> DeferredHolder<R, T> create(ResourceKey<? extends Registry<R>> registryKey, Identifier valueId) {
+        return create(ResourceKey.create(registryKey, valueId));
     }
 
     /**
      * Creates a new DeferredHolder targeting the value with the specified name in the specified registry.
      *
-     * @param <T>          The registry type.
-     * @param registryName The name of the registry the target value is a member of.
-     * @param valueName    The name of the target value.
+     * @param <T>        The registry type.
+     * @param registryId The id of the registry the target value is a member of.
+     * @param valueId    The id of the target value.
      */
-    public static <R, T extends R> DeferredHolder<R, T> create(ResourceLocation registryName, ResourceLocation valueName) {
-        return create(ResourceKey.createRegistryKey(registryName), valueName);
+    public static <R, T extends R> DeferredHolder<R, T> create(Identifier registryId, Identifier valueId) {
+        return create(ResourceKey.createRegistryKey(registryId), valueId);
     }
 
     /**
@@ -77,8 +77,8 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
      * <p>Attempts to bind immediately if possible.
      *
      * @param key The resource key of the target object.
-     * @see #create(ResourceKey, ResourceLocation)
-     * @see #create(ResourceLocation, ResourceLocation)
+     * @see #create(ResourceKey, Identifier)
+     * @see #create(Identifier, Identifier)
      * @see #create(ResourceKey)
      */
     protected DeferredHolder(ResourceKey<R> key) {
@@ -168,8 +168,8 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     /**
      * @return The ID of the object pointed to by this DeferredHolder.
      */
-    public ResourceLocation getId() {
-        return this.key.location();
+    public Identifier getId() {
+        return this.key.identifier();
     }
 
     /**
@@ -208,11 +208,11 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     }
 
     /**
-     * {@return true if the passed ResourceLocation is the same as the ID of the target object}
+     * {@return true if the passed Identifier is the same as the ID of the target object}
      */
     @Override
-    public boolean is(ResourceLocation id) {
-        return id.equals(this.key.location());
+    public boolean is(Identifier id) {
+        return id.equals(this.key.identifier());
     }
 
     /**

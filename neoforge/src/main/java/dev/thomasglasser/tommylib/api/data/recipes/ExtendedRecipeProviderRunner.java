@@ -11,7 +11,7 @@ import java.util.function.BiFunction;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.advancements.critereon.ImpossibleTrigger;
+import net.minecraft.advancements.criterion.ImpossibleTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
@@ -20,8 +20,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.WithConditions;
@@ -51,17 +51,17 @@ public class ExtendedRecipeProviderRunner implements DataProvider {
                             final PackOutput.PathProvider recipePathProvider = this.packOutput.createRegistryElementsPathProvider(Registries.RECIPE);
                             final PackOutput.PathProvider advancementPathProvider = this.packOutput.createRegistryElementsPathProvider(Registries.ADVANCEMENT);
                             final Set<ResourceKey<Recipe<?>>> recipeKeys = Sets.newHashSet();
-                            final Set<ResourceLocation> advancementKeys = Sets.newHashSet();
+                            final Set<Identifier> advancementIds = Sets.newHashSet();
                             final List<CompletableFuture<?>> outputs = new ArrayList<>();
                             RecipeOutput recipeOutput = new RecipeOutput() {
                                 @Override
                                 public void accept(ResourceKey<Recipe<?>> key, Recipe<?> recipe, @Nullable AdvancementHolder holder, ICondition... conditions) {
                                     if (!recipeKeys.add(key)) {
-                                        throw new IllegalStateException("Duplicate recipe " + key.location());
+                                        throw new IllegalStateException("Duplicate recipe " + key.identifier());
                                     } else {
                                         this.saveRecipe(key, recipe, conditions);
                                         if (holder != null) {
-                                            advancementKeys.add(holder.id());
+                                            advancementIds.add(holder.id());
                                             this.saveAdvancement(holder, conditions);
                                         }
                                     }
@@ -86,7 +86,7 @@ public class ExtendedRecipeProviderRunner implements DataProvider {
 
                                 private void saveRecipe(ResourceKey<Recipe<?>> p_380099_, Recipe<?> p_364792_, ICondition... conditions) {
                                     outputs.add(
-                                            DataProvider.saveStable(output, provider, Recipe.CONDITIONAL_CODEC, Optional.of(new WithConditions<>(p_364792_, conditions)), recipePathProvider.json(p_380099_.location())));
+                                            DataProvider.saveStable(output, provider, Recipe.CONDITIONAL_CODEC, Optional.of(new WithConditions<>(p_364792_, conditions)), recipePathProvider.json(p_380099_.identifier())));
                                 }
 
                                 private void saveAdvancement(AdvancementHolder p_363148_) {
@@ -101,10 +101,10 @@ public class ExtendedRecipeProviderRunner implements DataProvider {
                             };
                             this.factory.apply(provider, recipeOutput).buildRecipes();
                             JsonArray jsonarray = new JsonArray();
-                            recipeKeys.stream().sorted().forEach(rl -> jsonarray.add(rl.location().toString()));
+                            recipeKeys.stream().sorted().forEach(id -> jsonarray.add(id.identifier().toString()));
                             outputs.add(DataProvider.saveStable(output, jsonarray, this.packOutput.getOutputFolder(PackOutput.Target.REPORTS).resolve("recipes.json")));
                             JsonArray advancementArray = new JsonArray();
-                            advancementKeys.stream().sorted().forEach(rl -> advancementArray.add(rl.toString()));
+                            advancementIds.stream().sorted().forEach(id -> advancementArray.add(id.toString()));
                             outputs.add(DataProvider.saveStable(output, advancementArray, this.packOutput.getOutputFolder(PackOutput.Target.REPORTS).resolve("recipe_advancements.json")));
                             return CompletableFuture.allOf(outputs.toArray(CompletableFuture[]::new));
                         });

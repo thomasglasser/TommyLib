@@ -6,15 +6,15 @@ import dev.thomasglasser.tommylib.api.world.entity.projectile.ThrownSword;
 import java.util.List;
 import java.util.function.Function;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.state.ThrownTridentRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 
 /**
@@ -23,14 +23,14 @@ import net.minecraft.util.Unit;
  * @param <T> The type of {@link ThrownSword} entity to render.
  */
 public class ThrownSwordRenderer<T extends ThrownSword> extends EntityRenderer<T, ThrownTridentRenderState> {
-    public static final Function<ResourceLocation, ResourceLocation> TEXTURE = (loc) -> loc.withPrefix("textures/entity/item/").withSuffix(".png");
+    public static final Function<Identifier, Identifier> TEXTURE = (loc) -> loc.withPrefix("textures/entity/item/").withSuffix(".png");
 
     private final Model<Unit> model;
-    private final ResourceLocation texture;
+    private final Identifier texture;
 
-    public ThrownSwordRenderer(EntityRendererProvider.Context context, ResourceLocation itemLoc, Model<Unit> model) {
+    public ThrownSwordRenderer(EntityRendererProvider.Context context, Identifier itemId, Model<Unit> model) {
         super(context);
-        this.texture = TEXTURE.apply(itemLoc);
+        this.texture = TEXTURE.apply(itemId);
         this.model = model;
     }
 

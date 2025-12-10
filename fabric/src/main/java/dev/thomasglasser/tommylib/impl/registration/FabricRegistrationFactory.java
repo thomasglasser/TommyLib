@@ -16,8 +16,8 @@ import java.util.Set;
 import java.util.function.Function;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -57,10 +57,10 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends T> DeferredHolder<T, I> register(String name, Function<ResourceLocation, ? extends I> func) {
-            final var rl = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
-            Registry.register(getRegistry().get(), rl, func.apply(rl));
-            DeferredHolder<T, I> ret = DeferredHolder.create(getRegistryKey(), rl);
+        public <I extends T> DeferredHolder<T, I> register(String name, Function<Identifier, ? extends I> func) {
+            final var id = Identifier.fromNamespaceAndPath(getNamespace(), name);
+            Registry.register(getRegistry().get(), id, func.apply(id));
+            DeferredHolder<T, I> ret = DeferredHolder.create(getRegistryKey(), id);
             this.entries.add(ret);
             return ret;
         }
@@ -85,10 +85,10 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends Item> DeferredItem<I> register(String name, Function<ResourceLocation, ? extends I> func) {
-            final var rl = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
-            Registry.register(getRegistry().get(), rl, func.apply(rl));
-            DeferredItem<I> ret = DeferredItem.createItem(rl);
+        public <I extends Item> DeferredItem<I> register(String name, Function<Identifier, ? extends I> func) {
+            final var id = Identifier.fromNamespaceAndPath(getNamespace(), name);
+            Registry.register(getRegistry().get(), id, func.apply(id));
+            DeferredItem<I> ret = DeferredItem.createItem(id);
             this.entries.add(ret);
             return ret;
         }
@@ -108,10 +108,10 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends Block> DeferredBlock<I> register(String name, Function<ResourceLocation, ? extends I> func) {
-            final var rl = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
-            Registry.register(getRegistry().get(), rl, func.apply(rl));
-            DeferredBlock<I> ret = DeferredBlock.createBlock(rl);
+        public <I extends Block> DeferredBlock<I> register(String name, Function<Identifier, ? extends I> func) {
+            final var id = Identifier.fromNamespaceAndPath(getNamespace(), name);
+            Registry.register(getRegistry().get(), id, func.apply(id));
+            DeferredBlock<I> ret = DeferredBlock.createBlock(id);
             this.entries.add(ret);
             return ret;
         }
@@ -131,10 +131,10 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends DataComponentType<?>> DeferredHolder<DataComponentType<?>, I> register(String name, Function<ResourceLocation, ? extends I> func) {
-            final var rl = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
-            Registry.register(getRegistry().get(), rl, func.apply(rl));
-            DeferredHolder<DataComponentType<?>, I> ret = DeferredHolder.create(ResourceKey.create(getRegistryKey(), rl));
+        public <I extends DataComponentType<?>> DeferredHolder<DataComponentType<?>, I> register(String name, Function<Identifier, ? extends I> func) {
+            final var id = Identifier.fromNamespaceAndPath(getNamespace(), name);
+            Registry.register(getRegistry().get(), id, func.apply(id));
+            DeferredHolder<DataComponentType<?>, I> ret = DeferredHolder.create(ResourceKey.create(getRegistryKey(), id));
             this.entries.add(ret);
             return ret;
         }
@@ -154,10 +154,10 @@ public class FabricRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends EntityType<?>> DeferredHolder<EntityType<?>, I> register(String name, Function<ResourceLocation, ? extends I> func) {
-            final var rl = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
-            Registry.register(getRegistry().get(), rl, func.apply(rl));
-            DeferredHolder<EntityType<?>, I> ret = DeferredHolder.create(ResourceKey.create(getRegistryKey(), rl));
+        public <I extends EntityType<?>> DeferredHolder<EntityType<?>, I> register(String name, Function<Identifier, ? extends I> func) {
+            final var id = Identifier.fromNamespaceAndPath(getNamespace(), name);
+            Registry.register(getRegistry().get(), id, func.apply(id));
+            DeferredHolder<EntityType<?>, I> ret = DeferredHolder.create(ResourceKey.create(getRegistryKey(), id));
             this.entries.add(ret);
             return ret;
         }

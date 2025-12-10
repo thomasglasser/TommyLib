@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.vehicle.AbstractBoat;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.HangingSignItem;
@@ -49,16 +49,16 @@ public class BlockUtils {
     /**
      * Map of blocks that can be stripped to their stripped versions
      */
-    private static final Map<ResourceLocation, DeferredBlock<?>> STRIPPABLES = new HashMap<>();
+    private static final Map<Identifier, DeferredBlock<?>> STRIPPABLES = new HashMap<>();
 
     /**
-     * Creates a block resource key given a {@link ResourceLocation}
-     * 
-     * @param location the {@link ResourceLocation} to turn into a resource key
+     * Creates a block resource key given a {@link Identifier}
+     *
+     * @param id the {@link Identifier} to turn into a resource key
      * @return the resource key
      */
-    public static ResourceKey<Block> blockId(ResourceLocation location) {
-        return ResourceKey.create(Registries.BLOCK, location);
+    public static ResourceKey<Block> blockKey(Identifier id) {
+        return ResourceKey.create(Registries.BLOCK, id);
     }
 
     /**
@@ -72,7 +72,7 @@ public class BlockUtils {
      * @param <T> The type of the block
      */
     public static <T extends Block> DeferredBlock<T> register(DeferredRegister.Blocks provider, String name, Function<BlockBehaviour.Properties, T> block, Supplier<BlockBehaviour.Properties> properties) {
-        return provider.register(name, id -> block.apply(properties.get().setId(blockId(id))));
+        return provider.register(name, id -> block.apply(properties.get().setId(blockKey(id))));
     }
 
     /**
@@ -244,7 +244,7 @@ public class BlockUtils {
                 .pushReaction(PushReaction.DESTROY));
         itemProvider.registerItem(name + "_door", properties -> new DoubleHighBlockItem(door.get(), properties), new Item.Properties());
         TagKey<Block> logsTag = provider.createTagKey(name + "_logs");
-        return new WoodSet(ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name),
+        return new WoodSet(Identifier.fromNamespaceAndPath(provider.getNamespace(), name),
                 log,
                 strippedLog,
                 wood,
@@ -314,7 +314,7 @@ public class BlockUtils {
                 .instabreak()
                 .sound(SoundType.GRASS)
                 .pushReaction(PushReaction.DESTROY), itemProvider);
-        return new LeavesSet(ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name),
+        return new LeavesSet(Identifier.fromNamespaceAndPath(provider.getNamespace(), name),
                 registerBlockAndItemAndWrap(provider, name + "_leaves", properties -> new TintedParticleLeavesBlock(0.01F, properties), () -> Blocks.leavesProperties(SoundType.GRASS), itemProvider),
                 sapling,
                 register(provider, "potted_" + name + "_sapling", properties -> new FlowerPotBlock(sapling.get(), properties), Blocks::flowerPotProperties));
@@ -337,7 +337,7 @@ public class BlockUtils {
                 .instabreak()
                 .sound(SoundType.GRASS)
                 .pushReaction(PushReaction.DESTROY), itemProvider);
-        return new LeavesSet(ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name),
+        return new LeavesSet(Identifier.fromNamespaceAndPath(provider.getNamespace(), name),
                 registerBlockAndItemAndWrap(provider, name + "_leaves", properties -> new TintedParticleLeavesBlock(0.01F, properties), () -> Blocks.leavesProperties(SoundType.GRASS), itemProvider),
                 sapling,
                 register(provider, "potted_" + name + "_sapling", properties -> new FlowerPotBlock(sapling.get(), properties), Blocks::flowerPotProperties));
@@ -350,7 +350,7 @@ public class BlockUtils {
      * @return The stripped block
      */
     public static Block getStripped(BlockState originalState) {
-        DeferredBlock<?> ro = STRIPPABLES.get(originalState.getBlock().builtInRegistryHolder().key().location());
+        DeferredBlock<?> ro = STRIPPABLES.get(originalState.getBlock().builtInRegistryHolder().key().identifier());
         return ro != null ? ro.get() : null;
     }
 }

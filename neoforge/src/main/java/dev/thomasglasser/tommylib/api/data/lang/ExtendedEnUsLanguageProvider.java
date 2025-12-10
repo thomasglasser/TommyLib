@@ -12,13 +12,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.decoration.PaintingVariant;
-import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.decoration.painting.PaintingVariant;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -61,7 +61,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param name The name of the key.
      */
     protected void add(ResourceKey<?> key, String name) {
-        add(key.location().toLanguageKey(key.registry().getPath()), name);
+        add(key.identifier().toLanguageKey(key.registry().getPath()), name);
     }
 
     /**
@@ -72,7 +72,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      */
     public void addPattern(ResourceKey<BannerPattern> pattern, String name) {
         for (DyeColor color : DyeColor.values()) {
-            add("block.minecraft." + pattern.location().toLanguageKey("banner") + "." + color.getName(), WordUtils.capitalize(color.getName().replace('_', ' ')) + " " + name);
+            add("block.minecraft." + pattern.identifier().toLanguageKey("banner") + "." + color.getName(), WordUtils.capitalize(color.getName().replace('_', ' ')) + " " + name);
         }
     }
 
@@ -84,8 +84,8 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param author The author of the painting.
      */
     public void addPaintingVariant(ResourceKey<PaintingVariant> key, String title, String author) {
-        add(key.location().toLanguageKey("painting") + ".title", title);
-        add(key.location().toLanguageKey("painting") + ".author", author);
+        add(key.identifier().toLanguageKey("painting") + ".title", title);
+        add(key.identifier().toLanguageKey("painting") + ".author", author);
     }
 
     /**
@@ -156,13 +156,13 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
 
     /**
      * Adds a translation for a given Jade config
-     * 
-     * @param location The location of the config.
-     * @param modName  The name of the mod.
-     * @param name     The name of the config.
+     *
+     * @param id      The id of the config.
+     * @param modName The name of the mod.
+     * @param name    The name of the config.
      */
-    public void addPluginConfig(ResourceLocation location, String modName, String name) {
-        add("config.jade.plugin_" + location.toLanguageKey(), modName + " " + name + " Config");
+    public void addPluginConfig(Identifier id, String modName, String name) {
+        add("config.jade.plugin_" + id.toLanguageKey(), modName + " " + name + " Config");
     }
 
     /**
@@ -234,7 +234,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param name       The name of the profession.
      */
     protected void addProfession(Holder<VillagerProfession> profession, String name) {
-        add(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.VILLAGER).toLanguageKey("entity") + "." + profession.getKey().location().toShortLanguageKey(), name);
+        add(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.VILLAGER).toLanguageKey("entity") + "." + profession.getKey().identifier().toShortLanguageKey(), name);
     }
 
     /**
@@ -253,7 +253,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param message the message of the damage type
      */
     protected void addAttack(ResourceKey<DamageType> key, String message) {
-        add("death.attack." + key.location().getPath(), message);
+        add("death.attack." + key.identifier().getPath(), message);
     }
 
     /**
@@ -265,7 +265,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      */
     protected void addAttackWithPlayer(ResourceKey<DamageType> key, String message, String playerSuffix) {
         addAttack(key, message);
-        add("death.attack." + key.location().getPath() + ".player", message + " " + playerSuffix);
+        add("death.attack." + key.identifier().getPath() + ".player", message + " " + playerSuffix);
     }
 
     /**
@@ -277,7 +277,7 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      */
     protected void addAttackWithItem(ResourceKey<DamageType> key, String message, String itemSuffix) {
         addAttack(key, message);
-        add("death.attack." + key.location().toShortLanguageKey() + ".item", message + " " + itemSuffix);
+        add("death.attack." + key.identifier().toShortLanguageKey() + ".item", message + " " + itemSuffix);
     }
 
     /**
@@ -362,6 +362,6 @@ public abstract class ExtendedEnUsLanguageProvider extends LanguageProvider {
      * @param key The resource key to add the translation for.
      */
     protected void addCapitalized(ResourceKey<?> key) {
-        add(key, capitalize(key.location().getPath()));
+        add(key, capitalize(key.identifier().getPath()));
     }
 }

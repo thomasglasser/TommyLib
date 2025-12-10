@@ -8,8 +8,8 @@ import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
@@ -59,7 +59,7 @@ public final class ItemUtils {
      * @return The registered sherd item holder.
      */
     public static DeferredItem<Item> registerSherd(DeferredRegister.Items provider, String name, Item.Properties properties) {
-        return provider.registerSimpleItem(name + "_pottery_sherd", properties.rarity(Rarity.UNCOMMON).component(SherdsApiDataComponents.SHERD_PATTERN.get(), ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name + "_pottery_pattern")));
+        return provider.registerSimpleItem(name + "_pottery_sherd", properties.rarity(Rarity.UNCOMMON).component(SherdsApiDataComponents.SHERD_PATTERN.get(), Identifier.fromNamespaceAndPath(provider.getNamespace(), name + "_pottery_pattern")));
     }
 
     /**
@@ -71,7 +71,7 @@ public final class ItemUtils {
      * @return The registered smithing template item holder.
      */
     public static DeferredItem<SmithingTemplateItem> registerArmorTrimSmithingTemplate(DeferredRegister.Items provider, ResourceKey<TrimPattern> key, Rarity rarity) {
-        return provider.registerItem(key.location().getPath() + "_armor_trim_smithing_template", SmithingTemplateItem::createArmorTrimTemplate, new Item.Properties().rarity(rarity));
+        return provider.registerItem(key.identifier().getPath() + "_armor_trim_smithing_template", SmithingTemplateItem::createArmorTrimTemplate, new Item.Properties().rarity(rarity));
     }
 
     /**

@@ -5,7 +5,7 @@ import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.data.BlockFamily;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.Item;
@@ -50,7 +50,7 @@ import net.minecraft.world.level.block.WallSignBlock;
  * @param logsBlockTag    The tag key for the log block tag
  * @param logsItemTag     The tag key for the log item tag
  */
-public record WoodSet(ResourceLocation id,
+public record WoodSet(Identifier id,
         DeferredBlock<? extends RotatedPillarBlock> log,
         DeferredBlock<? extends RotatedPillarBlock> strippedLog,
         DeferredBlock<? extends RotatedPillarBlock> wood,

@@ -2,8 +2,8 @@ package dev.thomasglasser.tommylib.api.tags;
 
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 
 public class TagUtils {
@@ -15,7 +15,7 @@ public class TagUtils {
      * @return the tag key
      */
     public static <T> TagKey<T> createConventional(ResourceKey<? extends Registry<T>> registry, String tagId) {
-        return TagKey.create(registry, ResourceLocation.fromNamespaceAndPath("c", tagId));
+        return TagKey.create(registry, Identifier.fromNamespaceAndPath("c", tagId));
     }
 
     /**
@@ -26,7 +26,7 @@ public class TagUtils {
      * @return the tag key
      */
     public static <T> TagKey<T> createVanilla(ResourceKey<? extends Registry<T>> registry, String tagId) {
-        return TagKey.create(registry, ResourceLocation.withDefaultNamespace(tagId));
+        return TagKey.create(registry, Identifier.withDefaultNamespace(tagId));
     }
 
     /**
@@ -38,6 +38,6 @@ public class TagUtils {
      * @param <T> the type of the registry
      */
     public static <T> TagKey<T> logs(ResourceKey<Registry<T>> registry, WoodSet set) {
-        return TagKey.create(registry, ResourceLocation.fromNamespaceAndPath(set.id().getNamespace(), set.id().getPath() + "_logs"));
+        return TagKey.create(registry, Identifier.fromNamespaceAndPath(set.id().getNamespace(), set.id().getPath() + "_logs"));
     }
 }

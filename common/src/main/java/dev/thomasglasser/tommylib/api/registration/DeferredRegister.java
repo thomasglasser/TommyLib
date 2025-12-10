@@ -16,8 +16,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>Suppliers should return <em>new</em> instances every time they are invoked.
  *
  * <p>To create an instance of this helper class, use any of the three factory methods: {@link #create(Registry, String)},
- * {@link #create(ResourceKey, String)}, or {@link #create(ResourceLocation, String)}. There are also specialized
+ * {@link #create(ResourceKey, String)}, or {@link #create(Identifier, String)}. There are also specialized
  * subclasses of this helper for {@link Block}s and {@link Item}s, created through {@link #createBlocks(String)} and
  * {@link #createItems(String)} respectively. (Be sure to <em>store the concrete type</em> of those subclasses, rather than
  * storing them generically as {@code DeferredRegister<Block>} or {@code DeferredRegister<Item>}.)
@@ -82,7 +82,7 @@ public abstract class DeferredRegister<T> {
      * @param registry  the registry to register to
      * @param namespace the namespace for all objects registered to this DeferredRegister
      * @see #create(ResourceKey, String)
-     * @see #create(ResourceLocation, String)
+     * @see #create(Identifier, String)
      * @see #createItems(String)
      * @see #createBlocks(String)
      */
@@ -98,7 +98,7 @@ public abstract class DeferredRegister<T> {
      * @param key       the key of the registry to reference. May come from another DeferredRegister through {@link #getRegistryKey()}.
      * @param namespace the namespace for all objects registered to this DeferredRegister
      * @see #create(Registry, String)
-     * @see #create(ResourceLocation, String)
+     * @see #create(Identifier, String)
      * @see #createItems(String)
      * @see #createBlocks(String)
      */
@@ -111,15 +111,15 @@ public abstract class DeferredRegister<T> {
      * <p>
      * If the registry is never created, any {@link DeferredHolder}s made from this DeferredRegister will throw an exception.
      *
-     * @param registryName The name of the registry, should include namespace. May come from another DeferredRegister through {@link #getRegistryName()}.
-     * @param namespace    The namespace for all objects registered to this DeferredRegister
+     * @param registryId The id of the registry, should include namespace. May come from another DeferredRegister through {@link #getRegistryId()}.
+     * @param namespace  The namespace for all objects registered to this DeferredRegister
      * @see #create(Registry, String)
      * @see #create(ResourceKey, String)
      * @see #createItems(String)
      * @see #createBlocks(String)
      */
-    public static <B> DeferredRegister<B> create(ResourceLocation registryName, String namespace) {
-        return Factory.INSTANCE.create(ResourceKey.createRegistryKey(registryName), namespace);
+    public static <B> DeferredRegister<B> create(Identifier registryId, String namespace) {
+        return Factory.INSTANCE.create(ResourceKey.createRegistryKey(registryId), namespace);
     }
 
     /**
@@ -128,7 +128,7 @@ public abstract class DeferredRegister<T> {
      * @param namespace The namespace for all objects registered to this {@link DeferredRegister}
      * @see #create(Registry, String)
      * @see #create(ResourceKey, String)
-     * @see #create(ResourceLocation, String)
+     * @see #create(Identifier, String)
      * @see #createBlocks(String)
      */
     public static Items createItems(String namespace) {
@@ -141,7 +141,7 @@ public abstract class DeferredRegister<T> {
      * @param namespace The namespace for all objects registered to this DeferredRegister
      * @see #create(Registry, String)
      * @see #create(ResourceKey, String)
-     * @see #create(ResourceLocation, String)
+     * @see #create(Identifier, String)
      * @see #createItems(String)
      */
     public static DeferredRegister.Blocks createBlocks(String namespace) {
@@ -155,7 +155,7 @@ public abstract class DeferredRegister<T> {
      * @param namespace   The namespace for all objects registered to this DeferredRegister
      * @see #create(Registry, String)
      * @see #create(ResourceKey, String)
-     * @see #create(ResourceLocation, String)
+     * @see #create(Identifier, String)
      * @see #createItems(String)
      */
     public static DataComponents createDataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace) {
@@ -168,7 +168,7 @@ public abstract class DeferredRegister<T> {
      * @param namespace The namespace for all objects registered to this DeferredRegister
      * @see #create(Registry, String)
      * @see #create(ResourceKey, String)
-     * @see #create(ResourceLocation, String)
+     * @see #create(Identifier, String)
      */
     public static Entities createEntities(String namespace) {
         return Factory.INSTANCE.createEntities(namespace);
@@ -203,18 +203,18 @@ public abstract class DeferredRegister<T> {
      * @param func A factory for the new entry. The factory should not cache the created entry.
      * @return A {@link DeferredHolder} that will track updates from the registry for this entry.
      */
-    public abstract <I extends T> DeferredHolder<T, I> register(final String name, final Function<ResourceLocation, ? extends I> func);
+    public abstract <I extends T> DeferredHolder<T, I> register(final String name, final Function<Identifier, ? extends I> func);
 
     /**
      * Create a {@link DeferredHolder} or an inheriting type to be stored.
      *
+     * @param <I>         The specific type of the entry.
      * @param registryKey The key of the registry.
-     * @param key         The resource location of the entry.
+     * @param id          The identifier of the entry.
      * @return The new instance of {@link DeferredHolder} or an inheriting type.
-     * @param <I> The specific type of the entry.
      */
-    protected <I extends T> DeferredHolder<T, I> createHolder(ResourceKey<? extends Registry<T>> registryKey, ResourceLocation key) {
-        return DeferredHolder.create(registryKey, key);
+    protected <I extends T> DeferredHolder<T, I> createHolder(ResourceKey<? extends Registry<T>> registryKey, Identifier id) {
+        return DeferredHolder.create(registryKey, id);
     }
 
     /**
@@ -230,13 +230,13 @@ public abstract class DeferredRegister<T> {
     }
 
     /**
-     * Creates a tag key based on the current namespace and provided path as the location and the registry name linked to this DeferredRegister. To control the namespace, use {@link #createTagKey(ResourceLocation)}.
+     * Creates a tag key based on the current namespace and provided path as the location and the registry name linked to this DeferredRegister. To control the namespace, use {@link #createTagKey(Identifier)}.
      *
-     * @see #createTagKey(ResourceLocation)
+     * @see #createTagKey(Identifier)
      */
     public TagKey<T> createTagKey(String path) {
         Objects.requireNonNull(path);
-        return createTagKey(ResourceLocation.fromNamespaceAndPath(this.namespace, path));
+        return createTagKey(Identifier.fromNamespaceAndPath(this.namespace, path));
     }
 
     /**
@@ -244,9 +244,9 @@ public abstract class DeferredRegister<T> {
      *
      * @see #createTagKey(String)
      */
-    public TagKey<T> createTagKey(ResourceLocation location) {
-        Objects.requireNonNull(location);
-        return TagKey.create(this.registryKey, location);
+    public TagKey<T> createTagKey(Identifier id) {
+        Objects.requireNonNull(id);
+        return TagKey.create(this.registryKey, id);
     }
 
     /**
@@ -264,8 +264,8 @@ public abstract class DeferredRegister<T> {
     /**
      * @return The registry name stored in this deferred register. Useful for creating new deferred registers based on an existing one.
      */
-    public ResourceLocation getRegistryName() {
-        return this.registryKey.location();
+    public Identifier getRegistryId() {
+        return this.registryKey.identifier();
     }
 
     /**
@@ -291,7 +291,7 @@ public abstract class DeferredRegister<T> {
          * @return A {@link DeferredHolder} that will track updates from the registry for this block.
          */
         @Override
-        public abstract <B extends Block> DeferredBlock<B> register(String name, Function<ResourceLocation, ? extends B> func);
+        public abstract <B extends Block> DeferredBlock<B> register(String name, Function<Identifier, ? extends B> func);
 
         /**
          * Adds a new block to the list of entries to be registered and returns a {@link DeferredHolder} that will be populated with the created block automatically.
@@ -363,8 +363,8 @@ public abstract class DeferredRegister<T> {
         }
 
         @Override
-        protected <I extends Block> DeferredBlock<I> createHolder(ResourceKey<? extends Registry<Block>> registryKey, ResourceLocation key) {
-            return DeferredBlock.createBlock(ResourceKey.create(registryKey, key));
+        protected <I extends Block> DeferredBlock<I> createHolder(ResourceKey<? extends Registry<Block>> registryKey, Identifier id) {
+            return DeferredBlock.createBlock(ResourceKey.create(registryKey, id));
         }
     }
 
@@ -385,7 +385,7 @@ public abstract class DeferredRegister<T> {
          * @see #register(String, Supplier)
          */
         @Override
-        public abstract <I extends Item> DeferredItem<I> register(String name, Function<ResourceLocation, ? extends I> func);
+        public abstract <I extends Item> DeferredItem<I> register(String name, Function<Identifier, ? extends I> func);
 
         /**
          * Adds a new item to the list of entries to be registered and returns a {@link DeferredItem} that will be populated with the created item automatically.
@@ -445,7 +445,7 @@ public abstract class DeferredRegister<T> {
          * @see #registerSimpleBlockItem(Holder)
          */
         public DeferredItem<BlockItem> registerSimpleBlockItem(Holder<Block> block, Item.Properties properties) {
-            return this.registerSimpleBlockItem(block.unwrapKey().orElseThrow().location().getPath(), block::value, properties);
+            return this.registerSimpleBlockItem(block.unwrapKey().orElseThrow().identifier().getPath(), block::value, properties);
         }
 
         /**
@@ -523,8 +523,8 @@ public abstract class DeferredRegister<T> {
         }
 
         @Override
-        protected <I extends Item> DeferredItem<I> createHolder(ResourceKey<? extends Registry<Item>> registryKey, ResourceLocation key) {
-            return DeferredItem.createItem(ResourceKey.create(registryKey, key));
+        protected <I extends Item> DeferredItem<I> createHolder(ResourceKey<? extends Registry<Item>> registryKey, Identifier id) {
+            return DeferredItem.createItem(ResourceKey.create(registryKey, id));
         }
     }
 

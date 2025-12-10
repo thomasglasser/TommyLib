@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.Block;
 
 public class TommyLibItemTagsProvider extends ExtendedItemTagsProvider {
     public TommyLibItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> blockTagsProvider) {
-        super(output, future, blockTagsProvider, TommyLib.MOD_ID);
+        super(output, future, blockTagsProvider, TommyLib.MOD_NAMESPACE);
     }
 
     @Override

@@ -6,7 +6,7 @@ import dev.thomasglasser.tommylib.impl.data.TommyLibDataGenerators;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
-@Mod(TommyLib.MOD_ID)
+@Mod(TommyLib.MOD_NAMESPACE)
 public class TommyLibNeoForge {
     public TommyLibNeoForge(IEventBus eventBus) {
         TommyLib.init();

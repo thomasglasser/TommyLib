@@ -15,7 +15,7 @@ public class TommyLibDataGenerators {
         PackOutput packOutput = generator.getPackOutput();
 
         // Server
-        event.createProvider((output, lookupProvider) -> new ModRegistryDumpReport(packOutput, TommyLib.MOD_ID, lookupProvider));
+        event.createProvider((output, lookupProvider) -> new ModRegistryDumpReport(packOutput, TommyLib.MOD_NAMESPACE, lookupProvider));
         event.createBlockAndItemTags(TommyLibBlockTagsProvider::new, TommyLibItemTagsProvider::new);
 
         // Client

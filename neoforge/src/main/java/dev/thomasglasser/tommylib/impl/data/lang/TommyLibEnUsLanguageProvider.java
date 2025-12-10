@@ -8,7 +8,7 @@ import net.minecraft.data.PackOutput;
 
 public class TommyLibEnUsLanguageProvider extends ExtendedEnUsLanguageProvider {
     public TommyLibEnUsLanguageProvider(PackOutput output) {
-        super(output, TommyLib.MOD_ID);
+        super(output, TommyLib.MOD_NAMESPACE);
     }
 
     @Override

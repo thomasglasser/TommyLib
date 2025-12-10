@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -57,8 +57,8 @@ public class NbtFeature extends Feature<NbtFeatureConfig> {
 
         BlockPos.MutableBlockPos blockpos$Mutable = new BlockPos.MutableBlockPos();
         StructureTemplateManager templatemanager = context.level().getLevel().getServer().getStructureManager();
-        ResourceLocation nbtRL = getRandomEntry(context.config().nbts(), context.random());
-        Optional<StructureTemplate> template = templatemanager.get(nbtRL);
+        Identifier nbtId = getRandomEntry(context.config().nbts(), context.random());
+        Optional<StructureTemplate> template = templatemanager.get(nbtId);
 
         if (template.isEmpty()) {
             TommyLib.LOGGER.warn(context.config().nbts().toString() + " NBT does not exist!");
@@ -100,21 +100,21 @@ public class NbtFeature extends Feature<NbtFeatureConfig> {
     }
 
     // Weighted Random from: https://stackoverflow.com/a/6737362
-    public static <T> T getRandomEntry(List<Pair<T, Integer>> rlList, RandomSource random) {
+    public static <T> T getRandomEntry(List<Pair<T, Integer>> idList, RandomSource random) {
         double totalWeight = 0.0;
 
         // Compute the total weight of all items together.
-        for (Pair<T, Integer> pair : rlList) {
+        for (Pair<T, Integer> pair : idList) {
             totalWeight += pair.getSecond();
         }
 
         // Now choose a random item.
         int index = 0;
-        for (double randomWeightPicked = random.nextFloat() * totalWeight; index < rlList.size() - 1; ++index) {
-            randomWeightPicked -= rlList.get(index).getSecond();
+        for (double randomWeightPicked = random.nextFloat() * totalWeight; index < idList.size() - 1; ++index) {
+            randomWeightPicked -= idList.get(index).getSecond();
             if (randomWeightPicked <= 0.0) break;
         }
 
-        return rlList.get(index).getFirst();
+        return idList.get(index).getFirst();
     }
 }

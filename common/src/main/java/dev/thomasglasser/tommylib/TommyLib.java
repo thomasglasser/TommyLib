@@ -2,12 +2,12 @@ package dev.thomasglasser.tommylib;
 
 import dev.thomasglasser.tommylib.api.platform.TommyLibServices;
 import dev.thomasglasser.tommylib.api.world.level.levelgen.feature.TommyLibFeatures;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TommyLib {
-    public static final String MOD_ID = "tommylib";
+    public static final String MOD_NAMESPACE = "tommylib";
     public static final String MOD_NAME = "TommyLib";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
@@ -17,22 +17,22 @@ public class TommyLib {
         TommyLibFeatures.init();
     }
 
-    public static ResourceLocation modLoc(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier modId(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_NAMESPACE, path);
     }
 
     public enum Dependencies {
         GECKOLIB("geckolib"),
         PLAYERANIMATOR("playeranimator");
 
-        private final String modId;
+        private final String modNamespace;
 
-        Dependencies(String modId) {
-            this.modId = modId;
+        Dependencies(String modNamespace) {
+            this.modNamespace = modNamespace;
         }
 
         public boolean isLoaded() {
-            return TommyLibServices.PLATFORM.isModLoaded(modId);
+            return TommyLibServices.PLATFORM.isModLoaded(modNamespace);
         }
     }
 }

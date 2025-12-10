@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.Blocks;
 
 public class TommyLibBlockTagsProvider extends ExtendedBlockTagsProvider {
     public TommyLibBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(output, lookupProvider, TommyLib.MOD_ID);
+        super(output, lookupProvider, TommyLib.MOD_NAMESPACE);
     }
 
     @Override

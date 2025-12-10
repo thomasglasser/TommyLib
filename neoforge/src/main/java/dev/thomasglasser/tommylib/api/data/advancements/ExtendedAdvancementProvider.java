@@ -17,7 +17,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.advancements.AdvancementProvider;
 import net.minecraft.data.advancements.AdvancementSubProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * An {@link AdvancementProvider} that dumps a list of all generated advancements.
@@ -39,7 +39,7 @@ public class ExtendedAdvancementProvider extends AdvancementProvider {
     @Override
     public CompletableFuture<?> run(CachedOutput output) {
         return this.registries.thenCompose(provider -> {
-            Set<ResourceLocation> set = new HashSet<>();
+            Set<Identifier> set = new HashSet<>();
             List<CompletableFuture<?>> list = new ArrayList<>();
             Consumer<AdvancementHolder> consumer = holder -> {
                 if (!set.add(holder.id())) {
@@ -55,7 +55,7 @@ public class ExtendedAdvancementProvider extends AdvancementProvider {
             }
 
             JsonArray jsonarray = new JsonArray();
-            set.stream().sorted().forEach(rl -> jsonarray.add(rl.toString()));
+            set.stream().sorted().forEach(id -> jsonarray.add(id.toString()));
             list.add(DataProvider.saveStable(output, jsonarray, this.output.getOutputFolder(PackOutput.Target.REPORTS).resolve("advancements.json")));
 
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));

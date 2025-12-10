@@ -4,7 +4,7 @@ import dev.thomasglasser.tommylib.api.registration.DeferredHolder;
 import dev.thomasglasser.tommylib.api.world.level.block.WoodSet;
 import java.util.ArrayList;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.common.data.SoundDefinition;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
@@ -70,28 +70,28 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
      * @param variants The number of variants to add.
      * @return The defined {@link SoundDefinition}.
      */
-    private SoundDefinition defineVariants(String subtitle, ResourceLocation sound, int variants) {
+    private SoundDefinition defineVariants(String subtitle, Identifier sound, int variants) {
         if (variants == 1) {
             return define(subtitle, sound(sound));
         }
         ArrayList<SoundDefinition.Sound> sounds = new ArrayList<>();
         for (int i = 1; i < variants + 1; i++) {
-            sounds.add(sound(ResourceLocation.fromNamespaceAndPath(sound.getNamespace(), sound.getPath() + i)));
+            sounds.add(sound(Identifier.fromNamespaceAndPath(sound.getNamespace(), sound.getPath() + i)));
         }
         return define(subtitle, sounds.toArray(new SoundDefinition.Sound[] {}));
     }
 
     /**
-     * Gets a sound from a {@link ResourceLocation}.
-     * 
-     * @param location The location of the sound.
+     * Gets a sound from a {@link Identifier}.
+     *
+     * @param id The location of the sound.
      * @return The sound.
      */
-    protected static SoundDefinition.Sound sound(ResourceLocation location) {
-        if (location.getPath().contains(".")) {
-            return sound(ResourceLocation.fromNamespaceAndPath(location.getNamespace(), location.getPath().replace('.', '/')));
+    protected static SoundDefinition.Sound sound(Identifier id) {
+        if (id.getPath().contains(".")) {
+            return sound(Identifier.fromNamespaceAndPath(id.getNamespace(), id.getPath().replace('.', '/')));
         }
-        return SoundDefinitionsProvider.sound(location);
+        return SoundDefinitionsProvider.sound(id);
     }
 
     /**
@@ -107,38 +107,38 @@ public abstract class ExtendedSoundDefinitionsProvider extends SoundDefinitionsP
      * @param trapdoorToggleVariants   The number of trapdoor toggle variants.
      */
     protected void add(WoodSet set, int breakVariants, int stepVariants, int doorToggleVariants, int fenceGateToggleVariants, int hangingSignBreakVariants, int hangingSignStepVariants, int trapdoorToggleVariants) {
-        ResourceLocation woodId = set.id().withPrefix("block.").withSuffix("_wood");
-        ResourceLocation breakLoc = woodId.withSuffix(".break");
-        ResourceLocation stepLoc = woodId.withSuffix(".step");
-        ResourceLocation buttonClickLoc = woodId.withSuffix("_button.click");
-        ResourceLocation doorLoc = woodId.withSuffix("_door");
-        ResourceLocation doorToggleLoc = doorLoc.withSuffix(".toggle");
-        ResourceLocation fenceGateLoc = woodId.withSuffix("_fence_gate");
-        ResourceLocation fenceGateToggleLoc = fenceGateLoc.withSuffix(".toggle");
-        ResourceLocation hangingSignLoc = woodId.withSuffix("_hanging_sign");
-        ResourceLocation hangingSignBreakLoc = hangingSignLoc.withSuffix(".break");
-        ResourceLocation hangingSignStepLoc = hangingSignLoc.withSuffix(".step");
-        ResourceLocation trapdoorLoc = woodId.withSuffix("_trapdoor");
-        ResourceLocation trapdoorToggleLoc = trapdoorLoc.withSuffix(".toggle");
-        add(breakLoc, defineVariants("subtitles.block.generic.break", breakLoc, breakVariants));
-        add(woodId.withSuffix(".fall"), defineVariants(null, stepLoc, stepVariants));
-        add(woodId.withSuffix(".hit"), defineVariants("subtitles.block.generic.hit", stepLoc, stepVariants));
-        add(woodId.withSuffix(".place"), defineVariants("subtitles.block.generic.place", breakLoc, breakVariants));
-        add(stepLoc, defineVariants("subtitles.block.generic.footsteps", stepLoc, stepVariants));
-        add(buttonClickLoc.withSuffix("_off"), define("subtitles.block.button.click", sound(buttonClickLoc).pitch(0.5).volume(0.4)));
-        add(buttonClickLoc.withSuffix("_on"), define("subtitles.block.button.click", sound(buttonClickLoc).pitch(0.6).volume(0.4)));
-        add(doorLoc.withSuffix(".close"), defineVariants("subtitles.block.door.toggle", doorToggleLoc, doorToggleVariants));
-        add(doorLoc.withSuffix(".open"), defineVariants("subtitles.block.door.toggle", doorToggleLoc, doorToggleVariants));
-        add(fenceGateLoc.withSuffix(".close"), defineVariants("subtitles.block.fence_gate.toggle", fenceGateToggleLoc, fenceGateToggleVariants));
-        add(fenceGateLoc.withSuffix(".open"), defineVariants("subtitles.block.fence_gate.toggle", fenceGateToggleLoc, fenceGateToggleVariants));
-        add(hangingSignBreakLoc, defineVariants("subtitles.block.generic.break", hangingSignBreakLoc, hangingSignBreakVariants));
-        add(hangingSignLoc.withSuffix(".fall"), defineVariants(null, hangingSignStepLoc, hangingSignStepVariants));
-        add(hangingSignLoc.withSuffix(".hit"), defineVariants("subtitles.block.generic.hit", hangingSignStepLoc, hangingSignStepVariants));
-        add(hangingSignLoc.withSuffix(".place"), defineVariants("subtitles.block.generic.place", hangingSignBreakLoc, hangingSignBreakVariants));
-        add(hangingSignStepLoc, defineVariants("subtitles.block.generic.footsteps", hangingSignStepLoc, hangingSignStepVariants));
+        Identifier woodId = set.id().withPrefix("block.").withSuffix("_wood");
+        Identifier breakId = woodId.withSuffix(".break");
+        Identifier stepId = woodId.withSuffix(".step");
+        Identifier buttonClickId = woodId.withSuffix("_button.click");
+        Identifier doorId = woodId.withSuffix("_door");
+        Identifier doorToggleId = doorId.withSuffix(".toggle");
+        Identifier fenceGateId = woodId.withSuffix("_fence_gate");
+        Identifier fenceGateToggleId = fenceGateId.withSuffix(".toggle");
+        Identifier hangingSignId = woodId.withSuffix("_hanging_sign");
+        Identifier hangingSignBreakId = hangingSignId.withSuffix(".break");
+        Identifier hangingSignStepId = hangingSignId.withSuffix(".step");
+        Identifier trapdoorId = woodId.withSuffix("_trapdoor");
+        Identifier trapdoorToggleId = trapdoorId.withSuffix(".toggle");
+        add(breakId, defineVariants("subtitles.block.generic.break", breakId, breakVariants));
+        add(woodId.withSuffix(".fall"), defineVariants(null, stepId, stepVariants));
+        add(woodId.withSuffix(".hit"), defineVariants("subtitles.block.generic.hit", stepId, stepVariants));
+        add(woodId.withSuffix(".place"), defineVariants("subtitles.block.generic.place", breakId, breakVariants));
+        add(stepId, defineVariants("subtitles.block.generic.footsteps", stepId, stepVariants));
+        add(buttonClickId.withSuffix("_off"), define("subtitles.block.button.click", sound(buttonClickId).pitch(0.5).volume(0.4)));
+        add(buttonClickId.withSuffix("_on"), define("subtitles.block.button.click", sound(buttonClickId).pitch(0.6).volume(0.4)));
+        add(doorId.withSuffix(".close"), defineVariants("subtitles.block.door.toggle", doorToggleId, doorToggleVariants));
+        add(doorId.withSuffix(".open"), defineVariants("subtitles.block.door.toggle", doorToggleId, doorToggleVariants));
+        add(fenceGateId.withSuffix(".close"), defineVariants("subtitles.block.fence_gate.toggle", fenceGateToggleId, fenceGateToggleVariants));
+        add(fenceGateId.withSuffix(".open"), defineVariants("subtitles.block.fence_gate.toggle", fenceGateToggleId, fenceGateToggleVariants));
+        add(hangingSignBreakId, defineVariants("subtitles.block.generic.break", hangingSignBreakId, hangingSignBreakVariants));
+        add(hangingSignId.withSuffix(".fall"), defineVariants(null, hangingSignStepId, hangingSignStepVariants));
+        add(hangingSignId.withSuffix(".hit"), defineVariants("subtitles.block.generic.hit", hangingSignStepId, hangingSignStepVariants));
+        add(hangingSignId.withSuffix(".place"), defineVariants("subtitles.block.generic.place", hangingSignBreakId, hangingSignBreakVariants));
+        add(hangingSignStepId, defineVariants("subtitles.block.generic.footsteps", hangingSignStepId, hangingSignStepVariants));
         add(woodId.withSuffix("_pressure_plate.click_off"), define("subtitles.block.pressure_plate.click", sound("random/click").pitch(0.7).volume(0.3)));
         add(woodId.withSuffix("_pressure_plate.click_on"), define("subtitles.block.pressure_plate.click", sound("random/click").pitch(0.8).volume(0.3)));
-        add(trapdoorLoc.withSuffix(".close"), defineVariants("subtitles.block.trapdoor.toggle", trapdoorToggleLoc, trapdoorToggleVariants));
-        add(trapdoorLoc.withSuffix(".open"), defineVariants("subtitles.block.trapdoor.toggle", trapdoorToggleLoc, trapdoorToggleVariants));
+        add(trapdoorId.withSuffix(".close"), defineVariants("subtitles.block.trapdoor.toggle", trapdoorToggleId, trapdoorToggleVariants));
+        add(trapdoorId.withSuffix(".open"), defineVariants("subtitles.block.trapdoor.toggle", trapdoorToggleId, trapdoorToggleVariants));
     }
 }

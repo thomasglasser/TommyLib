@@ -16,8 +16,8 @@ import java.util.function.Function;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -112,7 +112,7 @@ public class NeoForgeRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends T> DeferredHolder<T, I> register(String name, Function<ResourceLocation, ? extends I> func) {
+        public <I extends T> DeferredHolder<T, I> register(String name, Function<Identifier, ? extends I> func) {
             final var obj = this.registry.<I>register(name, func);
             DeferredHolder<T, I> h = DeferredHolder.create(obj.getKey());
             this.entries.add(h);
@@ -137,7 +137,7 @@ public class NeoForgeRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends Item> DeferredItem<I> register(String name, Function<ResourceLocation, ? extends I> func) {
+        public <I extends Item> DeferredItem<I> register(String name, Function<Identifier, ? extends I> func) {
             final var obj = this.registry.<I>register(name, func);
             DeferredItem<I> h = DeferredItem.createItem(obj.getKey());
             this.entries.add(h);
@@ -162,7 +162,7 @@ public class NeoForgeRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends Block> DeferredBlock<I> register(String name, Function<ResourceLocation, ? extends I> func) {
+        public <I extends Block> DeferredBlock<I> register(String name, Function<Identifier, ? extends I> func) {
             final var obj = this.registry.<I>register(name, func);
             DeferredBlock<I> h = DeferredBlock.createBlock(obj.getKey());
             this.entries.add(h);
@@ -187,7 +187,7 @@ public class NeoForgeRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends DataComponentType<?>> DeferredHolder<DataComponentType<?>, I> register(String name, Function<ResourceLocation, ? extends I> func) {
+        public <I extends DataComponentType<?>> DeferredHolder<DataComponentType<?>, I> register(String name, Function<Identifier, ? extends I> func) {
             final var obj = this.registry.<I>register(name, func);
             DeferredHolder<DataComponentType<?>, I> h = DeferredHolder.create(obj.getKey());
             this.entries.add(h);
@@ -212,7 +212,7 @@ public class NeoForgeRegistrationFactory implements DeferredRegister.Factory {
         }
 
         @Override
-        public <I extends EntityType<?>> DeferredHolder<EntityType<?>, I> register(String name, Function<ResourceLocation, ? extends I> func) {
+        public <I extends EntityType<?>> DeferredHolder<EntityType<?>, I> register(String name, Function<Identifier, ? extends I> func) {
             final var obj = this.registry.<I>register(name, func);
             DeferredHolder<EntityType<?>, I> h = DeferredHolder.create(obj.getKey());
             this.entries.add(h);
