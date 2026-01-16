@@ -1,7 +1,7 @@
 package dev.thomasglasser.tommylib.api.data.advancements;
 
 import com.google.gson.JsonArray;
-import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import java.nio.file.Path;
 import java.util.Set;
@@ -39,7 +39,7 @@ public class ExtendedAdvancementProvider implements DataProvider {
 
     public CompletableFuture<?> run(CachedOutput output) {
         return this.registries.thenCompose((provider) -> {
-            SortedSet<ResourceLocation> ids = new ObjectLinkedOpenHashSet<>();
+            SortedSet<ResourceLocation> ids = new ObjectRBTreeSet<>();
             Set<CompletableFuture<?>> futures = new ReferenceOpenHashSet<>();
             Consumer<AdvancementHolder> consumer = (advancementHolder) -> {
                 if (!ids.add(advancementHolder.id())) {
