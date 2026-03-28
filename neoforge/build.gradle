@@ -6,11 +6,6 @@ plugins {
 neoForge {
 	version = "${neoforge_version}"
 
-	parchment {
-		minecraftVersion = parchment_minecraft_version
-		mappingsVersion = parchment_version
-	}
-
 	def at = rootProject.project(":common").file('src/main/resources/META-INF/accesstransformer.cfg')
 	if (file(at).exists()) {
 		accessTransformers = [at]
@@ -52,9 +47,8 @@ configurations {
 dependencies {
 	// Common
 //	compileOnly "net.tslat.smartbrainlib:SmartBrainLib-neoforge-${minecraft_version}:${smartbrainlib_version}"
-	compileOnly "net.tslat.smartbrainlib:SmartBrainLib-neoforge-1.21.10:${smartbrainlib_version}"
-	compileOnly "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
-	compileOnly("dev.thomasglasser.sherdsapi:sherdsapi-neoforge-${minecraft_version}:${sherdsapi_version}") {
-        transitive = false
-    }
+	compileOnly "com.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+//	compileOnly("dev.thomasglasser.sherdsapi:sherdsapi-neoforge-${minecraft_version}:${sherdsapi_version}") {
+//        transitive = false
+//    }
 }

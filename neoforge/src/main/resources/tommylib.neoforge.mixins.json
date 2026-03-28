@@ -2,11 +2,8 @@
   "required": true,
   "minVersion": "0.8",
   "package": "dev.thomasglasser.tommylib.impl.mixin",
-  "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "minecraft.world.item.AxeItemMixin",
-    "minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateMixin"
   ],
   "client": [
   ],
@@ -16,4 +13,3 @@
     "defaultRequire": 1
   }
 }
-  

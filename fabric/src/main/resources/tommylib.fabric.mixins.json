@@ -4,8 +4,6 @@
   "package": "dev.thomasglasser.tommylib.impl.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "minecraft.world.item.AxeItemMixin",
-    "minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateMixin"
   ],
   "client": [
   ],
@@ -15,3 +13,4 @@
     "defaultRequire": 1
   }
 }
+  

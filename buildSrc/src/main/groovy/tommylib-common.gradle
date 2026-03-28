@@ -72,7 +72,7 @@ repositories {
             }
         }
         filter {
-            includeGroupAndSubgroups("software.bernie.geckolib")
+            includeGroupAndSubgroups("com.geckolib")
             includeGroupAndSubgroups("com.eliotlash.mclib")
         }
     }
