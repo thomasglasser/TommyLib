@@ -1,8 +1,9 @@
-package dev.thomasglasser.tommylib;
+package dev.thomasglasser.tommylib.impl;
 
+import dev.thomasglasser.tommylib.api.TommyLibConstants;
 import net.neoforged.fml.common.Mod;
 
-@Mod(TommyLib.MOD_ID)
+@Mod(TommyLibConstants.MOD_ID)
 public class TommyLibNeoForge {
     public TommyLibNeoForge() {
         TommyLib.init();
