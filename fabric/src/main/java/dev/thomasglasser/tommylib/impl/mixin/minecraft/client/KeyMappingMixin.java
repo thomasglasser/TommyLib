@@ -5,37 +5,40 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.resources.language.I18n;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(KeyMapping.class)
-public class KeyMappingMixin implements Comparable<KeyMapping> {
+public class KeyMappingMixin {
     @Shadow
     @Final
-    public static Map<String, Integer> CATEGORY_SORT_ORDER;
+    private static Map<String, Integer> CATEGORY_SORT_ORDER;
 
     @Shadow
     @Final
     private String category;
 
-    @Shadow
-    @Final
-    private String name;
+    @Inject(method = "compareTo(Lnet/minecraft/client/KeyMapping;)I", at = @At("HEAD"), cancellable = true)
+    private void tommylib$safeCompareTo(KeyMapping other, CallbackInfoReturnable<Integer> cir) {
+        if (this.category.equals(other.getCategory())) {
+            return;
+        }
 
-    /**
-     * @author Thomas Glasser
-     *         <br>
-     * @reason Fixes errors with using the order map, code copied from NeoForge
-     */
-    @Override
-    @Overwrite
-    public int compareTo(KeyMapping other) {
-        if (this.category.equals(other.getCategory())) return I18n.get(this.name).compareTo(I18n.get(other.getName()));
         Integer tCat = CATEGORY_SORT_ORDER.get(this.category);
         Integer oCat = CATEGORY_SORT_ORDER.get(other.getCategory());
-        if (tCat == null && oCat != null) return 1;
-        if (tCat != null && oCat == null) return -1;
-        if (tCat == null) return I18n.get(this.category).compareTo(I18n.get(other.getCategory()));
-        return tCat.compareTo(oCat);
+
+        if (tCat != null && oCat != null) {
+            return;
+        }
+
+        if (tCat == null && oCat == null) {
+            cir.setReturnValue(I18n.get(this.category).compareTo(I18n.get(other.getCategory())));
+        } else if (tCat == null) {
+            cir.setReturnValue(1);
+        } else {
+            cir.setReturnValue(-1);
+        }
     }
 }
