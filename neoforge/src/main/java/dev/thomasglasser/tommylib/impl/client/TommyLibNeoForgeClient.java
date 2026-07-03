@@ -12,7 +12,6 @@ public class TommyLibNeoForgeClient {
     public TommyLibNeoForgeClient(IEventBus modBus) {
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post event) -> TommyLibClientEvents.onClientTick());
 
-        modBus.addListener(TommyLibNeoForgeClientEvents::onClientSetup);
         modBus.addListener(TommyLibNeoForgeClientEvents::onRegisterKeyMappings);
         modBus.addListener(TommyLibNeoForgeClientEvents::onRegisterClientExtensions);
     }

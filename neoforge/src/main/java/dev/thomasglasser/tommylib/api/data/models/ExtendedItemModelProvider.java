@@ -17,12 +17,7 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.client.model.generators.loaders.SeparateTransformsModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
-/**
- * Extension of {@link ItemModelProvider} that provides functionality for mod holders.
- *
- * @deprecated Model generation is completely rewritten in 1.21.5+
- */
-@Deprecated(forRemoval = true, since = "31.0.0")
+/// Extension of {@link ItemModelProvider} that provides functionality for mod holders.
 public abstract class ExtendedItemModelProvider extends ItemModelProvider {
     protected ExtendedItemModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
         super(output, modid, existingFileHelper);

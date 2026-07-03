@@ -92,15 +92,6 @@ repositories {
     exclusiveContent {
         forRepository {
             maven {
-                name = 'playerAnimator'
-                url = 'https://maven.kosmx.dev/'
-            }
-        }
-        filter { includeGroupAndSubgroups("dev.kosmx.player-anim") }
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
                 name = 'SmartBrainLib'
                 url = 'https://dl.cloudsmith.io/public/tslat/sbl/maven/'
             }

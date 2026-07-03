@@ -15,7 +15,6 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 	implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 
-	modCompileOnly("dev.kosmx.player-anim:player-animation-lib-fabric:${playeranimator_version}")
 	modCompileOnly "net.tslat.smartbrainlib:SmartBrainLib-fabric-${minecraft_version}:${smartbrainlib_version}"
 	modCompileOnly "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
 	modCompileOnly("dev.thomasglasser.sherdsapi:sherdsapi-fabric-${minecraft_version}:${sherdsapi_version}") {

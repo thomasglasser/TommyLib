@@ -33,12 +33,7 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Extension of {@link BlockStateProvider} that provides helpers and {@link BlockModelGenerators} support.
- *
- * @deprecated Model generation is completely rewritten in 1.21.5+
- */
-@Deprecated(forRemoval = true, since = "31.0.0")
+/// Extension of {@link BlockStateProvider} that provides helpers and {@link BlockModelGenerators} support.
 public abstract class ExtendedBlockStateProvider extends BlockStateProvider {
     protected static final ExistingFileHelper.ResourceType TEXTURE_RESOURCE = new ExistingFileHelper.ResourceType(PackType.CLIENT_RESOURCES, ".png", "textures");
 

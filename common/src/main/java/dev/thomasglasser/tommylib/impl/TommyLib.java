@@ -19,8 +19,7 @@ public class TommyLib {
     }
 
     public enum Dependencies {
-        GECKOLIB("geckolib"),
-        PLAYERANIMATOR("playeranimator");
+        GECKOLIB("geckolib");
 
         private final String modId;
 

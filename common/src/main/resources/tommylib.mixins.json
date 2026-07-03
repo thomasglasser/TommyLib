@@ -4,9 +4,7 @@
   "package": "dev.thomasglasser.tommylib.impl.mixin",
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [
-    "minecraft.world.item.alchemy.PotionContentsMixin"
-  ],
+  "mixins": [],
   "client": [
     "minecraft.client.renderer.entity.player.PlayerRendererMixin"
   ],

@@ -128,9 +128,7 @@ public class ClientUtils {
 
     /**
      * Renders an item inventory model.
-     * 
-     * @deprecated Changed in 1.21.5
-     * 
+     *
      * @param itemStack       The item stack to render.
      * @param displayContext  The display context of the item.
      * @param leftHand        Whether the item is in the left hand.
@@ -141,7 +139,6 @@ public class ClientUtils {
      * @param modid           The mod ID of the item.
      * @param model           The model of the item.
      */
-    @Deprecated(forRemoval = true, since = "31.0.0")
     public static void renderItem(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, String modid, String model) {
         ModelResourceLocation location = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(modid, "item/" + model), "standalone");
         Minecraft.getInstance().getItemRenderer().render(itemStack, displayContext, leftHand, poseStack, buffer, combinedLight, combinedOverlay, Minecraft.getInstance().getModelManager().getModel(location));
@@ -150,8 +147,6 @@ public class ClientUtils {
     /**
      * Renders an item inventory model with a fallback model.
      *
-     * @deprecated Changed in 1.21.5
-     * 
      * @param itemStack       The item stack to render.
      * @param displayContext  The display context of the item.
      * @param leftHand        Whether the item is in the left hand.
@@ -163,7 +158,6 @@ public class ClientUtils {
      * @param model           The model of the item.
      * @param fallbackModel   The fallback model of the item.
      */
-    @Deprecated(forRemoval = true, since = "31.0.0")
     public static void renderItem(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, String modid, String model, String fallbackModel) {
         ModelResourceLocation location = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(modid, "item/" + model), "standalone");
         ModelResourceLocation fallbackLocation = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(modid, "item/" + fallbackModel), "standalone");

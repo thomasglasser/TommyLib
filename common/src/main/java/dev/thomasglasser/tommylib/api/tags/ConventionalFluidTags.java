@@ -23,6 +23,8 @@ import net.minecraft.world.level.material.Fluid;
  * <p></p>
  * Note, fluid tags should not be plural to match the vanilla standard.
  * This is the only tag category exempted from many-different-types plural rule.
+ *
+ * <p>(See net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants for the correct droplet rates for containers)
  */
 public final class ConventionalFluidTags {
     private ConventionalFluidTags() {}
@@ -82,12 +84,6 @@ public final class ConventionalFluidTags {
      */
     public static final TagKey<Fluid> HIDDEN_FROM_RECIPE_VIEWERS = register("hidden_from_recipe_viewers");
 
-    /**
-     * Creates a new tag key for fluids
-     * 
-     * @param tagId The ID of the tag
-     * @return The tag key
-     */
     private static TagKey<Fluid> register(String tagId) {
         return TagUtils.createConventional(Registries.FLUID, tagId);
     }
