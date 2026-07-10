@@ -120,20 +120,6 @@ repositories {
         }
     }
     maven {
-        name = 'Sherds API'
-        url = 'https://dl.cloudsmith.io/public/thomasglasser/sherdsapi/maven/'
-        content {
-            includeGroupAndSubgroups("dev.thomasglasser.sherdsapi")
-        }
-    }
-    maven {
-        name = 'TommyLib'
-        url = 'https://dl.cloudsmith.io/public/thomasglasser/tommylib/maven/'
-        content {
-            includeGroupAndSubgroups("dev.thomasglasser.tommylib")
-        }
-    }
-    maven {
         name = 'NeoForge'
         url = 'https://maven.neoforged.net/releases'
     }
@@ -258,9 +244,7 @@ publishing {
         register('mavenJava', MavenPublication) {
             artifactId base.archivesName.get()
             from components.java
-        }
 
-        maven(MavenPublication) {
             pom {
                 name = project.mod_name
                 description = project.description
@@ -292,11 +276,11 @@ publishing {
 
     repositories {
         maven {
-            name = "Cloudsmith"
-            url = "https://maven.cloudsmith.io/thomasglasser/${mod_id}/"
+            name = "Reposilite"
+            url = "https://maven.thomasglasser.dev/releases"
             credentials {
-                username = project.findProperty("CLOUDSMITH_USERNAME") ?: System.getenv("CLOUDSMITH_USERNAME")
-                password = project.findProperty("CLOUDSMITH_API_KEY") ?: System.getenv("CLOUDSMITH_API_KEY")
+                username = project.findProperty("REPOSILITE_USERNAME") ?: System.getenv("REPOSILITE_USERNAME")
+                password = project.findProperty("REPOSILITE_PASSWORD") ?: System.getenv("REPOSILITE_PASSWORD")
             }
         }
     }

@@ -1,11 +1,9 @@
 package dev.thomasglasser.tommylib.api.world.item;
 
-import dev.thomasglasser.sherdsapi.api.SherdsApiDataComponents;
 import dev.thomasglasser.tommylib.api.registration.DeferredItem;
 import dev.thomasglasser.tommylib.api.registration.DeferredRegister;
 import java.util.function.Supplier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
@@ -35,18 +33,6 @@ public final class ItemUtils {
      */
     public static <T extends Item> DeferredItem<T> register(DeferredRegister.Items provider, String name, Supplier<T> item) {
         return provider.register(name, item);
-    }
-
-    /**
-     * Registers a sherd item with the given name.
-     *
-     * @param provider   The item provider
-     * @param name       The registry name of the sherd item
-     * @param properties The item properties
-     * @return The registered sherd item holder
-     */
-    public static DeferredItem<Item> registerSherd(DeferredRegister.Items provider, String name, Item.Properties properties) {
-        return register(provider, name + "_pottery_sherd", () -> new Item(properties.component(SherdsApiDataComponents.SHERD_PATTERN.get(), ResourceLocation.fromNamespaceAndPath(provider.getNamespace(), name + "_pottery_pattern"))));
     }
 
     /**
