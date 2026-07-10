@@ -43,12 +43,3 @@ neoForge {
 configurations {
 	runtimeClasspath.extendsFrom localRuntime
 }
-
-dependencies {
-	// Common
-//	compileOnly "net.tslat.smartbrainlib:SmartBrainLib-neoforge-${minecraft_version}:${smartbrainlib_version}"
-	compileOnly "com.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
-//	compileOnly("dev.thomasglasser.sherdsapi:sherdsapi-neoforge-${minecraft_version}:${sherdsapi_version}") {
-//        transitive = false
-//    }
-}
