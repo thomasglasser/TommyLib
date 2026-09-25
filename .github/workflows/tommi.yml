@@ -1,0 +1,35 @@
+name: T.O.M.M.I. Code Reviewer
+
+on:
+  issue_comment:
+    types: [created, edited]
+  pull_request_review_comment:
+    types: [created, edited]
+  pull_request_review:
+    types: [submitted, edited]
+  pull_request:
+    types: [closed]
+
+jobs:
+  tommi:
+    # Trigger on human comments/reviews containing /tommi OR when a PR is merged
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      ((github.event.comment.user.type != 'Bot' && github.event.review.user.type != 'Bot' && !endsWith(github.actor, '[bot]')) &&
+       (contains(github.event.comment.body, '/tommi') || contains(github.event.review.body, '/tommi')))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run T.O.M.M.I.
+        uses: thomasglasser/tommi@main
+        with:
+          app-id: ${{ secrets.TOMMI_APP_ID }}
+          private-key: ${{ secrets.TOMMI_PRIVATE_KEY }}
+          gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
