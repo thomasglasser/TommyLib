@@ -1,14 +1,11 @@
 package dev.thomasglasser.tommylib.impl;
 
-import dev.thomasglasser.tommylib.impl.data.TommyLibDataGenerators;
-import net.neoforged.bus.api.IEventBus;
+import dev.thomasglasser.tommylib.api.TommyLibConstants;
 import net.neoforged.fml.common.Mod;
 
-@Mod(dev.thomasglasser.tommylib.impl.TommyLib.MOD_ID)
+@Mod(TommyLibConstants.MOD_ID)
 public class TommyLibNeoForge {
-    public TommyLibNeoForge(IEventBus modBus) {
+    public TommyLibNeoForge() {
         TommyLib.init();
-
-        modBus.addListener(TommyLibDataGenerators::onGatherData);
     }
 }
