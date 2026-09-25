@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentMap;
@@ -18,233 +19,172 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import org.jspecify.annotations.Nullable;
 
-/**
- * A Deferred Holder is a {@link Holder} that is constructed with only a ResourceKey.
- *
- * <p>It will be populated with the underlying Holder from the registry when available.
- *
- * @param <T> The type of object being held by this ExtendedHolder.
- */
+/// An ExtendedHolder is a [Holder] constructed with a [ResourceKey] that lazily binds to the underlying registry holder.
+///
+/// @param <R> The base registry type.
+/// @param <T> The specific object type held by this holder.
 public class ExtendedHolder<R, T extends R> implements Holder<R>, Supplier<T> {
-    /**
-     * Creates a new ExtendedHolder targeting the value with the specified name in the specified registry.
-     *
-     * @param <T>         The type of the target value.
-     * @param <R>         The registry type.
-     * @param registryKey The name of the registry the target value is a member of.
-     * @param valueName   The name of the target value.
-     */
+    /// The resource key of the target object.
+    protected final ResourceKey<R> key;
+
+    /// The currently cached value holder from the registry.
+    @Nullable
+    private Holder<R> holder = null;
+
+    /// Constructs a new [ExtendedHolder] pointing to the specified resource key.
+    ///
+    /// @param key the resource key of the target object
+    protected ExtendedHolder(ResourceKey<R> key) {
+        this.key = Objects.requireNonNull(key);
+        bind(false);
+    }
+
+    /// Creates a new ExtendedHolder targeting the value with the specified name in the specified registry.
+    ///
+    /// @param registryKey The key of the registry the target value is a member of.
+    /// @param valueName   The name of the target value.
+    /// @param <R>         The base registry type.
+    /// @param <T>         The specific value type.
+    /// @return a new [ExtendedHolder] instance.
     public static <R, T extends R> ExtendedHolder<R, T> create(ResourceKey<? extends Registry<R>> registryKey, Identifier valueName) {
         return create(ResourceKey.create(registryKey, valueName));
     }
 
-    /**
-     * Creates a new ExtendedHolder targeting the value with the specified name in the specified registry.
-     *
-     * @param <T>          The registry type.
-     * @param registryName The name of the registry the target value is a member of.
-     * @param valueName    The name of the target value.
-     */
+    /// Creates a new ExtendedHolder targeting the value with the specified name in the specified registry.
+    ///
+    /// @param registryName The name of the registry the target value is a member of.
+    /// @param valueName    The name of the target value.
+    /// @param <R>          The base registry type.
+    /// @param <T>          The specific value type.
+    /// @return a new [ExtendedHolder] instance.
     public static <R, T extends R> ExtendedHolder<R, T> create(Identifier registryName, Identifier valueName) {
         return create(ResourceKey.createRegistryKey(registryName), valueName);
     }
 
-    /**
-     * Creates a new ExtendedHolder targeting the specified value.
-     *
-     * @param <T> The type of the target value.
-     * @param key The resource key of the target value.
-     */
+    /// Creates a new ExtendedHolder targeting the specified value key.
+    ///
+    /// @param key The resource key of the target value.
+    /// @param <R> The base registry type.
+    /// @param <T> The specific value type.
+    /// @return a new [ExtendedHolder] instance.
     public static <R, T extends R> ExtendedHolder<R, T> create(ResourceKey<R> key) {
         return new ExtendedHolder<>(key);
     }
 
-    /**
-     * The resource key of the target object.
-     */
-    protected final ResourceKey<R> key;
-
-    /**
-     * The currently cached value.
-     */
-    @Nullable
-    private Holder<R> holder = null;
-
-    /**
-     * Creates a new ExtendedHolder with a ResourceKey.
-     *
-     * <p>Attempts to bind immediately if possible.
-     *
-     * @param key The resource key of the target object.
-     * @see #create(ResourceKey, Identifier)
-     * @see #create(Identifier, Identifier)
-     * @see #create(ResourceKey)
-     */
-    protected ExtendedHolder(ResourceKey<R> key) {
-        this.key = Objects.requireNonNull(key);
-        this.bind(false);
-    }
-
-    /**
-     * Gets the object stored by this ExtendedHolder, if this holder {@linkplain #isBound() is bound}.
-     *
-     * @throws IllegalStateException If the backing registry is unavailable.
-     * @throws NullPointerException  If the underlying Holder has not been populated (the target object is not registered).
-     */
     @SuppressWarnings("unchecked")
     @Override
     public T value() {
         bind(true);
-        if (this.holder == null) {
-            throw new NullPointerException("Trying to access unbound value: " + this.key);
-        }
+        if (holder == null)
+            throw new NullPointerException("Trying to access unbound value: " + key);
 
-        return (T) this.holder.value();
+        return (T) holder.value();
     }
 
-    /**
-     * Gets the object stored by this ExtendedHolder, if this holder {@linkplain #isBound() is bound}.
-     *
-     * @throws IllegalStateException If the backing registry is unavailable.
-     * @throws NullPointerException  If the underlying Holder has not been populated (the target object is not registered).
-     */
     @Override
     public T get() {
-        return this.value();
+        return value();
     }
 
-    /**
-     * Returns an optional containing the target object, if {@link #isBound() bound}; otherwise {@linkplain Optional#empty() an empty optional}.
-     *
-     * @return an optional containing the target object, if {@link #isBound() bound}; otherwise {@linkplain Optional#empty() an empty optional}
-     */
+    /// Returns an optional containing the target object, if bound; otherwise an empty optional.
+    ///
+    /// @return an optional containing the target object if bound.
     public Optional<T> asOptional() {
         return isBound() ? Optional.of(value()) : Optional.empty();
     }
 
-    /**
-     * Returns the registry that this ExtendedHolder is pointing at, or {@code null} if it doesn't exist.
-     *
-     * @return the registry that this ExtendedHolder is pointing at, or {@code null} if it doesn't exist
-     */
+    /// Returns the registry that this ExtendedHolder is pointing at, or `null` if it doesn't exist.
+    ///
+    /// @return the backing registry or `null`.
     @Nullable
     @SuppressWarnings("unchecked")
-    protected Registry<R> getRegistry() {
-        return (Registry<R>) BuiltInRegistries.REGISTRY.getValue(this.key.registry());
+    protected Registry<R> registry() {
+        return (Registry<R>) BuiltInRegistries.REGISTRY.getValue(key.registry());
     }
 
-    /**
-     * Binds this ExtendedHolder to the underlying registry and target object.
-     *
-     * <p>Has no effect if already bound.
-     *
-     * @param throwOnMissingRegistry If true, an exception will be thrown if the registry is absent.
-     * @throws IllegalStateException If throwOnMissingRegistry is true and the backing registry is unavailable.
-     */
+    /// Binds this ExtendedHolder to the underlying registry and target object.
+    ///
+    /// @param throwOnMissingRegistry If true, an exception will be thrown if the registry is absent.
     protected final void bind(boolean throwOnMissingRegistry) {
-        if (this.holder != null) return;
-
-        Registry<R> registry = getRegistry();
-        if (registry != null) {
-            this.holder = registry.get(this.key).orElse(null);
-        } else if (throwOnMissingRegistry) {
-            throw new IllegalStateException("Registry not present for " + this + ": " + this.key.registry());
-        }
+        if (holder != null)
+            return;
+        Registry<R> registry = registry();
+        if (registry != null)
+            holder = registry.get(key).orElse(null);
+        else if (throwOnMissingRegistry)
+            throw new IllegalStateException("Registry not present for " + this + ": " + key.registry());
     }
 
-    /**
-     * @return The ID of the object pointed to by this ExtendedHolder.
-     */
-    public Identifier getId() {
-        return this.key.identifier();
+    /// Returns the ID of the object pointed to by this ExtendedHolder.
+    ///
+    /// @return the [Identifier] ID.
+    public Identifier id() {
+        return key.identifier();
     }
 
-    /**
-     * @return The ResourceKey of the object pointed to by this ExtendedHolder.
-     */
+    /// Returns the ResourceKey of the object pointed to by this ExtendedHolder.
+    ///
+    /// @return the [ResourceKey].
     public ResourceKey<R> key() {
-        return this.key;
+        return key;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        // TODO: Replace with KeyedHolder?
-        return obj instanceof Holder<?> h && h.kind() == Kind.REFERENCE && h.unwrapKey().orElse(null) == this.key;
+        if (this == obj)
+            return true;
+        return obj instanceof Holder<?> h && h.kind() == Kind.REFERENCE && h.unwrapKey().orElse(null) == key;
     }
 
     @Override
     public int hashCode() {
-        return this.key.hashCode();
+        return key.hashCode();
     }
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "ExtendedHolder{%s}", this.key);
+        return String.format(Locale.ENGLISH, "ExtendedHolder{%s}", key);
     }
 
-    /**
-     * {@return true if the underlying object is available}
-     *
-     * <p>If {@code true}, the underlying object was added to the registry,
-     * and {@link #value()} or {@link #get()} can be called.
-     */
     @Override
     public boolean isBound() {
         bind(false);
-        return this.holder != null && this.holder.isBound();
+        return holder != null && holder.isBound();
     }
 
     @Override
     public boolean areComponentsBound() {
         bind(false);
-        return this.holder != null && this.holder.areComponentsBound();
+        return holder != null && holder.areComponentsBound();
     }
 
     @Override
     public DataComponentMap components() {
         bind(true);
-        return this.holder != null ? this.holder.components() : DataComponentMap.EMPTY;
+        return holder != null ? holder.components() : DataComponentMap.EMPTY;
     }
 
-    /**
-     * {@return true if the passed Identifier is the same as the ID of the target object}
-     */
     @Override
     public boolean is(Identifier id) {
-        return id.equals(this.key.identifier());
+        return id.equals(key.identifier());
     }
 
-    /**
-     * {@return true if the passed ResourceKey is the same as this holder's resource key}
-     */
     @Override
     public boolean is(ResourceKey<R> key) {
         return key == this.key;
     }
 
-    /**
-     * Evaluates the passed predicate against this holder's resource key.
-     *
-     * @return {@code true} if the filter matches {@linkplain #key() this ExtendedHolder's resource key}
-     */
     @Override
     public boolean is(Predicate<ResourceKey<R>> filter) {
-        return filter.test(this.key);
+        return filter.test(key);
     }
 
-    /**
-     * {@return true if this holder is a member of the passed tag}
-     */
     @Override
     public boolean is(TagKey<R> tag) {
         bind(false);
-        return this.holder != null && this.holder.is(tag);
+        return holder != null && holder.is(tag);
     }
 
-    /**
-     * {@return {@code true} if the {@code holder} is the same as this holder}
-     */
     @Override
     @Deprecated
     public boolean is(Holder<R> holder) {
@@ -252,37 +192,20 @@ public class ExtendedHolder<R, T extends R> implements Holder<R>, Supplier<T> {
         return this.holder != null && this.holder.is(holder);
     }
 
-    /**
-     * {@return all tags present on the underlying object}
-     *
-     * <p>If the underlying object is not {@linkplain #isBound() bound} yet, and empty stream is returned.
-     */
     @Override
     public Stream<TagKey<R>> tags() {
         bind(false);
-        return this.holder != null ? this.holder.tags() : Stream.empty();
+        return holder != null ? holder.tags() : Stream.empty();
     }
 
-    /**
-     * Returns an {@link Either#left()} containing {@linkplain #key() the resource key of this holder}.
-     *
-     * @apiNote This method is implemented for {@link Holder} compatibility, but {@link #key()} should be preferred.
-     */
     @Override
     public Either<ResourceKey<R>, R> unwrap() {
-        // Holder.Reference always returns the key, do the same here.
-        return Either.left(this.key);
+        return Either.left(key);
     }
 
-    /**
-     * Returns the resource key of this holder.
-     *
-     * @return a present optional containing {@linkplain #key() the resource key of this holder}
-     * @apiNote This method is implemented for {@link Holder} compatibility, but {@link #key()} should be preferred.
-     */
     @Override
     public Optional<ResourceKey<R>> unwrapKey() {
-        return Optional.of(this.key);
+        return Optional.of(key);
     }
 
     @Override
@@ -293,10 +216,22 @@ public class ExtendedHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     @Override
     public boolean canSerializeIn(HolderOwner<R> owner) {
         bind(false);
-        return this.holder != null && this.holder.canSerializeIn(owner);
+        return holder != null && holder.canSerializeIn(owner);
     }
 
-    public Holder.Reference<R> asReference(HolderGetter<R> getter) {
+    /// Resolves this holder to a [Reference] using the provided [HolderGetter].
+    ///
+    /// @param getter the holder getter used to resolve this reference
+    /// @return the resolved [Reference]
+    public Reference<R> asReference(HolderGetter<R> getter) {
         return getter.getOrThrow(key);
+    }
+
+    /// Resolves this holder to a [Reference] using the provided [HolderLookup.Provider].
+    ///
+    /// @param registries the lookup provider used to resolve this reference
+    /// @return the resolved [Reference]
+    public Reference<R> asReference(HolderLookup.Provider registries) {
+        return registries.lookupOrThrow(key.registryKey()).getOrThrow(key);
     }
 }
