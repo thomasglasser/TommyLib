@@ -1,12 +1,12 @@
 package dev.thomasglasser.tommylib.impl.services;
 
+import dev.thomasglasser.tommylib.api.collection.ImmutableCollectionView;
 import dev.thomasglasser.tommylib.api.registration.BlockHolder;
 import dev.thomasglasser.tommylib.api.registration.ExtendedHolder;
 import dev.thomasglasser.tommylib.api.registration.ItemHolder;
 import dev.thomasglasser.tommylib.api.registration.Registrar;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import java.util.Optional;
 import java.util.function.Function;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
@@ -17,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.javafmlmod.FMLModContainer;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -48,27 +49,26 @@ public class NeoForgeRegistrationService implements RegistrationService {
     }
 
     private static <T> DeferredRegister<T> createDeferredRegister(ResourceKey<? extends Registry<T>> registryKey, String namespace) {
-        final var containerOpt = ModList.get().getModContainerById(namespace);
+        final Optional<? extends ModContainer> containerOpt = ModList.get().getModContainerById(namespace);
         if (containerOpt.isEmpty())
             throw new NullPointerException("Cannot find mod container for id " + namespace);
-        final var cont = containerOpt.get();
+        final ModContainer cont = containerOpt.get();
         if (cont instanceof FMLModContainer fmlModContainer) {
-            final var register = DeferredRegister.create(registryKey, namespace);
+            final DeferredRegister<T> register = DeferredRegister.create(registryKey, namespace);
             IEventBus modBus = fmlModContainer.getEventBus();
             if (modBus == null)
                 throw new NullPointerException("Cannot find event bus for mod " + namespace);
             register.register(modBus);
             return register;
-        } else {
-            throw new ClassCastException("The container of the mod " + namespace + " is not a FML one!");
         }
+        throw new ClassCastException("The container of the mod " + namespace + " is not a FML one!");
     }
 
     private static class NeoForgeRegistrar<T> extends Registrar<T> {
         private final DeferredRegister<T> registry;
 
-        private final Set<ExtendedHolder<T, ? extends T>> entries = new HashSet<>();
-        private final Set<ExtendedHolder<T, ? extends T>> entriesView = Collections.unmodifiableSet(this.entries);
+        private final ObjectOpenHashSet<ExtendedHolder<T, ? extends T>> entries = new ObjectOpenHashSet<>();
+        private final ImmutableCollectionView<ExtendedHolder<T, ? extends T>> entriesView = ImmutableCollectionView.of(entries);
 
         private NeoForgeRegistrar(String namespace, DeferredRegister<T> registry) {
             super(registry.getRegistryKey(), namespace);
@@ -77,23 +77,23 @@ public class NeoForgeRegistrationService implements RegistrationService {
 
         @Override
         public <I extends T> ExtendedHolder<T, I> register(String name, Function<Identifier, ? extends I> func) {
-            ResourceKey<T> key = this.registry.register(name, func).getKey();
+            ResourceKey<T> key = registry.register(name, func).getKey();
             ExtendedHolder<T, I> holder = ExtendedHolder.create(key);
-            this.entries.add(holder);
+            entries.add(holder);
             return holder;
         }
 
         @Override
-        public Set<ExtendedHolder<T, ? extends T>> getEntries() {
-            return this.entriesView;
+        public ImmutableCollectionView<ExtendedHolder<T, ? extends T>> entries() {
+            return entriesView;
         }
     }
 
     private static class NeoForgeItemsRegistrar extends Registrar.Items {
         private final DeferredRegister<Item> registry;
 
-        private final Set<ExtendedHolder<Item, ? extends Item>> entries = new HashSet<>();
-        private final Set<ExtendedHolder<Item, ? extends Item>> entriesView = Collections.unmodifiableSet(this.entries);
+        private final ObjectOpenHashSet<ExtendedHolder<Item, ? extends Item>> entries = new ObjectOpenHashSet<>();
+        private final ImmutableCollectionView<ExtendedHolder<Item, ? extends Item>> entriesView = ImmutableCollectionView.of(entries);
 
         private NeoForgeItemsRegistrar(String namespace, DeferredRegister<Item> registry) {
             super(namespace);
@@ -102,23 +102,23 @@ public class NeoForgeRegistrationService implements RegistrationService {
 
         @Override
         public <I extends Item> ItemHolder<I> register(String name, Function<Identifier, ? extends I> func) {
-            ResourceKey<Item> key = this.registry.register(name, func).getKey();
+            ResourceKey<Item> key = registry.register(name, func).getKey();
             ItemHolder<I> holder = ItemHolder.createItem(key);
-            this.entries.add(holder);
+            entries.add(holder);
             return holder;
         }
 
         @Override
-        public Set<ExtendedHolder<Item, ? extends Item>> getEntries() {
-            return this.entriesView;
+        public ImmutableCollectionView<ExtendedHolder<Item, ? extends Item>> entries() {
+            return entriesView;
         }
     }
 
     private static class NeoForgeBlocksRegistrar extends Registrar.Blocks {
         private final DeferredRegister<Block> registry;
 
-        private final Set<ExtendedHolder<Block, ? extends Block>> entries = new HashSet<>();
-        private final Set<ExtendedHolder<Block, ? extends Block>> entriesView = Collections.unmodifiableSet(this.entries);
+        private final ObjectOpenHashSet<ExtendedHolder<Block, ? extends Block>> entries = new ObjectOpenHashSet<>();
+        private final ImmutableCollectionView<ExtendedHolder<Block, ? extends Block>> entriesView = ImmutableCollectionView.of(entries);
 
         private NeoForgeBlocksRegistrar(String namespace, DeferredRegister<Block> registry) {
             super(namespace);
@@ -127,23 +127,23 @@ public class NeoForgeRegistrationService implements RegistrationService {
 
         @Override
         public <B extends Block> BlockHolder<B> register(String name, Function<Identifier, ? extends B> func) {
-            ResourceKey<Block> key = this.registry.register(name, func).getKey();
+            ResourceKey<Block> key = registry.register(name, func).getKey();
             BlockHolder<B> holder = BlockHolder.createBlock(key);
-            this.entries.add(holder);
+            entries.add(holder);
             return holder;
         }
 
         @Override
-        public Set<ExtendedHolder<Block, ? extends Block>> getEntries() {
-            return this.entriesView;
+        public ImmutableCollectionView<ExtendedHolder<Block, ? extends Block>> entries() {
+            return entriesView;
         }
     }
 
     private static class NeoForgeDataComponentsRegistrar extends Registrar.DataComponents {
         private final DeferredRegister<DataComponentType<?>> registry;
 
-        private final Set<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries = new HashSet<>();
-        private final Set<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entriesView = Collections.unmodifiableSet(this.entries);
+        private final ObjectOpenHashSet<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries = new ObjectOpenHashSet<>();
+        private final ImmutableCollectionView<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entriesView = ImmutableCollectionView.of(entries);
 
         private NeoForgeDataComponentsRegistrar(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace, DeferredRegister<DataComponentType<?>> registry) {
             super(registryKey, namespace);
@@ -152,23 +152,23 @@ public class NeoForgeRegistrationService implements RegistrationService {
 
         @Override
         public <D extends DataComponentType<?>> ExtendedHolder<DataComponentType<?>, D> register(String name, Function<Identifier, ? extends D> func) {
-            ResourceKey<DataComponentType<?>> key = this.registry.register(name, func).getKey();
+            ResourceKey<DataComponentType<?>> key = registry.register(name, func).getKey();
             ExtendedHolder<DataComponentType<?>, D> holder = ExtendedHolder.create(key);
-            this.entries.add(holder);
+            entries.add(holder);
             return holder;
         }
 
         @Override
-        public Set<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> getEntries() {
-            return this.entriesView;
+        public ImmutableCollectionView<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries() {
+            return entriesView;
         }
     }
 
     private static class NeoForgeEntitiesRegistrar extends Registrar.Entities {
         private final DeferredRegister<EntityType<?>> registry;
 
-        private final Set<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entries = new HashSet<>();
-        private final Set<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entriesView = Collections.unmodifiableSet(this.entries);
+        private final ObjectOpenHashSet<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entries = new ObjectOpenHashSet<>();
+        private final ImmutableCollectionView<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entriesView = ImmutableCollectionView.of(entries);
 
         private NeoForgeEntitiesRegistrar(String namespace, DeferredRegister<EntityType<?>> registry) {
             super(namespace);
@@ -177,15 +177,15 @@ public class NeoForgeRegistrationService implements RegistrationService {
 
         @Override
         public <E extends EntityType<?>> ExtendedHolder<EntityType<?>, E> register(String name, Function<Identifier, ? extends E> func) {
-            ResourceKey<EntityType<?>> key = this.registry.register(name, func).getKey();
+            ResourceKey<EntityType<?>> key = registry.register(name, func).getKey();
             ExtendedHolder<EntityType<?>, E> holder = ExtendedHolder.create(key);
-            this.entries.add(holder);
+            entries.add(holder);
             return holder;
         }
 
         @Override
-        public Set<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> getEntries() {
-            return this.entriesView;
+        public ImmutableCollectionView<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entries() {
+            return entriesView;
         }
     }
 }

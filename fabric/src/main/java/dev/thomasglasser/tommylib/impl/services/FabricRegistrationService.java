@@ -1,12 +1,11 @@
 package dev.thomasglasser.tommylib.impl.services;
 
+import dev.thomasglasser.tommylib.api.collection.ImmutableCollectionView;
 import dev.thomasglasser.tommylib.api.registration.BlockHolder;
 import dev.thomasglasser.tommylib.api.registration.ExtendedHolder;
 import dev.thomasglasser.tommylib.api.registration.ItemHolder;
 import dev.thomasglasser.tommylib.api.registration.Registrar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.Set;
 import java.util.function.Function;
 import net.minecraft.core.Registry;
@@ -44,8 +43,8 @@ public class FabricRegistrationService implements RegistrationService {
     }
 
     private static class FabricRegistrar<T> extends Registrar<T> {
-        private final Set<ExtendedHolder<T, ? extends T>> entries = new HashSet<>();
-        private final Set<ExtendedHolder<T, ? extends T>> entriesView = Collections.unmodifiableSet(this.entries);
+        private final Set<ExtendedHolder<T, ? extends T>> entries = new ObjectOpenHashSet<>();
+        private final ImmutableCollectionView<ExtendedHolder<T, ? extends T>> entriesView = ImmutableCollectionView.of(entries);
 
         protected FabricRegistrar(ResourceKey<? extends Registry<T>> registryKey, String namespace) {
             super(registryKey, namespace);
@@ -53,22 +52,22 @@ public class FabricRegistrationService implements RegistrationService {
 
         @Override
         public <I extends T> ExtendedHolder<T, I> register(String name, Function<Identifier, ? extends I> func) {
-            Identifier id = Identifier.fromNamespaceAndPath(getNamespace(), name);
-            Registry.register(getRegistry().get(), id, func.apply(id));
-            ExtendedHolder<T, I> holder = ExtendedHolder.create(getRegistryKey(), id);
-            this.entries.add(holder);
+            Identifier id = Identifier.fromNamespaceAndPath(namespace(), name);
+            Registry.register(registry().get(), id, func.apply(id));
+            ExtendedHolder<T, I> holder = ExtendedHolder.create(registryKey(), id);
+            entries.add(holder);
             return holder;
         }
 
         @Override
-        public Collection<ExtendedHolder<T, ? extends T>> getEntries() {
-            return this.entriesView;
+        public ImmutableCollectionView<ExtendedHolder<T, ? extends T>> entries() {
+            return entriesView;
         }
     }
 
     private static class FabricItemsRegistrar extends Registrar.Items {
-        private final Set<ExtendedHolder<Item, ? extends Item>> entries = new HashSet<>();
-        private final Set<ExtendedHolder<Item, ? extends Item>> entriesView = Collections.unmodifiableSet(this.entries);
+        private final Set<ExtendedHolder<Item, ? extends Item>> entries = new ObjectOpenHashSet<>();
+        private final ImmutableCollectionView<ExtendedHolder<Item, ? extends Item>> entriesView = ImmutableCollectionView.of(entries);
 
         protected FabricItemsRegistrar(String namespace) {
             super(namespace);
@@ -76,22 +75,22 @@ public class FabricRegistrationService implements RegistrationService {
 
         @Override
         public <I extends Item> ItemHolder<I> register(String name, Function<Identifier, ? extends I> func) {
-            Identifier id = Identifier.fromNamespaceAndPath(getNamespace(), name);
-            Registry.register(getRegistry().get(), id, func.apply(id));
+            Identifier id = Identifier.fromNamespaceAndPath(namespace(), name);
+            Registry.register(registry().get(), id, func.apply(id));
             ItemHolder<I> holder = ItemHolder.createItem(id);
-            this.entries.add(holder);
+            entries.add(holder);
             return holder;
         }
 
         @Override
-        public Collection<ExtendedHolder<Item, ? extends Item>> getEntries() {
-            return this.entriesView;
+        public ImmutableCollectionView<ExtendedHolder<Item, ? extends Item>> entries() {
+            return entriesView;
         }
     }
 
     private static class FabricBlocksRegistrar extends Registrar.Blocks {
-        private final Set<ExtendedHolder<Block, ? extends Block>> entries = new HashSet<>();
-        private final Set<ExtendedHolder<Block, ? extends Block>> entriesView = Collections.unmodifiableSet(this.entries);
+        private final Set<ExtendedHolder<Block, ? extends Block>> entries = new ObjectOpenHashSet<>();
+        private final ImmutableCollectionView<ExtendedHolder<Block, ? extends Block>> entriesView = ImmutableCollectionView.of(entries);
 
         protected FabricBlocksRegistrar(String namespace) {
             super(namespace);
@@ -99,22 +98,22 @@ public class FabricRegistrationService implements RegistrationService {
 
         @Override
         public <B extends Block> BlockHolder<B> register(String name, Function<Identifier, ? extends B> func) {
-            Identifier id = Identifier.fromNamespaceAndPath(getNamespace(), name);
-            Registry.register(getRegistry().get(), id, func.apply(id));
+            Identifier id = Identifier.fromNamespaceAndPath(namespace(), name);
+            Registry.register(registry().get(), id, func.apply(id));
             BlockHolder<B> holder = BlockHolder.createBlock(id);
-            this.entries.add(holder);
+            entries.add(holder);
             return holder;
         }
 
         @Override
-        public Set<ExtendedHolder<Block, ? extends Block>> getEntries() {
-            return this.entriesView;
+        public ImmutableCollectionView<ExtendedHolder<Block, ? extends Block>> entries() {
+            return entriesView;
         }
     }
 
     private static class FabricDataComponentsRegistrar extends Registrar.DataComponents {
-        private final Set<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries = new HashSet<>();
-        private final Set<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entriesView = Collections.unmodifiableSet(this.entries);
+        private final Set<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries = new ObjectOpenHashSet<>();
+        private final ImmutableCollectionView<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entriesView = ImmutableCollectionView.of(entries);
 
         protected FabricDataComponentsRegistrar(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace) {
             super(registryKey, namespace);
@@ -122,22 +121,22 @@ public class FabricRegistrationService implements RegistrationService {
 
         @Override
         public <D extends DataComponentType<?>> ExtendedHolder<DataComponentType<?>, D> register(String name, Function<Identifier, ? extends D> func) {
-            Identifier id = Identifier.fromNamespaceAndPath(getNamespace(), name);
-            Registry.register(getRegistry().get(), id, func.apply(id));
-            ExtendedHolder<DataComponentType<?>, D> holder = ExtendedHolder.create(getRegistryKey(), id);
-            this.entries.add(holder);
+            Identifier id = Identifier.fromNamespaceAndPath(namespace(), name);
+            Registry.register(registry().get(), id, func.apply(id));
+            ExtendedHolder<DataComponentType<?>, D> holder = ExtendedHolder.create(registryKey(), id);
+            entries.add(holder);
             return holder;
         }
 
         @Override
-        public Set<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> getEntries() {
-            return this.entriesView;
+        public ImmutableCollectionView<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries() {
+            return entriesView;
         }
     }
 
     private static class FabricEntitiesRegistrar extends Registrar.Entities {
-        private final Set<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entries = new HashSet<>();
-        private final Set<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entriesView = Collections.unmodifiableSet(this.entries);
+        private final Set<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entries = new ObjectOpenHashSet<>();
+        private final ImmutableCollectionView<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entriesView = ImmutableCollectionView.of(entries);
 
         protected FabricEntitiesRegistrar(String namespace) {
             super(namespace);
@@ -145,16 +144,16 @@ public class FabricRegistrationService implements RegistrationService {
 
         @Override
         public <I extends EntityType<?>> ExtendedHolder<EntityType<?>, I> register(String name, Function<Identifier, ? extends I> func) {
-            Identifier id = Identifier.fromNamespaceAndPath(getNamespace(), name);
-            Registry.register(getRegistry().get(), id, func.apply(id));
-            ExtendedHolder<EntityType<?>, I> holder = ExtendedHolder.create(getRegistryKey(), id);
-            this.entries.add(holder);
+            Identifier id = Identifier.fromNamespaceAndPath(namespace(), name);
+            Registry.register(registry().get(), id, func.apply(id));
+            ExtendedHolder<EntityType<?>, I> holder = ExtendedHolder.create(registryKey(), id);
+            entries.add(holder);
             return holder;
         }
 
         @Override
-        public Set<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> getEntries() {
-            return this.entriesView;
+        public ImmutableCollectionView<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entries() {
+            return entriesView;
         }
     }
 }
