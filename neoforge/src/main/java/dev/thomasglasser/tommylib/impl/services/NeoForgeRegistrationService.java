@@ -23,6 +23,22 @@ import net.neoforged.fml.javafmlmod.FMLModContainer;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class NeoForgeRegistrationService implements RegistrationService {
+    private static <T> DeferredRegister<T> createDeferredRegister(ResourceKey<? extends Registry<T>> registryKey, String namespace) {
+        final Optional<? extends ModContainer> containerOpt = ModList.get().getModContainerById(namespace);
+        if (containerOpt.isEmpty())
+            throw new NullPointerException("Cannot find mod container for id " + namespace);
+        final ModContainer cont = containerOpt.get();
+        if (cont instanceof FMLModContainer fmlModContainer) {
+            final DeferredRegister<T> register = DeferredRegister.create(registryKey, namespace);
+            IEventBus modBus = fmlModContainer.getEventBus();
+            if (modBus == null)
+                throw new NullPointerException("Cannot find event bus for mod " + namespace);
+            register.register(modBus);
+            return register;
+        }
+        throw new ClassCastException("The container of the mod " + namespace + " is not a FML one!");
+    }
+
     @Override
     public <T> Registrar<T> create(ResourceKey<? extends Registry<T>> key, String namespace) {
         return new NeoForgeRegistrar<>(namespace, createDeferredRegister(key, namespace));
@@ -39,29 +55,13 @@ public class NeoForgeRegistrationService implements RegistrationService {
     }
 
     @Override
-    public Registrar.DataComponents createDataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace) {
+    public Registrar.DataComponents createDataComponents(ResourceKey<? extends Registry<DataComponentType<?>>> registryKey, String namespace) {
         return new NeoForgeDataComponentsRegistrar(registryKey, namespace, createDeferredRegister(registryKey, namespace));
     }
 
     @Override
     public Registrar.Entities createEntities(String namespace) {
         return new NeoForgeEntitiesRegistrar(namespace, createDeferredRegister(Registries.ENTITY_TYPE, namespace));
-    }
-
-    private static <T> DeferredRegister<T> createDeferredRegister(ResourceKey<? extends Registry<T>> registryKey, String namespace) {
-        final Optional<? extends ModContainer> containerOpt = ModList.get().getModContainerById(namespace);
-        if (containerOpt.isEmpty())
-            throw new NullPointerException("Cannot find mod container for id " + namespace);
-        final ModContainer cont = containerOpt.get();
-        if (cont instanceof FMLModContainer fmlModContainer) {
-            final DeferredRegister<T> register = DeferredRegister.create(registryKey, namespace);
-            IEventBus modBus = fmlModContainer.getEventBus();
-            if (modBus == null)
-                throw new NullPointerException("Cannot find event bus for mod " + namespace);
-            register.register(modBus);
-            return register;
-        }
-        throw new ClassCastException("The container of the mod " + namespace + " is not a FML one!");
     }
 
     private static class NeoForgeRegistrar<T> extends Registrar<T> {
@@ -145,7 +145,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         private final ObjectOpenHashSet<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries = new ObjectOpenHashSet<>();
         private final ImmutableCollectionView<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entriesView = ImmutableCollectionView.of(entries);
 
-        private NeoForgeDataComponentsRegistrar(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace, DeferredRegister<DataComponentType<?>> registry) {
+        private NeoForgeDataComponentsRegistrar(ResourceKey<? extends Registry<DataComponentType<?>>> registryKey, String namespace, DeferredRegister<DataComponentType<?>> registry) {
             super(registryKey, namespace);
             this.registry = registry;
         }

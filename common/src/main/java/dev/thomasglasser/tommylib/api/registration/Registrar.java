@@ -88,10 +88,10 @@ public abstract class Registrar<T> {
      *
      * @param registryName The name of the registry, should include namespace.
      * @param namespace    The namespace for all objects registered to this Registrar.
-     * @param <B>          the registry entry type.
+     * @param <T>          the registry entry type.
      * @return a new {@link Registrar} instance.
      */
-    public static <B> Registrar<B> create(ResourceLocation registryName, String namespace) {
+    public static <T> Registrar<T> create(ResourceLocation registryName, String namespace) {
         return create(ResourceKey.createRegistryKey(registryName), namespace);
     }
 
@@ -116,13 +116,23 @@ public abstract class Registrar<T> {
     }
 
     /**
+     * Factory for a specialized Registrar for {@link DataComponentType DataComponentTypes} using the default registry key.
+     *
+     * @param namespace The namespace for all objects registered to this Registrar.
+     * @return a new specialized {@link DataComponents} instance.
+     */
+    public static DataComponents createDataComponents(String namespace) {
+        return createDataComponents(Registries.DATA_COMPONENT_TYPE, namespace);
+    }
+
+    /**
      * Factory for a specialized Registrar for {@link DataComponentType DataComponentTypes}.
      *
      * @param registryKey The key for the data component type registry.
      * @param namespace   The namespace for all objects registered to this Registrar.
      * @return a new specialized {@link DataComponents} instance.
      */
-    public static DataComponents createDataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace) {
+    public static DataComponents createDataComponents(ResourceKey<? extends Registry<DataComponentType<?>>> registryKey, String namespace) {
         return TommyLibServices.REGISTRATION.createDataComponents(registryKey, namespace);
     }
 
@@ -417,7 +427,7 @@ public abstract class Registrar<T> {
          * @return an {@link ItemHolder} for the registered item
          */
         public ItemHolder<Item> registerSimple(String name) {
-            return register(name, Item::new, UnaryOperator.identity());
+            return registerSimple(name, UnaryOperator.identity());
         }
 
         /**
@@ -487,73 +497,6 @@ public abstract class Registrar<T> {
             return registerSimpleBlockItem(block, UnaryOperator.identity());
         }
 
-        /**
-         * Alias for {@link #registerSimpleBlockItem(String, Supplier, Supplier)}.
-         *
-         * @param name       the entry name
-         * @param block      the block supplier
-         * @param properties the item properties supplier
-         * @return the registered {@link BlockItem} holder
-         */
-        public ItemHolder<BlockItem> registerSimpleBlock(String name, Supplier<? extends Block> block, Supplier<Item.Properties> properties) {
-            return registerSimpleBlockItem(name, block, properties);
-        }
-
-        /**
-         * Alias for {@link #registerSimpleBlockItem(String, Supplier, UnaryOperator)}.
-         *
-         * @param name       the entry name
-         * @param block      the block supplier
-         * @param properties the item properties operator
-         * @return the registered {@link BlockItem} holder
-         */
-        public ItemHolder<BlockItem> registerSimpleBlock(String name, Supplier<? extends Block> block, UnaryOperator<Item.Properties> properties) {
-            return registerSimpleBlockItem(name, block, properties);
-        }
-
-        /**
-         * Alias for {@link #registerSimpleBlockItem(String, Supplier)}.
-         *
-         * @param name  the entry name
-         * @param block the block supplier
-         * @return the registered {@link BlockItem} holder
-         */
-        public ItemHolder<BlockItem> registerSimpleBlock(String name, Supplier<? extends Block> block) {
-            return registerSimpleBlockItem(name, block);
-        }
-
-        /**
-         * Alias for {@link #registerSimpleBlockItem(Holder, Supplier)}.
-         *
-         * @param block      the block holder
-         * @param properties the item properties supplier
-         * @return the registered {@link BlockItem} holder
-         */
-        public ItemHolder<BlockItem> registerSimpleBlock(Holder<Block> block, Supplier<Item.Properties> properties) {
-            return registerSimpleBlockItem(block, properties);
-        }
-
-        /**
-         * Alias for {@link #registerSimpleBlockItem(Holder, UnaryOperator)}.
-         *
-         * @param block      the block holder
-         * @param properties the item properties operator
-         * @return the registered {@link BlockItem} holder
-         */
-        public ItemHolder<BlockItem> registerSimpleBlock(Holder<Block> block, UnaryOperator<Item.Properties> properties) {
-            return registerSimpleBlockItem(block, properties);
-        }
-
-        /**
-         * Alias for {@link #registerSimpleBlockItem(Holder)}.
-         *
-         * @param block the block holder
-         * @return the registered {@link BlockItem} holder
-         */
-        public ItemHolder<BlockItem> registerSimpleBlock(Holder<Block> block) {
-            return registerSimpleBlockItem(block);
-        }
-
         @Override
         protected <I extends Item> ItemHolder<I> createHolder(ResourceKey<? extends Registry<Item>> registryKey, ResourceLocation key) {
             return ItemHolder.createItem(ResourceKey.create(registryKey, key));
@@ -568,7 +511,7 @@ public abstract class Registrar<T> {
          * @param registryKey the data component type registry key
          * @param namespace   the mod namespace
          */
-        protected DataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace) {
+        protected DataComponents(ResourceKey<? extends Registry<DataComponentType<?>>> registryKey, String namespace) {
             super(registryKey, namespace);
         }
 

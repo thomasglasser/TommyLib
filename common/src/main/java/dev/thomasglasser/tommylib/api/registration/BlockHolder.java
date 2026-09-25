@@ -63,7 +63,7 @@ public class BlockHolder<T extends Block> extends ExtendedHolder<Block, T> imple
     public ItemStack toStack(int count) {
         ItemStack stack = asItem().getDefaultInstance();
         if (stack.isEmpty())
-            throw new IllegalStateException("Block does not have a corresponding item: " + key);
+            throw new IllegalStateException("Block does not have a corresponding item: " + key());
         stack.setCount(count);
         return stack;
     }

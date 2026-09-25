@@ -33,7 +33,7 @@ public class FabricRegistrationService implements RegistrationService {
     }
 
     @Override
-    public Registrar.DataComponents createDataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace) {
+    public Registrar.DataComponents createDataComponents(ResourceKey<? extends Registry<DataComponentType<?>>> registryKey, String namespace) {
         return new FabricDataComponentsRegistrar(registryKey, namespace);
     }
 
@@ -115,7 +115,7 @@ public class FabricRegistrationService implements RegistrationService {
         private final Set<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries = new ObjectOpenHashSet<>();
         private final ImmutableCollectionView<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entriesView = ImmutableCollectionView.of(entries);
 
-        protected FabricDataComponentsRegistrar(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace) {
+        protected FabricDataComponentsRegistrar(ResourceKey<? extends Registry<DataComponentType<?>>> registryKey, String namespace) {
             super(registryKey, namespace);
         }
 

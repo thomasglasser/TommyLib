@@ -150,7 +150,7 @@ public class ExtendedHolder<R, T extends R> implements Holder<R>, Supplier<T> {
         if (this == obj) {
             return true;
         }
-        return obj instanceof Holder<?> h && h.kind() == Kind.REFERENCE && h.unwrapKey().orElse(null) == key;
+        return obj instanceof Holder<?> h && h.kind() == Kind.REFERENCE && key.equals(h.unwrapKey().orElse(null));
     }
 
     @Override
@@ -176,7 +176,7 @@ public class ExtendedHolder<R, T extends R> implements Holder<R>, Supplier<T> {
 
     @Override
     public boolean is(ResourceKey<R> key) {
-        return key == this.key;
+        return this.key.equals(key);
     }
 
     @Override

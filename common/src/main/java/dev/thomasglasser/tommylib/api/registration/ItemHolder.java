@@ -62,7 +62,7 @@ public class ItemHolder<T extends Item> extends ExtendedHolder<Item, T> implemen
     public ItemStack toStack(int count) {
         ItemStack stack = asItem().getDefaultInstance();
         if (stack.isEmpty())
-            throw new IllegalStateException("Obtained empty item stack; incorrect getDefaultInstance() call for: " + key);
+            throw new IllegalStateException("Obtained empty item stack; incorrect getDefaultInstance() call for: " + key());
         stack.setCount(count);
         return stack;
     }

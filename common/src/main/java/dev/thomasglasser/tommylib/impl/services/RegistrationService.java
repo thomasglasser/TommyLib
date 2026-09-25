@@ -12,7 +12,7 @@ public interface RegistrationService {
 
     Registrar.Blocks createBlocks(String namespace);
 
-    Registrar.DataComponents createDataComponents(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace);
+    Registrar.DataComponents createDataComponents(ResourceKey<? extends Registry<DataComponentType<?>>> key, String namespace);
 
     Registrar.Entities createEntities(String namespace);
 }
