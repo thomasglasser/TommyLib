@@ -6,7 +6,6 @@ import dev.thomasglasser.tommylib.api.registration.ExtendedHolder;
 import dev.thomasglasser.tommylib.api.registration.ItemHolder;
 import dev.thomasglasser.tommylib.api.registration.Registrar;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import java.util.Set;
 import java.util.function.Function;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
@@ -43,7 +42,7 @@ public class FabricRegistrationService implements RegistrationService {
     }
 
     private static class FabricRegistrar<T> extends Registrar<T> {
-        private final Set<ExtendedHolder<T, ? extends T>> entries = new ObjectOpenHashSet<>();
+        private final ObjectOpenHashSet<ExtendedHolder<T, ? extends T>> entries = new ObjectOpenHashSet<>();
         private final ImmutableCollectionView<ExtendedHolder<T, ? extends T>> entriesView = ImmutableCollectionView.of(entries);
 
         protected FabricRegistrar(ResourceKey<? extends Registry<T>> registryKey, String namespace) {
@@ -54,7 +53,7 @@ public class FabricRegistrationService implements RegistrationService {
         public <I extends T> ExtendedHolder<T, I> register(String name, Function<Identifier, ? extends I> func) {
             Identifier id = Identifier.fromNamespaceAndPath(namespace(), name);
             Registry.register(registry().get(), id, func.apply(id));
-            ExtendedHolder<T, I> holder = ExtendedHolder.create(registryKey(), id);
+            ExtendedHolder<T, I> holder = createHolder(ResourceKey.create(registryKey(), id));
             entries.add(holder);
             return holder;
         }
@@ -66,7 +65,7 @@ public class FabricRegistrationService implements RegistrationService {
     }
 
     private static class FabricItemsRegistrar extends Registrar.Items {
-        private final Set<ExtendedHolder<Item, ? extends Item>> entries = new ObjectOpenHashSet<>();
+        private final ObjectOpenHashSet<ExtendedHolder<Item, ? extends Item>> entries = new ObjectOpenHashSet<>();
         private final ImmutableCollectionView<ExtendedHolder<Item, ? extends Item>> entriesView = ImmutableCollectionView.of(entries);
 
         protected FabricItemsRegistrar(String namespace) {
@@ -77,7 +76,7 @@ public class FabricRegistrationService implements RegistrationService {
         public <I extends Item> ItemHolder<I> register(String name, Function<Identifier, ? extends I> func) {
             Identifier id = Identifier.fromNamespaceAndPath(namespace(), name);
             Registry.register(registry().get(), id, func.apply(id));
-            ItemHolder<I> holder = ItemHolder.createItem(id);
+            ItemHolder<I> holder = createHolder(ResourceKey.create(registryKey(), id));
             entries.add(holder);
             return holder;
         }
@@ -89,7 +88,7 @@ public class FabricRegistrationService implements RegistrationService {
     }
 
     private static class FabricBlocksRegistrar extends Registrar.Blocks {
-        private final Set<ExtendedHolder<Block, ? extends Block>> entries = new ObjectOpenHashSet<>();
+        private final ObjectOpenHashSet<ExtendedHolder<Block, ? extends Block>> entries = new ObjectOpenHashSet<>();
         private final ImmutableCollectionView<ExtendedHolder<Block, ? extends Block>> entriesView = ImmutableCollectionView.of(entries);
 
         protected FabricBlocksRegistrar(String namespace) {
@@ -100,7 +99,7 @@ public class FabricRegistrationService implements RegistrationService {
         public <B extends Block> BlockHolder<B> register(String name, Function<Identifier, ? extends B> func) {
             Identifier id = Identifier.fromNamespaceAndPath(namespace(), name);
             Registry.register(registry().get(), id, func.apply(id));
-            BlockHolder<B> holder = BlockHolder.createBlock(id);
+            BlockHolder<B> holder = createHolder(ResourceKey.create(registryKey(), id));
             entries.add(holder);
             return holder;
         }
@@ -112,7 +111,7 @@ public class FabricRegistrationService implements RegistrationService {
     }
 
     private static class FabricDataComponentsRegistrar extends Registrar.DataComponents {
-        private final Set<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries = new ObjectOpenHashSet<>();
+        private final ObjectOpenHashSet<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries = new ObjectOpenHashSet<>();
         private final ImmutableCollectionView<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entriesView = ImmutableCollectionView.of(entries);
 
         protected FabricDataComponentsRegistrar(ResourceKey<Registry<DataComponentType<?>>> registryKey, String namespace) {
@@ -123,7 +122,7 @@ public class FabricRegistrationService implements RegistrationService {
         public <D extends DataComponentType<?>> ExtendedHolder<DataComponentType<?>, D> register(String name, Function<Identifier, ? extends D> func) {
             Identifier id = Identifier.fromNamespaceAndPath(namespace(), name);
             Registry.register(registry().get(), id, func.apply(id));
-            ExtendedHolder<DataComponentType<?>, D> holder = ExtendedHolder.create(registryKey(), id);
+            ExtendedHolder<DataComponentType<?>, D> holder = createHolder(ResourceKey.create(registryKey(), id));
             entries.add(holder);
             return holder;
         }
@@ -135,7 +134,7 @@ public class FabricRegistrationService implements RegistrationService {
     }
 
     private static class FabricEntitiesRegistrar extends Registrar.Entities {
-        private final Set<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entries = new ObjectOpenHashSet<>();
+        private final ObjectOpenHashSet<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entries = new ObjectOpenHashSet<>();
         private final ImmutableCollectionView<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entriesView = ImmutableCollectionView.of(entries);
 
         protected FabricEntitiesRegistrar(String namespace) {
@@ -146,7 +145,7 @@ public class FabricRegistrationService implements RegistrationService {
         public <I extends EntityType<?>> ExtendedHolder<EntityType<?>, I> register(String name, Function<Identifier, ? extends I> func) {
             Identifier id = Identifier.fromNamespaceAndPath(namespace(), name);
             Registry.register(registry().get(), id, func.apply(id));
-            ExtendedHolder<EntityType<?>, I> holder = ExtendedHolder.create(registryKey(), id);
+            ExtendedHolder<EntityType<?>, I> holder = createHolder(ResourceKey.create(registryKey(), id));
             entries.add(holder);
             return holder;
         }

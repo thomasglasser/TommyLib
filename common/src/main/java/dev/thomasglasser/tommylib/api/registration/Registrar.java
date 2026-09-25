@@ -95,7 +95,7 @@ public abstract class Registrar<T> {
         return create(registry.key(), namespace);
     }
 
-    /// Registrar factory for modded registries or [`vanilla registries`][BuiltInRegistries] to lookup based on the provided registry name. Supports both registries that already exist or do not exist yet.
+    /// Registrar factory for modded registries or [vanilla registries][BuiltInRegistries] to lookup based on the provided registry name. Supports both registries that already exist or do not exist yet.
     ///
     /// If the registry is never created, any [ExtendedHolder]s made from this Registrar will throw an exception.
     ///
@@ -182,12 +182,11 @@ public abstract class Registrar<T> {
 
     /// Create a [ExtendedHolder] or an inheriting type to be stored.
     ///
-    /// @param registryKey The key of the registry.
-    /// @param key         The resource location of the entry.
+    /// @param key         The resource key of the entry.
     /// @return The new instance of [ExtendedHolder] or an inheriting type.
     /// @param <I> The specific type of the entry.
-    protected <I extends T> ExtendedHolder<T, I> createHolder(ResourceKey<? extends Registry<T>> registryKey, Identifier key) {
-        return ExtendedHolder.create(registryKey, key);
+    protected <I extends T> ExtendedHolder<T, I> createHolder(ResourceKey<T> key) {
+        return ExtendedHolder.create(key);
     }
 
     /// Returns an unmodifiable view of the entries registered to this Registrar.
@@ -347,8 +346,8 @@ public abstract class Registrar<T> {
         }
 
         @Override
-        protected <I extends Block> BlockHolder<I> createHolder(ResourceKey<? extends Registry<Block>> registryKey, Identifier key) {
-            return BlockHolder.createBlock(ResourceKey.create(registryKey, key));
+        protected <I extends Block> BlockHolder<I> createHolder(ResourceKey<Block> key) {
+            return BlockHolder.createBlock(key);
         }
     }
 
@@ -563,8 +562,8 @@ public abstract class Registrar<T> {
         }
 
         @Override
-        protected <I extends Item> ItemHolder<I> createHolder(ResourceKey<? extends Registry<Item>> registryKey, Identifier key) {
-            return ItemHolder.createItem(ResourceKey.create(registryKey, key));
+        protected <I extends Item> ItemHolder<I> createHolder(ResourceKey<Item> key) {
+            return ItemHolder.createItem(key);
         }
     }
 
@@ -606,7 +605,7 @@ public abstract class Registrar<T> {
         /// @param name     The name for this entity type. It will automatically have the [namespace][#namespace()] prefixed.
         /// @param factory  The factory used to typically construct the entity when using an existing helper from the type.
         /// @param category The category of the entity, typically [MobCategory#MISC] for non-living entities, or one of the others for living entities.
-        /// @param builder  The unary operator, which is passed a new builder for user operators, then builds it upon registration.
+        /// @param builder  The unary operator, which is passed a new builder for user operations, then builds it upon registration.
         /// @return A [ExtendedHolder] which reflects the data that will be registered.
         /// @param <E> the type of the entity
         public <E extends Entity> ExtendedHolder<EntityType<?>, EntityType<E>> register(String name, EntityType.EntityFactory<E> factory, MobCategory category, UnaryOperator<EntityType.Builder<E>> builder) {

@@ -230,7 +230,7 @@ public class ExtendedHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     /// Resolves this holder to a [Reference] using the provided [HolderLookup.Provider].
     ///
     /// @param registries the lookup provider used to resolve this reference
-    /// @return the resolved [Reference], or `null` if the registry cannot be found
+    /// @return the resolved [Reference]
     public Reference<R> asReference(HolderLookup.Provider registries) {
         return registries.lookupOrThrow(key.registryKey()).getOrThrow(key);
     }

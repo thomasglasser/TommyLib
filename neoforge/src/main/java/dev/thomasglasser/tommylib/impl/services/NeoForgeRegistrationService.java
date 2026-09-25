@@ -78,7 +78,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         @Override
         public <I extends T> ExtendedHolder<T, I> register(String name, Function<Identifier, ? extends I> func) {
             ResourceKey<T> key = registry.register(name, func).getKey();
-            ExtendedHolder<T, I> holder = ExtendedHolder.create(key);
+            ExtendedHolder<T, I> holder = createHolder(key);
             entries.add(holder);
             return holder;
         }
@@ -103,7 +103,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         @Override
         public <I extends Item> ItemHolder<I> register(String name, Function<Identifier, ? extends I> func) {
             ResourceKey<Item> key = registry.register(name, func).getKey();
-            ItemHolder<I> holder = ItemHolder.createItem(key);
+            ItemHolder<I> holder = createHolder(key);
             entries.add(holder);
             return holder;
         }
@@ -128,7 +128,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         @Override
         public <B extends Block> BlockHolder<B> register(String name, Function<Identifier, ? extends B> func) {
             ResourceKey<Block> key = registry.register(name, func).getKey();
-            BlockHolder<B> holder = BlockHolder.createBlock(key);
+            BlockHolder<B> holder = createHolder(key);
             entries.add(holder);
             return holder;
         }
@@ -153,7 +153,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         @Override
         public <D extends DataComponentType<?>> ExtendedHolder<DataComponentType<?>, D> register(String name, Function<Identifier, ? extends D> func) {
             ResourceKey<DataComponentType<?>> key = registry.register(name, func).getKey();
-            ExtendedHolder<DataComponentType<?>, D> holder = ExtendedHolder.create(key);
+            ExtendedHolder<DataComponentType<?>, D> holder = createHolder(key);
             entries.add(holder);
             return holder;
         }
@@ -178,7 +178,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         @Override
         public <E extends EntityType<?>> ExtendedHolder<EntityType<?>, E> register(String name, Function<Identifier, ? extends E> func) {
             ResourceKey<EntityType<?>> key = registry.register(name, func).getKey();
-            ExtendedHolder<EntityType<?>, E> holder = ExtendedHolder.create(key);
+            ExtendedHolder<EntityType<?>, E> holder = createHolder(key);
             entries.add(holder);
             return holder;
         }
