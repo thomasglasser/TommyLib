@@ -45,8 +45,3 @@ neoForge {
 configurations {
 	runtimeClasspath.extendsFrom localRuntime
 }
-
-dependencies {
-	// Common
-	compileOnly "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
-}
