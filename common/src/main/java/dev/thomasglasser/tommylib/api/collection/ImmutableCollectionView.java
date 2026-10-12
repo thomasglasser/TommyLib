@@ -2,33 +2,17 @@ package dev.thomasglasser.tommylib.api.collection;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Consumer;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /// An unmodifiable view of a backing [Collection].
-///
-/// @param delegate The backing collection
-/// @param <E> The element type
-public record ImmutableCollectionView<E>(Collection<E> delegate) implements Collection<E> {
-    /// Creates an unmodifiable view wrapping the given collection.
-    ///
-    /// @param delegate The backing collection to wrap
-    /// @param <E>      The element type
-    /// @return An [ImmutableCollectionView] wrapping the delegate
-    public static <E> ImmutableCollectionView<E> of(Collection<E> delegate) {
-        return new ImmutableCollectionView<>(delegate);
-    }
+public class ImmutableCollectionView<E> implements Collection<E> {
+    private final Collection<E> delegate;
 
-    /// Returns an empty [ImmutableCollectionView].
-    ///
-    /// @param <E> The element type
-    /// @return An empty unmodifiable collection view
-    public static <E> ImmutableCollectionView<E> empty() {
-        return of(List.of());
+    public ImmutableCollectionView(Collection<E> delegate) {
+        this.delegate = delegate;
     }
 
     @Override
@@ -61,15 +45,15 @@ public record ImmutableCollectionView<E>(Collection<E> delegate) implements Coll
                 return iterator.next();
             }
 
+            @Override
+            public void forEachRemaining(Consumer<? super E> action) {
+                iterator.forEachRemaining(action);
+            }
+
             @Deprecated
             @Override
             public void remove() {
                 throw new UnsupportedOperationException("ImmutableCollectionView iterator cannot be modified");
-            }
-
-            @Override
-            public void forEachRemaining(Consumer<? super E> action) {
-                iterator.forEachRemaining(action);
             }
         };
     }
@@ -85,18 +69,13 @@ public record ImmutableCollectionView<E>(Collection<E> delegate) implements Coll
     }
 
     @Override
-    public <T> T[] toArray(IntFunction<T[]> generator) {
-        return delegate.toArray(generator);
-    }
-
-    @Override
     public boolean containsAll(Collection<?> c) {
         return delegate.containsAll(c);
     }
 
     @Override
     public Spliterator<E> spliterator() {
-        return delegate.spliterator();
+        return Spliterators.spliterator(delegate, Spliterator.DISTINCT & Spliterator.IMMUTABLE);
     }
 
     @Override
@@ -115,9 +94,25 @@ public record ImmutableCollectionView<E>(Collection<E> delegate) implements Coll
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o instanceof ImmutableCollectionView<?> other)
+            return delegate.equals(other.delegate);
+        return delegate.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return delegate.hashCode();
+    }
+
+    @Override
     public String toString() {
         return delegate.toString();
     }
+
+    // Modifiers
 
     @Deprecated
     @Override
@@ -152,12 +147,6 @@ public record ImmutableCollectionView<E>(Collection<E> delegate) implements Coll
     @Deprecated
     @Override
     public void clear() {
-        throw new UnsupportedOperationException("ImmutableCollectionView cannot be modified");
-    }
-
-    @Deprecated
-    @Override
-    public boolean removeIf(Predicate<? super E> filter) {
         throw new UnsupportedOperationException("ImmutableCollectionView cannot be modified");
     }
 }

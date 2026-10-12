@@ -1,7 +1,7 @@
 package dev.thomasglasser.tommylib.api.registration;
 
-import dev.thomasglasser.tommylib.api.collection.ImmutableCollectionView;
 import dev.thomasglasser.tommylib.impl.services.TommyLibServices;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -189,10 +189,10 @@ public abstract class Registrar<T> {
         return ExtendedHolder.create(key);
     }
 
-    /// Returns an unmodifiable view of the entries registered to this Registrar.
+    /// Returns an unmodifiable collection of the entries registered to this Registrar.
     ///
-    /// @return the registered entries view
-    public abstract ImmutableCollectionView<ExtendedHolder<T, ? extends T>> entries();
+    /// @return the registered entries
+    public abstract Collection<ExtendedHolder<T, ? extends T>> entries();
 
     /// Returns a supplier for the [Registry] linked to this deferred register. For vanilla registries, this will always return a non-null registry. For modded registries, a non-null registry will only be returned after the registry is created.
     ///
