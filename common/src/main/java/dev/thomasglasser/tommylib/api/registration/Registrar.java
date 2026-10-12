@@ -1,7 +1,7 @@
 package dev.thomasglasser.tommylib.api.registration;
 
-import dev.thomasglasser.tommylib.api.collection.ImmutableCollectionView;
 import dev.thomasglasser.tommylib.impl.services.TommyLibServices;
+import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -213,11 +213,11 @@ public abstract class Registrar<T> {
     }
 
     /**
-     * Returns an unmodifiable view of registered entries.
+     * Returns an unmodifiable collection of registered entries.
      *
      * @return The unmodifiable collection of registered entries.
      */
-    public abstract ImmutableCollectionView<ExtendedHolder<T, ? extends T>> entries();
+    public abstract Collection<ExtendedHolder<T, ? extends T>> entries();
 
     /**
      * Returns the registry key stored in this registrar.

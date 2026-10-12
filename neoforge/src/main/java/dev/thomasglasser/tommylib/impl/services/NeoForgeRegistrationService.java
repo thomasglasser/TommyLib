@@ -1,11 +1,12 @@
 package dev.thomasglasser.tommylib.impl.services;
 
-import dev.thomasglasser.tommylib.api.collection.ImmutableCollectionView;
+import dev.thomasglasser.tommylib.api.collection.ImmutableSetView;
 import dev.thomasglasser.tommylib.api.registration.BlockHolder;
 import dev.thomasglasser.tommylib.api.registration.ExtendedHolder;
 import dev.thomasglasser.tommylib.api.registration.ItemHolder;
 import dev.thomasglasser.tommylib.api.registration.Registrar;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 import net.minecraft.core.Registry;
@@ -68,7 +69,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         private final DeferredRegister<T> registry;
 
         private final ObjectOpenHashSet<ExtendedHolder<T, ? extends T>> entries = new ObjectOpenHashSet<>();
-        private final ImmutableCollectionView<ExtendedHolder<T, ? extends T>> entriesView = ImmutableCollectionView.of(entries);
+        private final ImmutableSetView<ExtendedHolder<T, ? extends T>> entriesView = new ImmutableSetView<>(entries);
 
         private NeoForgeRegistrar(String namespace, DeferredRegister<T> registry) {
             super(registry.getRegistryKey(), namespace);
@@ -84,7 +85,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         }
 
         @Override
-        public ImmutableCollectionView<ExtendedHolder<T, ? extends T>> entries() {
+        public Collection<ExtendedHolder<T, ? extends T>> entries() {
             return entriesView;
         }
     }
@@ -93,7 +94,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         private final DeferredRegister<Item> registry;
 
         private final ObjectOpenHashSet<ExtendedHolder<Item, ? extends Item>> entries = new ObjectOpenHashSet<>();
-        private final ImmutableCollectionView<ExtendedHolder<Item, ? extends Item>> entriesView = ImmutableCollectionView.of(entries);
+        private final ImmutableSetView<ExtendedHolder<Item, ? extends Item>> entriesView = new ImmutableSetView<>(entries);
 
         private NeoForgeItemsRegistrar(String namespace, DeferredRegister<Item> registry) {
             super(namespace);
@@ -109,7 +110,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         }
 
         @Override
-        public ImmutableCollectionView<ExtendedHolder<Item, ? extends Item>> entries() {
+        public Collection<ExtendedHolder<Item, ? extends Item>> entries() {
             return entriesView;
         }
     }
@@ -118,7 +119,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         private final DeferredRegister<Block> registry;
 
         private final ObjectOpenHashSet<ExtendedHolder<Block, ? extends Block>> entries = new ObjectOpenHashSet<>();
-        private final ImmutableCollectionView<ExtendedHolder<Block, ? extends Block>> entriesView = ImmutableCollectionView.of(entries);
+        private final ImmutableSetView<ExtendedHolder<Block, ? extends Block>> entriesView = new ImmutableSetView<>(entries);
 
         private NeoForgeBlocksRegistrar(String namespace, DeferredRegister<Block> registry) {
             super(namespace);
@@ -134,7 +135,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         }
 
         @Override
-        public ImmutableCollectionView<ExtendedHolder<Block, ? extends Block>> entries() {
+        public Collection<ExtendedHolder<Block, ? extends Block>> entries() {
             return entriesView;
         }
     }
@@ -143,7 +144,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         private final DeferredRegister<DataComponentType<?>> registry;
 
         private final ObjectOpenHashSet<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries = new ObjectOpenHashSet<>();
-        private final ImmutableCollectionView<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entriesView = ImmutableCollectionView.of(entries);
+        private final ImmutableSetView<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entriesView = new ImmutableSetView<>(entries);
 
         private NeoForgeDataComponentsRegistrar(ResourceKey<? extends Registry<DataComponentType<?>>> registryKey, String namespace, DeferredRegister<DataComponentType<?>> registry) {
             super(registryKey, namespace);
@@ -159,7 +160,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         }
 
         @Override
-        public ImmutableCollectionView<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries() {
+        public Collection<ExtendedHolder<DataComponentType<?>, ? extends DataComponentType<?>>> entries() {
             return entriesView;
         }
     }
@@ -168,7 +169,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         private final DeferredRegister<EntityType<?>> registry;
 
         private final ObjectOpenHashSet<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entries = new ObjectOpenHashSet<>();
-        private final ImmutableCollectionView<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entriesView = ImmutableCollectionView.of(entries);
+        private final ImmutableSetView<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entriesView = new ImmutableSetView<>(entries);
 
         private NeoForgeEntitiesRegistrar(String namespace, DeferredRegister<EntityType<?>> registry) {
             super(namespace);
@@ -184,7 +185,7 @@ public class NeoForgeRegistrationService implements RegistrationService {
         }
 
         @Override
-        public ImmutableCollectionView<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entries() {
+        public Collection<ExtendedHolder<EntityType<?>, ? extends EntityType<?>>> entries() {
             return entriesView;
         }
     }
